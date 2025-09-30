@@ -73,9 +73,6 @@ export const authOptions: NextAuthOptions = {
     signOut(message) {
       console.log('[auth][event] signOut', message)
     },
-    error(error) {
-      console.error('[auth][event] error', error)
-    },
     session(message) {
       console.log('[auth][event] session', message)
     }
