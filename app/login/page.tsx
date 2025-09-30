@@ -107,6 +107,8 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
                     required
+                    className="bg-white text-gray-900 placeholder:text-gray-500"
+                    autoComplete="email"
                   />
                 </div>
                 <Button
