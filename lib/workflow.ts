@@ -30,18 +30,18 @@ export function requiresApproval(
 }
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {
-  NEW: 'New',
-  IN_REVIEW: 'In Review',
-  PENDING_APPROVAL: 'Pending Approval',
-  APPROVED: 'Approved',
-  ORDERED: 'Ordered',
-  IN_TRANSIT: 'In Transit',
-  READY_FOR_PICKUP: 'Ready for Pickup',
-  DELIVERED: 'Delivered',
-  COMPLETED: 'Completed',
-  REJECTED: 'Rejected',
-  CANCELLED: 'Cancelled',
-  ON_HOLD: 'On Hold'
+  NEW: 'Neu',
+  IN_REVIEW: 'In Prüfung',
+  PENDING_APPROVAL: 'Wartet auf Genehmigung',
+  APPROVED: 'Genehmigt',
+  ORDERED: 'Bestellt',
+  IN_TRANSIT: 'Unterwegs',
+  READY_FOR_PICKUP: 'Abholbereit',
+  DELIVERED: 'Zugestellt',
+  COMPLETED: 'Abgeschlossen',
+  REJECTED: 'Abgelehnt',
+  CANCELLED: 'Storniert',
+  ON_HOLD: 'Pausiert'
 }
 
 export const STATUS_COLORS: Record<OrderStatus, string> = {

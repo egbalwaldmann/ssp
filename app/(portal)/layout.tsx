@@ -39,7 +39,7 @@ export default function PortalLayout({
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600">Laden...</p>
         </div>
       </div>
     )
@@ -61,6 +61,17 @@ export default function PortalLayout({
       .slice(0, 2)
   }
 
+  const getRoleLabel = (role: string) => {
+    const roleLabels: Record<string, string> = {
+      REQUESTER: 'Anforderer',
+      IT_AGENT: 'IT-Agent',
+      RECEPTION_AGENT: 'Empfang',
+      APPROVER: 'Genehmiger',
+      ADMIN: 'Admin'
+    }
+    return roleLabels[role] || role
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -72,7 +83,7 @@ export default function PortalLayout({
                   <ShoppingCart className="h-6 w-6 text-white" />
                 </div>
                 <span className="font-bold text-xl text-gray-900">
-                  Self-Service Portal
+                  Self-Service-Portal
                 </span>
               </Link>
 
@@ -83,7 +94,7 @@ export default function PortalLayout({
                     className="flex items-center space-x-2"
                   >
                     <ShoppingCart className="h-4 w-4" />
-                    <span>Catalog</span>
+                    <span>Katalog</span>
                   </Button>
                 </Link>
                 <Link href="/orders">
@@ -92,7 +103,7 @@ export default function PortalLayout({
                     className="flex items-center space-x-2"
                   >
                     <Package className="h-4 w-4" />
-                    <span>My Orders</span>
+                    <span>Meine Bestellungen</span>
                   </Button>
                 </Link>
                 {isAgent && (
@@ -141,7 +152,7 @@ export default function PortalLayout({
                       <p className="text-xs text-gray-500">{session.user.email}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant="secondary" className="text-xs">
-                          {session.user.role.replace(/_/g, ' ')}
+                          {getRoleLabel(session.user.role)}
                         </Badge>
                         <Badge variant="outline" className="text-xs">
                           {session.user.costCenter}
@@ -152,7 +163,7 @@ export default function PortalLayout({
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/login' })}>
                     <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
+                    Abmelden
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -166,9 +177,9 @@ export default function PortalLayout({
       <footer className="bg-white border-t border-gray-200 mt-auto">
         <div className="container mx-auto px-4 py-6">
           <div className="text-center text-sm text-gray-600">
-            <p>Self-Service Portal MVP © 2025</p>
+            <p>Self-Service-Portal MVP © 2025</p>
             <p className="mt-1">
-              Department: {session.user.department} | Cost Center: {session.user.costCenter}
+              Abteilung: {session.user.department} | Kostenstelle: {session.user.costCenter}
             </p>
           </div>
         </div>
