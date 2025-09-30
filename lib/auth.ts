@@ -40,19 +40,19 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.id
-        session.user.role = token.role
-        session.user.costCenter = token.costCenter
-        session.user.department = token.department
+        session.user.id = token.id as string
+        session.user.role = token.role as any
+        session.user.costCenter = token.costCenter as string
+        session.user.department = token.department as string
       }
       return session
     },
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
-        token.role = user.role
-        token.costCenter = user.costCenter
-        token.department = user.department
+        token.id = (user as any).id
+        token.role = (user as any).role
+        token.costCenter = (user as any).costCenter
+        token.department = (user as any).department
       }
       return token
     }
@@ -63,7 +63,6 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt'
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  trustHost: true
+  secret: process.env.NEXTAUTH_SECRET
 }
 
