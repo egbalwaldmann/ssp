@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  role          Role      @default(REQUESTER)
+  costCenter    String
+  department    String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  orders        Order[]
+  comments      Comment[]
+  approvals     Approval[]
+}
+
+enum Role {
+  REQUESTER
+  IT_AGENT
+  RECEPTION_AGENT
+  APPROVER
+  ADMIN
+}
+
+model Product {
+  id            String    @id @default(cuid())
+  name          String
+  description   String?
+  category      Category
+  model         String?
+  imageUrl      String?
+  isActive      Boolean   @default(true)
+  requiresApproval Boolean @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  orderItems    OrderItem[]
+}
+
+enum Category {
+  WEBCAM
+  HEADSET
+  MOUSE
+  KEYBOARD
+  PRINTER_TONER
+  SPEAKERS
+  ADAPTER
+  CABLE
+  WHITEBOARD
+  PINBOARD
+  FLIPCHART
+  CHAIR
+  BUSINESS_PRINTS
+  OFFICE_MISC
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  status          OrderStatus @default(NEW)
+  userId          String
+  costCenter      String
+  specialRequest  String?
+  justification   String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  user            User        @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+  comments        Comment[]
+  approvals       Approval[]
+  statusHistory   StatusHistory[]
+  asset           Asset?
+}
+
+enum OrderStatus {
+  NEW
+  IN_REVIEW
+  PENDING_APPROVAL
+  APPROVED
+  ORDERED
+  IN_TRANSIT
+  READY_FOR_PICKUP
+  DELIVERED
+  COMPLETED
+  REJECTED
+  CANCELLED
+  ON_HOLD
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  productId   String
+  quantity    Int      @default(1)
+  
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id])
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  orderId     String
+  userId      String
+  content     String
+  isInternal  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Approval {
+  id          String        @id @default(cuid())
+  orderId     String
+  approverId  String
+  status      ApprovalStatus @default(PENDING)
+  comment     String?
+  createdAt   DateTime      @default(now())
+  decidedAt   DateTime?
+  
+  order       Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  approver    User          @relation(fields: [approverId], references: [id])
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model StatusHistory {
+  id          String      @id @default(cuid())
+  orderId     String
+  fromStatus  OrderStatus?
+  toStatus    OrderStatus
+  changedBy   String
+  note        String?
+  createdAt   DateTime    @default(now())
+  
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Asset {
+  id          String   @id @default(cuid())
+  orderId     String   @unique
+  assetTag    String   @unique
+  serialNumber String?
+  location    String?
+  assignedTo  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  order       Order    @relation(fields: [orderId], references: [id])
+}
