@@ -170,21 +170,21 @@ export default function CatalogPage() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base line-clamp-2">{product.name}</CardTitle>
+                    <CardTitle className="text-base line-clamp-2 text-gray-900">{product.name}</CardTitle>
                     {product.requiresApproval && (
                       <Badge variant="secondary" className="text-xs shrink-0">
-                        Approval
+                        Genehmigung
                       </Badge>
                     )}
                   </div>
                   {product.model && (
-                    <p className="text-sm text-gray-500">Model: {product.model}</p>
+                    <p className="text-sm text-gray-600">Modell: {product.model}</p>
                   )}
                 </div>
               </CardHeader>
               <CardContent className="flex-1">
                 {product.description && (
-                  <p className="text-sm text-gray-600 line-clamp-3">
+                  <p className="text-sm text-gray-700 line-clamp-3">
                     {product.description}
                   </p>
                 )}
@@ -195,7 +195,7 @@ export default function CatalogPage() {
                   className="w-full"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />
-                  Add to Cart
+                  In Warenkorb
                 </Button>
               </CardFooter>
             </Card>
