@@ -41,6 +41,7 @@ export default function CatalogPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('ALL')
   const [searchQuery, setSearchQuery] = useState('')
+  const [imageFail, setImageFail] = useState<Record<string, boolean>>({})
   const { addItem } = useCart()
 
   useEffect(() => {
@@ -151,23 +152,12 @@ export default function CatalogPage() {
             <Card key={product.id} className="flex flex-col hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="aspect-square bg-gray-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
-                  {product.imageUrl ? (
+                  {product.imageUrl && !imageFail[product.id] ? (
                     <img
                       src={product.imageUrl}
                       alt={product.name}
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = ''
-                        e.currentTarget.style.display = 'none'
-                        e.currentTarget.parentElement!.innerHTML = `
-                          <div class="flex flex-col items-center justify-center w-full h-full">
-                            <svg class="h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
-                            <p class="text-gray-400 text-sm mt-2">${product.name}</p>
-                          </div>
-                        `
-                      }}
+                      onError={() => setImageFail((prev) => ({ ...prev, [product.id]: true }))}
                     />
                   ) : (
                     <div className="flex flex-col items-center justify-center">
