@@ -3,8 +3,18 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        - corepack enable
+        - nvm install 20
+        - node -v
+        - npm ci --cache .npm --prefer-offline
         - npx prisma generate
+        - echo "DATABASE_URL=$DATABASE_URL" >> .env.local
+        - echo "NEXTAUTH_URL=$NEXTAUTH_URL" >> .env.local
+        - echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env.local
+        - echo "AUTH_TRUST_HOST=$AUTH_TRUST_HOST" >> .env.local
+        - echo "NEXTAUTH_DEBUG=$NEXTAUTH_DEBUG" >> .env.local
+        - echo "NEXTAUTH_CSRF_CHECK_ORIGIN=$NEXTAUTH_CSRF_CHECK_ORIGIN" >> .env.local
+        - echo "NEXTAUTH_URL_INTERNAL=$NEXTAUTH_URL_INTERNAL" >> .env.local
     build:
       commands:
         - npm run build
@@ -14,5 +24,6 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - node_modules/**/*
       - .next/cache/**/*
+      - .npm/**/*
+      - node_modules/**/*
