@@ -276,3 +276,12 @@ Start by logging in as `user@bund.de` and exploring the catalog.
 
 **Happy ordering!** 🛒
 
+## Deployment note (Amplify)
+
+Set environment variables before production login tests:
+- `NEXTAUTH_URL` = your Amplify default domain (e.g., https://main.d2zig7giatoyll.amplifyapp.com)
+- `AUTH_TRUST_HOST` = `true`
+- `DATABASE_URL` should include `?sslmode=require` when using managed Postgres
+
+After changing env vars, redeploy with “Clear cache”.
+
