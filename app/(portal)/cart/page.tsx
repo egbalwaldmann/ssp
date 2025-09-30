@@ -225,8 +225,8 @@ export default function CartPage() {
                 className="w-full"
                 disabled={
                   isSubmitting ||
-                  ((hasItemsRequiringApproval || specialRequest.trim()) &&
-                    !justification.trim())
+                  ((hasItemsRequiringApproval || !!specialRequest.trim()) &&
+                    justification.trim().length === 0)
                 }
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Order'}
