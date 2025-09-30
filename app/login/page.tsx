@@ -5,7 +5,7 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { ShoppingCart } from 'lucide-react'
 
@@ -18,7 +18,7 @@ export default function LoginPage() {
     e.preventDefault()
     
     if (!email) {
-      toast.error('Please enter your email')
+      toast.error('Bitte E-Mail eingeben')
       return
     }
 
@@ -31,14 +31,14 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        toast.error('Invalid email. Please use a registered email address.')
+        toast.error('Unbekannte E-Mail. Bitte eine registrierte Adresse verwenden.')
       } else {
-        toast.success('Login successful!')
+        toast.success('Anmeldung erfolgreich!')
         router.push('/catalog')
         router.refresh()
       }
     } catch (error) {
-      toast.error('An error occurred. Please try again.')
+      toast.error('Ein Fehler ist aufgetreten. Bitte erneut versuchen.')
     } finally {
       setIsLoading(false)
     }
@@ -55,14 +55,14 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        toast.error('Login failed')
+        toast.error('Anmeldung fehlgeschlagen')
       } else {
-        toast.success('Login successful!')
+        toast.success('Anmeldung erfolgreich!')
         router.push('/catalog')
         router.refresh()
       }
     } catch (error) {
-      toast.error('An error occurred')
+      toast.error('Ein Fehler ist aufgetreten')
     } finally {
       setIsLoading(false)
     }
@@ -78,26 +78,26 @@ export default function LoginPage() {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Self-Service Portal
+            Self-Service-Portal
           </h1>
           <p className="text-gray-600 text-lg">
-            Order IT equipment and office supplies online
+            IT-Equipment und Büromaterial online bestellen
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Sign In</CardTitle>
+              <CardTitle>Anmelden</CardTitle>
               <CardDescription>
-                Enter your email address to access the portal
+                E-Mail-Adresse eingeben, um das Portal zu nutzen
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="email" className="text-sm font-medium">
-                    Email Address
+                    E-Mail-Adresse
                   </label>
                   <Input
                     id="email"
@@ -116,7 +116,7 @@ export default function LoginPage() {
                   className="w-full"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Signing in...' : 'Sign In'}
+                  {isLoading ? 'Anmelden…' : 'Anmelden'}
                 </Button>
               </form>
             </CardContent>
@@ -124,9 +124,9 @@ export default function LoginPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Quick Login (Demo)</CardTitle>
+              <CardTitle>Schnell-Anmeldung (Demo)</CardTitle>
               <CardDescription>
-                Select a test account to explore the portal
+                Testkonto auswählen, um das Portal zu erkunden
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -138,8 +138,8 @@ export default function LoginPage() {
                   disabled={isLoading}
                 >
                   <div className="text-left">
-                    <div className="font-medium">Test User</div>
-                    <div className="text-xs text-gray-500">user@bund.de (Requester)</div>
+                    <div className="font-medium">Mitarbeiter</div>
+                    <div className="text-xs text-gray-500">user@bund.de (Anforderer)</div>
                   </div>
                 </Button>
                 <Button
@@ -149,8 +149,8 @@ export default function LoginPage() {
                   disabled={isLoading}
                 >
                   <div className="text-left">
-                    <div className="font-medium">IT Support</div>
-                    <div className="text-xs text-gray-500">it@bund.de (IT Agent)</div>
+                    <div className="font-medium">IT-Support</div>
+                    <div className="text-xs text-gray-500">it@bund.de (IT-Agent)</div>
                   </div>
                 </Button>
                 <Button
@@ -160,8 +160,8 @@ export default function LoginPage() {
                   disabled={isLoading}
                 >
                   <div className="text-left">
-                    <div className="font-medium">Reception</div>
-                    <div className="text-xs text-gray-500">reception@bund.de (Reception Agent)</div>
+                    <div className="font-medium">Empfang</div>
+                    <div className="text-xs text-gray-500">reception@bund.de (Empfang)</div>
                   </div>
                 </Button>
                 <Button
@@ -171,8 +171,8 @@ export default function LoginPage() {
                   disabled={isLoading}
                 >
                   <div className="text-left">
-                    <div className="font-medium">Manager</div>
-                    <div className="text-xs text-gray-500">manager@bund.de (Approver)</div>
+                    <div className="font-medium">Führungskraft</div>
+                    <div className="text-xs text-gray-500">manager@bund.de (Genehmiger)</div>
                   </div>
                 </Button>
                 <Button
@@ -192,7 +192,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-8 text-center text-sm text-gray-600">
-          <p>MVP Demo - Simulates Azure AD / Entra ID authentication</p>
+          <p>MVP-Demo – simuliert Azure AD / Entra ID</p>
         </div>
       </div>
     </div>
