@@ -1,10 +1,8 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from '@/lib/prisma'
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
   providers: [
     CredentialsProvider({
       name: 'Email',
@@ -17,7 +15,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         // For MVP: Simple email-based auth (simulates Entra ID)
-        // In production, this would verify against Azure AD
         const user = await prisma.user.findUnique({
           where: { email: credentials.email }
         })
