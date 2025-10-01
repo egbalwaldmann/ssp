@@ -347,7 +347,19 @@ function LoginForm() {
           </Card>
         </div>
 
-        <div className="mt-8 text-center text-sm text-gray-600">
+        <div className="mt-6">
+          <div className="p-4 rounded-lg border border-yellow-300 bg-yellow-50 text-yellow-900">
+            <p className="font-semibold mb-1">Hinweis zum Nutzerwechsel</p>
+            <p className="text-sm">Um zwischen Demo‑Nutzern zu wechseln, bitte einen Hard‑Refresh (hartes Neuladen) der Seite durchführen.</p>
+            <ul className="mt-2 text-sm list-disc ml-5">
+              <li>Windows Edge: Strg + F5</li>
+              <li>Windows Chrome: Strg + F5 oder Strg + Umschalt + R</li>
+              <li>Windows Firefox: Strg + F5 oder Strg + Umschalt + R</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center text-sm text-gray-600">
           <p>MVP-Demo – simuliert Azure AD / Entra ID</p>
         </div>
       </div>
