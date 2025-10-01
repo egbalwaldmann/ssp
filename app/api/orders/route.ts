@@ -145,6 +145,7 @@ export async function POST(request: Request) {
     const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 
     // Create order
+    const now = new Date().toISOString()
     const { data: order, error: orderError } = await supabase
       .from('Order')
       .insert({
@@ -154,7 +155,9 @@ export async function POST(request: Request) {
         costCenter,
         specialRequest,
         justification,
-        status: orderStatus
+        status: orderStatus,
+        createdAt: now,
+        updatedAt: now
       })
       .select()
       .single()
