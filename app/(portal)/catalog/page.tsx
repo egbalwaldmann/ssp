@@ -55,6 +55,8 @@ const CATEGORIES = [
   { value: 'CHAIR', label: 'Stühle' },
   { value: 'BUSINESS_PRINTS', label: 'Geschäftsausdrucke' },
   { value: 'OFFICE_MISC', label: 'Büro-Sonstiges' },
+  { value: 'REQUIRES_APPROVAL', label: 'Genehmigung erforderlich' },
+  { value: 'NO_APPROVAL', label: 'Keine Genehmigung' },
 ]
 
 export default function CatalogPage() {
@@ -63,7 +65,7 @@ export default function CatalogPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
-  const [sortBy, setSortBy] = useState<'name' | 'price-low' | 'price-high'>('name')
+  const [sortBy, setSortBy] = useState<'name' | 'name-reverse' | 'price-low' | 'price-high'>('name')
   const [imageFail, setImageFail] = useState<Record<string, boolean>>({})
   const { addItem } = useCart()
   
@@ -102,7 +104,17 @@ export default function CatalogPage() {
     let filtered = products
 
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter((p) => selectedCategories.includes(p.category))
+      filtered = filtered.filter((p) => {
+        // Handle special approval categories
+        if (selectedCategories.includes('REQUIRES_APPROVAL')) {
+          return p.requiresApproval === true
+        }
+        if (selectedCategories.includes('NO_APPROVAL')) {
+          return p.requiresApproval === false
+        }
+        // Handle regular categories
+        return selectedCategories.includes(p.category)
+      })
     }
 
     if (searchQuery) {
@@ -118,6 +130,8 @@ export default function CatalogPage() {
     // Sort products
     if (sortBy === 'name') {
       filtered = filtered.sort((a, b) => a.name.localeCompare(b.name))
+    } else if (sortBy === 'name-reverse') {
+      filtered = filtered.sort((a, b) => b.name.localeCompare(a.name))
     } else if (sortBy === 'price-low') {
       filtered = filtered.sort((a, b) => (a.price || 0) - (b.price || 0))
     } else if (sortBy === 'price-high') {
@@ -155,7 +169,11 @@ export default function CatalogPage() {
             <CardContent className="space-y-1 p-0">
               {CATEGORIES.filter(cat => cat.value !== 'ALL').map((cat) => {
                 const isSelected = selectedCategories.includes(cat.value)
-                const count = products.filter(p => p.category === cat.value).length
+                const count = cat.value === 'REQUIRES_APPROVAL' 
+                  ? products.filter(p => p.requiresApproval === true).length
+                  : cat.value === 'NO_APPROVAL'
+                  ? products.filter(p => p.requiresApproval === false).length
+                  : products.filter(p => p.category === cat.value).length
                 
                 return (
                   <button
@@ -219,6 +237,9 @@ export default function CatalogPage() {
             <SelectContent className="bg-white">
               <SelectItem value="name" className="font-medium text-gray-800">
                 🔤 Alphabetisch (A-Z)
+              </SelectItem>
+              <SelectItem value="name-reverse" className="font-medium text-gray-800">
+                🔤 Alphabetisch (Z-A)
               </SelectItem>
               <SelectItem value="price-low" className="font-medium text-gray-800">
                 💰 Preis aufsteigend
