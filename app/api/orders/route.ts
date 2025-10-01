@@ -109,10 +109,15 @@ export async function POST(request: Request) {
 
     if (productsError) {
       console.error('❌ Error fetching products:', productsError)
-      return NextResponse.json({ error: 'Fehler beim Laden der Produkte' }, { status: 500 })
+      return NextResponse.json({ 
+        error: 'Fehler beim Laden der Produkte',
+        details: productsError.message 
+      }, { status: 500 })
     }
 
     console.log('📦 Found products:', products?.length || 0)
+    console.log('📦 Available product IDs:', products?.map(p => p.id) || [])
+    console.log('📦 Requested product IDs:', productIds)
     
     // Check if all requested products exist
     const foundProductIds = products?.map(p => p.id) || []
@@ -121,7 +126,9 @@ export async function POST(request: Request) {
     if (missingProducts.length > 0) {
       console.error('❌ Missing products:', missingProducts)
       return NextResponse.json({ 
-        error: `Produkte nicht gefunden: ${missingProducts.join(', ')}. Bitte aktualisieren Sie den Warenkorb.` 
+        error: `Produkte nicht gefunden: ${missingProducts.join(', ')}. Bitte aktualisieren Sie den Warenkorb.`,
+        missingProducts: missingProducts,
+        availableProducts: foundProductIds
       }, { status: 400 })
     }
 
@@ -152,7 +159,11 @@ export async function POST(request: Request) {
 
     if (orderError) {
       console.error('❌ Error creating order:', orderError)
-      return NextResponse.json({ error: 'Fehler beim Erstellen der Bestellung' }, { status: 500 })
+      return NextResponse.json({ 
+        error: 'Fehler beim Erstellen der Bestellung',
+        details: orderError.message,
+        code: orderError.code
+      }, { status: 500 })
     }
 
     // Create order items
@@ -168,7 +179,11 @@ export async function POST(request: Request) {
 
     if (itemsError) {
       console.error('❌ Error creating order items:', itemsError)
-      return NextResponse.json({ error: 'Fehler beim Erstellen der Bestellpositionen' }, { status: 500 })
+      return NextResponse.json({ 
+        error: 'Fehler beim Erstellen der Bestellpositionen',
+        details: itemsError.message,
+        code: itemsError.code
+      }, { status: 500 })
     }
 
     // Fetch the complete order with items and user data
@@ -191,13 +206,21 @@ export async function POST(request: Request) {
 
     if (fetchError) {
       console.error('❌ Error fetching complete order:', fetchError)
-      return NextResponse.json({ error: 'Bestellung erstellt, aber Fehler beim Laden der Details' }, { status: 500 })
+      return NextResponse.json({ 
+        error: 'Bestellung erstellt, aber Fehler beim Laden der Details',
+        details: fetchError.message,
+        code: fetchError.code
+      }, { status: 500 })
     }
 
     console.log(`✅ Created order ${orderNumber} with status ${orderStatus}`)
     return NextResponse.json(completeOrder, { status: 201 })
   } catch (error) {
     console.error('❌ Error creating order:', error)
-    return NextResponse.json({ error: 'Fehler beim Erstellen der Bestellung' }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Fehler beim Erstellen der Bestellung',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      type: error instanceof Error ? error.constructor.name : typeof error
+    }, { status: 500 })
   }
 }
