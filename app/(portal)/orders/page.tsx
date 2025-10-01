@@ -109,7 +109,7 @@ export default function OrdersPage() {
                       <Package className="h-4 w-4" />
                       {order.items.reduce((sum, item) => sum + item.quantity, 0)} Artikel
                     </div>
-                    {order._count.comments > 0 && (
+                    {order._count?.comments && order._count.comments > 0 && (
                       <div className="flex items-center gap-1">
                         💬 {order._count.comments} Kommentare
                       </div>
