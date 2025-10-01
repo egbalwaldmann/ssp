@@ -136,8 +136,10 @@ export default function CatalogPage() {
     // Sort products
     if (sortBy === 'name') {
       filtered = filtered.sort((a, b) => a.name.localeCompare(b.name))
+      console.log('🔤 Sorting A-Z:', filtered.slice(0, 3).map(p => p.name))
     } else if (sortBy === 'name-reverse') {
       filtered = filtered.sort((a, b) => b.name.localeCompare(a.name))
+      console.log('🔤 Sorting Z-A:', filtered.slice(0, 3).map(p => p.name))
     } else if (sortBy === 'price-low') {
       filtered = filtered.sort((a, b) => (a.price || 0) - (b.price || 0))
     } else if (sortBy === 'price-high') {
