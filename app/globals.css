@@ -1,25 +1,42 @@
 @import "tailwindcss";
 
 :root {
+  /* Atlassian/Jira Service Management Colors */
+  --jira-blue: #0052CC;
+  --jira-blue-hover: #0747A6;
+  --jira-blue-light: #DEEBFF;
+  --jira-purple: #6554C0;
+  --jira-green: #00875A;
+  --jira-orange: #FF8B00;
+  --jira-red: #DE350B;
+  --jira-gray-50: #FAFBFC;
+  --jira-gray-100: #F4F5F7;
+  --jira-gray-200: #EBECF0;
+  --jira-gray-300: #DFE1E6;
+  --jira-gray-500: #6B778C;
+  --jira-gray-700: #42526E;
+  --jira-gray-900: #172B4D;
+  
   --background: #ffffff;
-  --foreground: #1f2937;
-  --primary: #2563eb;
+  --foreground: var(--jira-gray-900);
+  --primary: var(--jira-blue);
   --primary-foreground: #ffffff;
-  --secondary: #f3f4f6;
-  --secondary-foreground: #374151;
-  --muted: #f9fafb;
-  --muted-foreground: #6b7280;
-  --accent: #f3f4f6;
-  --accent-foreground: #1f2937;
-  --destructive: #dc2626;
+  --secondary: var(--jira-gray-100);
+  --secondary-foreground: var(--jira-gray-900);
+  --muted: var(--jira-gray-100);
+  --muted-foreground: var(--jira-gray-500);
+  --accent: var(--jira-blue-light);
+  --accent-foreground: var(--jira-blue);
+  --destructive: var(--jira-red);
   --destructive-foreground: #ffffff;
-  --border: #e5e7eb;
+  --border: var(--jira-gray-200);
   --input: #ffffff;
-  --ring: #2563eb;
+  --ring: var(--jira-blue);
   --card: #ffffff;
-  --card-foreground: #1f2937;
+  --card-foreground: var(--jira-gray-900);
   --popover: #ffffff;
-  --popover-foreground: #1f2937;
+  --popover-foreground: var(--jira-gray-900);
+  --radius: 0.25rem;
 }
 
 @theme inline {
@@ -85,8 +102,8 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: #1d4ed8;
-  border-color: #1d4ed8;
+  background-color: var(--jira-blue-hover);
+  border-color: var(--jira-blue-hover);
 }
 
 .btn-secondary {

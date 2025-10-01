@@ -61,10 +61,18 @@ export default function CatalogPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState('ALL')
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [imageFail, setImageFail] = useState<Record<string, boolean>>({})
   const { addItem } = useCart()
+  
+  const toggleCategory = (category: string) => {
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories(selectedCategories.filter(c => c !== category))
+    } else {
+      setSelectedCategories([...selectedCategories, category])
+    }
+  }
 
   useEffect(() => {
     fetchProducts()
@@ -72,7 +80,7 @@ export default function CatalogPage() {
 
   useEffect(() => {
     filterProducts()
-  }, [products, selectedCategory, searchQuery])
+  }, [products, selectedCategories, searchQuery])
 
   const fetchProducts = async () => {
     try {
@@ -92,8 +100,8 @@ export default function CatalogPage() {
   const filterProducts = () => {
     let filtered = products
 
-    if (selectedCategory !== 'ALL') {
-      filtered = filtered.filter((p) => p.category === selectedCategory)
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter((p) => selectedCategories.includes(p.category))
     }
 
     if (searchQuery) {
@@ -122,20 +130,67 @@ export default function CatalogPage() {
           <p className="mt-4 text-gray-600">Produkte werden geladen...</p>
         </div>
       </div>
-    )
+      </div>
+    </div>
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">🛍️ Produktkatalog</h1>
-        <p className="text-gray-700 mt-2 font-medium">
-          IT-Equipment und Büromaterial durchsuchen und bestellen
-        </p>
-      </div>
+    <div className="flex gap-6">
+      {/* Left Sidebar - Category Filter (Jira-Style) */}
+      <aside className="w-64 shrink-0">
+        <div className="sticky top-6 space-y-4">
+          <Card className="border shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-semibold text-gray-900">📂 Kategorien</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1 p-0">
+              {CATEGORIES.filter(cat => cat.value !== 'ALL').map((cat) => {
+                const isSelected = selectedCategories.includes(cat.value)
+                const count = products.filter(p => p.category === cat.value).length
+                
+                return (
+                  <button
+                    key={cat.value}
+                    onClick={() => toggleCategory(cat.value)}
+                    className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors
+                      ${isSelected 
+                        ? 'bg-[var(--jira-blue-light)] text-[var(--jira-blue)] font-medium border-l-4 border-[var(--jira-blue)]' 
+                        : 'hover:bg-gray-50 text-gray-700 border-l-4 border-transparent'
+                      }`}
+                  >
+                    <span>{cat.label}</span>
+                    <span className={`text-xs ${isSelected ? 'text-[var(--jira-blue)]' : 'text-gray-400'}`}>
+                      {count}
+                    </span>
+                  </button>
+                )
+              })}
+            </CardContent>
+          </Card>
+          
+          {selectedCategories.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedCategories([])}
+              className="w-full text-sm"
+            >
+              Alle Filter zurücksetzen
+            </Button>
+          )}
+        </div>
+      </aside>
 
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
+      {/* Main Content */}
+      <div className="flex-1 space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold text-[var(--jira-gray-900)]">🛍️ Produktkatalog</h1>
+          <p className="text-[var(--jira-gray-500)] mt-1">
+            IT-Equipment und Büromaterial durchsuchen und bestellen
+          </p>
+        </div>
+
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             id="product-search"
@@ -146,23 +201,15 @@ export default function CatalogPage() {
             className="pl-10"
           />
         </div>
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-full md:w-[250px] bg-white border-2 border-gray-300 font-semibold text-gray-900">
-            <SelectValue placeholder="📂 Alle Kategorien" />
-          </SelectTrigger>
-          <SelectContent className="bg-white">
-            {CATEGORIES.map((cat) => (
-              <SelectItem key={cat.value} value={cat.value} className="font-medium text-gray-800">
-                {cat.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
 
-      <div className="text-sm text-gray-600">
-        {filteredProducts.length} von {products.length} Produkten angezeigt
-      </div>
+        <div className="flex items-center justify-between text-sm text-[var(--jira-gray-500)]">
+          <span>{filteredProducts.length} von {products.length} Produkten</span>
+          {selectedCategories.length > 0 && (
+            <span className="text-[var(--jira-blue)] font-medium">
+              {selectedCategories.length} {selectedCategories.length === 1 ? 'Filter' : 'Filter'} aktiv
+            </span>
+          )}
+        </div>
 
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
