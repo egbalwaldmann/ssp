@@ -1,6 +1,7 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/lib/prisma'
+import { env } from '@/lib/env'
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -94,7 +95,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt'
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NEXTAUTH_DEBUG === 'true'
+  secret: env.NEXTAUTH_SECRET,
+  debug: env.NEXTAUTH_DEBUG === 'true'
 }
 
