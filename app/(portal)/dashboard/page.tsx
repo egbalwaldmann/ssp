@@ -202,15 +202,25 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
-          {session?.user?.role === 'APPROVER' ? '⏳ Genehmiger-Dashboard' : '📊 Bestellungs-Dashboard'}
-        </h1>
-        <p className="text-gray-700 mt-2 font-medium">
-          {session?.user?.role === 'APPROVER' 
-            ? 'Bestellungen genehmigen und ablehnen' 
-            : 'Bestellungen verwalten und bearbeiten'
-          }
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {session?.user?.role === 'APPROVER' ? '⏳ Genehmiger-Dashboard' : '📊 Bestellungs-Dashboard'}
+            </h1>
+            <p className="text-gray-700 mt-2 font-medium">
+              {session?.user?.role === 'APPROVER' 
+                ? 'Bestellungen genehmigen und ablehnen' 
+                : 'Bestellungen verwalten und bearbeiten'
+              }
+            </p>
+          </div>
+          
+          {/* Fallback Status Indicator */}
+          <div className="flex items-center space-x-2 text-sm bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
+            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+            <span className="text-yellow-700 font-medium">Demo-Daten</span>
+          </div>
+        </div>
       </div>
 
       {/* Stats Cards */}

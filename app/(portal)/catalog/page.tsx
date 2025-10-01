@@ -128,10 +128,20 @@ export default function CatalogPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">🛍️ Produktkatalog</h1>
-        <p className="text-gray-700 mt-2 font-medium">
-          IT-Equipment und Büromaterial durchsuchen und bestellen
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">🛍️ Produktkatalog</h1>
+            <p className="text-gray-700 mt-2 font-medium">
+              IT-Equipment und Büromaterial durchsuchen und bestellen
+            </p>
+          </div>
+          
+          {/* Fallback Status Indicator */}
+          <div className="flex items-center space-x-2 text-sm bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
+            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+            <span className="text-yellow-700 font-medium">Demo-Produkte</span>
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4">
@@ -190,11 +200,11 @@ export default function CatalogPage() {
                   )}
                 </div>
                 <div className="space-y-3">
-                  <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-2">
                     <CardTitle className="text-lg font-bold line-clamp-2 text-gray-900 leading-tight">{product.name}</CardTitle>
                     {product.requiresApproval && (
-                      <Badge variant="secondary" className="text-xs shrink-0 bg-orange-100 text-orange-800 border-orange-200">
-                        ⚠️ Genehmigung
+                      <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 border-orange-200 w-fit">
+                        ⚠️ Genehmigung erforderlich
                       </Badge>
                     )}
                   </div>
