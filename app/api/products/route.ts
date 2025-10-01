@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { robustAuth } from '@/lib/auth-robust'
+import { Category } from '@prisma/client'
 
 // Fallback-Produktdaten für den Fall, dass die Datenbank nicht verfügbar ist
 const getFallbackProducts = () => {
@@ -8,7 +9,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-1',
       name: 'Logitech C270 HD-Webcam',
-      category: 'WEBCAM',
+      category: Category.WEBCAM,
       model: 'C270',
       imageUrl: '/products/webcam-logitech-c270.jpg',
       description: 'HD-Webcam für Videotelefonie und Konferenzen',
@@ -20,7 +21,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-2',
       name: 'Jabra Evolve2 65 (Bluetooth)',
-      category: 'HEADSET',
+      category: Category.HEADSET,
       model: 'Evolve2 65',
       imageUrl: '/products/headset-jabra-evolve2-65.jpg',
       description: 'Kabelloses Bluetooth-Headset mit aktiver Geräuschunterdrückung',
@@ -32,7 +33,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-3',
       name: 'Jabra Evolve2 40 (Kabelgebunden)',
-      category: 'HEADSET',
+      category: Category.HEADSET,
       model: 'Evolve2 40',
       imageUrl: '/products/headset-jabra-evolve2-40.jpg',
       description: 'Kabelgebundenes USB-Headset mit überlegener Klangqualität',
@@ -44,7 +45,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-4',
       name: 'Cherry GENTIX Silent Maus',
-      category: 'MOUSE',
+      category: Category.MOUSE,
       model: 'GENTIX Silent',
       imageUrl: '/products/mouse-cherry-gentix.jpg',
       description: 'Leise Maus für ruhige Büroumgebungen',
@@ -56,7 +57,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-5',
       name: 'Logitech Lift Ergonomische Maus',
-      category: 'MOUSE',
+      category: Category.MOUSE,
       model: 'Lift',
       imageUrl: '/products/mouse-logitech-lift.jpg',
       description: 'Ergonomische vertikale Maus für komfortable Nutzung',
@@ -68,7 +69,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-6',
       name: 'Cherry Stream Tastatur',
-      category: 'KEYBOARD',
+      category: Category.KEYBOARD,
       model: 'JK-8500',
       imageUrl: '/products/keyboard-cherry-stream.jpg',
       description: 'Professionelle Tastatur mit flachen Tasten',
@@ -80,7 +81,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-7',
       name: 'Verbatim USB-C zu HDMI Adapter',
-      category: 'ADAPTER',
+      category: Category.ADAPTER,
       model: 'USB-C-HDMI',
       imageUrl: '/products/adapter-usb-c-hdmi.jpg',
       description: 'Verbinden Sie Ihr USB-C-Gerät mit HDMI-Displays',
@@ -92,7 +93,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-8',
       name: 'ROLINE HDMI Kabel High Speed',
-      category: 'CABLE',
+      category: Category.CABLE,
       model: 'HDMI-2M',
       imageUrl: '/products/cable-hdmi.jpg',
       description: 'Hochgeschwindigkeits-HDMI-Kabel für 4K-Displays',
@@ -104,7 +105,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-9',
       name: 'Druckertoner',
-      category: 'PRINTER_TONER',
+      category: Category.PRINTER_TONER,
       model: 'Toner-001',
       imageUrl: '/products/toner.jpg',
       description: 'Verschiedene Tonerkartuschen für alle Bürodrucker verfügbar',
@@ -116,7 +117,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-10',
       name: 'Desktop-Lautsprecher',
-      category: 'SPEAKERS',
+      category: Category.SPEAKERS,
       model: 'Speaker-001',
       imageUrl: '/products/speakers.jpg',
       description: 'Kompakte Desktop-Lautsprecher für Multimedia',
@@ -128,7 +129,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-11',
       name: 'Whiteboard',
-      category: 'WHITEBOARD',
+      category: Category.WHITEBOARD,
       model: 'WB-001',
       imageUrl: '/products/whiteboard.jpg',
       description: 'Verschiedene Größen verfügbar - in Sonderwünschen angeben',
@@ -140,7 +141,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-12',
       name: 'Pinnwand',
-      category: 'PINBOARD',
+      category: Category.PINBOARD,
       model: 'PB-001',
       imageUrl: '/products/pinboard.jpg',
       description: 'Korkpinnwand für Mitteilungen und Dokumente',
@@ -152,7 +153,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-13',
       name: 'Flipchart-Papier',
-      category: 'FLIPCHART',
+      category: Category.FLIPCHART,
       model: 'FC-001',
       imageUrl: '/products/flipchart.jpg',
       description: 'Flipchart-Papierblöcke für Meetings und Präsentationen',
@@ -164,7 +165,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-14',
       name: 'Bürostuhl',
-      category: 'CHAIR',
+      category: Category.CHAIR,
       model: 'Chair-001',
       imageUrl: '/products/chair.jpg',
       description: 'Ergonomischer Bürostuhl - erfordert Manager-Genehmigung',
@@ -176,7 +177,7 @@ const getFallbackProducts = () => {
     {
       id: 'demo-15',
       name: 'Geschäftsausdrucke & Briefumschläge',
-      category: 'BUSINESS_PRINTS',
+      category: Category.BUSINESS_PRINTS,
       model: 'BP-001',
       imageUrl: '/products/business-prints.jpg',
       description: 'Visitenkarten, Briefköpfe und Briefumschläge',
@@ -250,8 +251,8 @@ export async function GET(request: Request) {
         const searchLower = search.toLowerCase()
         filteredProducts = filteredProducts.filter(p => 
           p.name.toLowerCase().includes(searchLower) ||
-          p.description.toLowerCase().includes(searchLower) ||
-          p.model.toLowerCase().includes(searchLower)
+          (p.description && p.description.toLowerCase().includes(searchLower)) ||
+          (p.model && p.model.toLowerCase().includes(searchLower))
         )
       }
       
