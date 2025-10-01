@@ -39,16 +39,16 @@ export async function GET(
           email,
           department
         ),
-        statusHistory:OrderStatusHistory(
+        statusHistory:StatusHistory(
           *,
-          changedByUser:User(
+          changedBy:User!StatusHistory_changedById_fkey(
             name,
             email
           )
         ),
-        comments:OrderComment(
+        comments:Comment(
           *,
-          user:User(
+          user:User!Comment_userId_fkey(
             name,
             email
           )
