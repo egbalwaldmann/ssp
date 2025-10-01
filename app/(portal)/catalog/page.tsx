@@ -44,20 +44,20 @@ const CATEGORIES = [
   { value: 'REQUIRES_APPROVAL', label: '🔒 Genehmigung erforderlich' },
   { value: 'NO_APPROVAL', label: '✅ Keine Genehmigung' },
   { value: 'BUSINESS_CARDS', label: '💳 Visitenkarten' },
-  { value: 'WEBCAM', label: 'Webcams' },
-  { value: 'HEADSET', label: 'Headsets' },
-  { value: 'MOUSE', label: 'Mäuse' },
-  { value: 'KEYBOARD', label: 'Tastaturen' },
-  { value: 'PRINTER_TONER', label: 'Druckertoner' },
-  { value: 'SPEAKERS', label: 'Lautsprecher' },
-  { value: 'ADAPTER', label: 'Adapter' },
-  { value: 'CABLE', label: 'Kabel' },
-  { value: 'WHITEBOARD', label: 'Whiteboards' },
-  { value: 'PINBOARD', label: 'Pinnwände' },
-  { value: 'FLIPCHART', label: 'Flipcharts' },
-  { value: 'CHAIR', label: 'Stühle' },
-  { value: 'BUSINESS_PRINTS', label: 'Geschäftsausdrucke' },
-  { value: 'OFFICE_MISC', label: 'Büro-Sonstiges' },
+  { value: 'WEBCAM', label: '📹 Webcams' },
+  { value: 'HEADSET', label: '🎧 Headsets' },
+  { value: 'MOUSE', label: '🖱️ Mäuse' },
+  { value: 'KEYBOARD', label: '⌨️ Tastaturen' },
+  { value: 'PRINTER_TONER', label: '🖨️ Druckertoner' },
+  { value: 'SPEAKERS', label: '🔊 Lautsprecher' },
+  { value: 'ADAPTER', label: '🔌 Adapter' },
+  { value: 'CABLE', label: '🔗 Kabel' },
+  { value: 'WHITEBOARD', label: '📋 Whiteboards' },
+  { value: 'PINBOARD', label: '📌 Pinnwände' },
+  { value: 'FLIPCHART', label: '📊 Flipcharts' },
+  { value: 'CHAIR', label: '🪑 Stühle' },
+  { value: 'BUSINESS_PRINTS', label: '📄 Geschäftsausdrucke' },
+  { value: 'OFFICE_MISC', label: '📦 Büro-Sonstiges' },
 ]
 
 export default function CatalogPage() {
@@ -175,7 +175,7 @@ export default function CatalogPage() {
               <CardTitle className="text-base font-semibold text-gray-900">📂 Kategorien</CardTitle>
             </CardHeader>
             <CardContent className="space-y-1 p-0">
-              {CATEGORIES.filter(cat => cat.value !== 'ALL').map((cat) => {
+              {CATEGORIES.filter(cat => cat.value !== 'ALL').map((cat, index) => {
                 const isSelected = selectedCategories.includes(cat.value)
                 const count = cat.value === 'REQUIRES_APPROVAL' 
                   ? products.filter(p => p.requiresApproval === true).length
@@ -186,20 +186,24 @@ export default function CatalogPage() {
                   : products.filter(p => p.category === cat.value).length
                 
                 return (
-                  <button
-                    key={cat.value}
-                    onClick={() => toggleCategory(cat.value)}
-                    className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors
-                      ${isSelected 
-                        ? 'bg-[var(--jira-blue-light)] text-[var(--jira-blue)] font-medium border-l-4 border-[var(--jira-blue)]' 
-                        : 'hover:bg-gray-50 text-gray-700 border-l-4 border-transparent'
-                      }`}
-                  >
-                    <span>{cat.label}</span>
-                    <span className={`text-xs ${isSelected ? 'text-[var(--jira-blue)]' : 'text-gray-400'}`}>
-                      {count}
-                    </span>
-                  </button>
+                  <div key={cat.value}>
+                    {index === 3 && (
+                      <div className="border-t border-gray-200 my-2"></div>
+                    )}
+                    <button
+                      onClick={() => toggleCategory(cat.value)}
+                      className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors
+                        ${isSelected 
+                          ? 'bg-[var(--jira-blue-light)] text-[var(--jira-blue)] font-medium border-l-4 border-[var(--jira-blue)]' 
+                          : 'hover:bg-gray-50 text-gray-700 border-l-4 border-transparent'
+                        }`}
+                    >
+                      <span>{cat.label}</span>
+                      <span className={`text-xs ${isSelected ? 'text-[var(--jira-blue)]' : 'text-gray-400'}`}>
+                        {count}
+                      </span>
+                    </button>
+                  </div>
                 )
               })}
             </CardContent>
