@@ -221,17 +221,11 @@ export const robustAuthOptions: NextAuthOptions = {
           }
         } catch (err) {
           console.error('[auth][authorize] Authentication failed:', err)
-          
-          // Return specific error types for better user feedback
-          if (err instanceof Error) {
-            if (err.message === 'INVALID_EMAIL_FORMAT') {
-              throw new Error('UNGÜLTIGE_E_MAIL_FORMAT')
-            } else if (err.message === 'USER_NOT_FOUND') {
-              throw new Error('BENUTZER_NICHT_GEFUNDEN')
-            }
-          }
-          
-          throw new Error('AUTHENTIFIZIERUNG_FEHLGESCHLAGEN')
+
+          // IMPORTANT: Do NOT throw here to avoid 500 from /callback/credentials.
+          // Returning null causes NextAuth to respond with 401 CredentialsSignin,
+          // which the client can handle gracefully.
+          return null
         }
       }
     })
