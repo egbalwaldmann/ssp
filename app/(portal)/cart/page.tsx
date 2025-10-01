@@ -67,8 +67,8 @@ export default function CartPage() {
         const order = await res.json()
         logger.info('Order created successfully', { orderId: order.id, orderNumber: order.orderNumber })
         clearCart()
-        toast.success('Bestellung erfolgreich eingereicht!')
-        router.push(`/orders/${order.id}`)
+        toast.success(`🎉 Bestellung ${order.orderNumber} erfolgreich eingereicht!`)
+        router.push('/orders')
       } else {
         const error = await res.json()
         logger.error('Order creation failed', { 
