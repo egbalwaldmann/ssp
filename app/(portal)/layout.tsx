@@ -106,6 +106,15 @@ export default function PortalLayout({
                     <span>Meine Bestellungen</span>
                   </Button>
                 </Link>
+                <Link href="/business-cards">
+                  <Button
+                    variant={pathname === '/business-cards' ? 'default' : 'ghost'}
+                    className="flex items-center space-x-2"
+                  >
+                    <span>🪪</span>
+                    <span>Visitenkarten</span>
+                  </Button>
+                </Link>
                 {isAgent && (
                   <Link href="/dashboard">
                     <Button

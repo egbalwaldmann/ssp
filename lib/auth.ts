@@ -1,6 +1,6 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { prisma } from '@/lib/prisma'
+import { createClient } from '@supabase/supabase-js'
 import { env } from '@/lib/env'
 
 export const authOptions: NextAuthOptions = {
@@ -16,12 +16,35 @@ export const authOptions: NextAuthOptions = {
             console.error('[auth][authorize] Missing email in credentials')
             return null
           }
+
           const email = String(credentials.email).toLowerCase().trim()
-          const user = await prisma.user.findUnique({ where: { email } })
-          if (!user) {
-            console.warn('[auth][authorize] User not found', { email })
+          console.log(`🔐 Authentication attempt for: ${email}`)
+
+          // Create Supabase client
+          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+          const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+          
+          if (!supabaseUrl || !supabaseKey) {
+            console.error('[auth] Missing Supabase configuration')
             return null
           }
+
+          const supabase = createClient(supabaseUrl, supabaseKey)
+
+          // Find user
+          const { data: user, error } = await supabase
+            .from('User')
+            .select('*')
+            .eq('email', email)
+            .single()
+
+          if (error || !user) {
+            console.warn('[auth][authorize] User not found', { email, error: error?.message })
+            return null
+          }
+
+          console.log(`✅ User authenticated: ${user.name} (${user.role})`)
+
           return {
             id: user.id,
             email: user.email,
@@ -32,70 +55,36 @@ export const authOptions: NextAuthOptions = {
           }
         } catch (err) {
           console.error('[auth][authorize] Unexpected error', err)
-          throw err
+          return null
         }
       }
     })
   ],
   callbacks: {
     async session({ session, token }) {
-      try {
-        if (token && session.user) {
-          session.user.id = token.id as string
-          session.user.role = token.role as any
-          session.user.costCenter = token.costCenter as string
-          session.user.department = token.department as string
-        }
-        return session
-      } catch (err) {
-        console.error('[auth][session] error', err)
-        throw err as any
+      if (token && session.user) {
+        session.user.id = token.id as string
+        session.user.role = token.role as any
+        session.user.costCenter = token.costCenter as string
+        session.user.department = token.department as string
       }
+      return session
     },
     async jwt({ token, user }) {
-      try {
-        if (user) {
-          token.id = (user as any).id
-          token.role = (user as any).role
-          token.costCenter = (user as any).costCenter
-          token.department = (user as any).department
-        }
-        return token
-      } catch (err) {
-        console.error('[auth][jwt] error', err)
-        throw err as any
+      if (user) {
+        token.id = user.id
+        token.role = user.role
+        token.costCenter = user.costCenter
+        token.department = user.department
       }
-    }
-  },
-  events: {
-    signIn(message) {
-      console.log('[auth][event] signIn', message)
-    },
-    signOut(message) {
-      console.log('[auth][event] signOut', message)
-    },
-    session(message) {
-      console.log('[auth][event] session', message)
-    }
-  },
-  logger: {
-    error(code, metadata) {
-      console.error('[auth][logger][error]', code, metadata)
-    },
-    warn(code) {
-      console.warn('[auth][logger][warn]', code)
-    },
-    debug(code, metadata) {
-      console.debug('[auth][logger][debug]', code, metadata)
+      return token
     }
   },
   pages: {
-    signIn: '/login',
+    signIn: '/login'
   },
   session: {
     strategy: 'jwt'
   },
-  secret: env.NEXTAUTH_SECRET,
-  debug: env.NEXTAUTH_DEBUG === 'true'
+  secret: env.NEXTAUTH_SECRET
 }
-

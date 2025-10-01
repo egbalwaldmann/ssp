@@ -1,15 +1,14 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { robustAuthOptions } from '@/lib/auth-robust'
-import { prisma } from '@/lib/prisma'
-import { robustAuth } from '@/lib/auth-robust'
+import { authOptions } from '@/lib/auth'
+import { createClient } from '@supabase/supabase-js'
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(robustAuthOptions)
+    const session = await getServerSession(authOptions)
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })
@@ -26,34 +25,24 @@ export async function POST(
       )
     }
 
-    // Check database health first
-    const dbHealthy = await robustAuth.checkDatabaseHealth()
+    // Create Supabase client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     
-    if (!dbHealthy) {
-      // Return a fallback comment for demo purposes
-      const fallbackComment = {
-        id: `fallback-comment-${Date.now()}`,
-        orderId: id,
-        userId: session.user.id,
-        content,
-        isInternal: isInternal || false,
-        createdAt: new Date(),
-        user: {
-          name: session.user.name,
-          role: session.user.role
-        }
-      }
-      
-      console.log('📝 Database unhealthy, returning fallback comment')
-      return NextResponse.json(fallbackComment, { status: 201 })
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json({ error: 'Missing Supabase configuration' }, { status: 500 })
     }
 
-    // Check if order exists
-    const order = await prisma.order.findUnique({
-      where: { id }
-    })
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
-    if (!order) {
+    // Check if order exists
+    const { data: order, error: orderError } = await supabase
+      .from('Order')
+      .select('id')
+      .eq('id', id)
+      .single()
+
+    if (orderError || !order) {
       return NextResponse.json({ error: 'Bestellung nicht gefunden' }, { status: 404 })
     }
 
@@ -70,59 +59,42 @@ export async function POST(
     }
 
     // Create comment
-    const comment = await prisma.comment.create({
-      data: {
+    const commentId = `comment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    const now = new Date().toISOString()
+
+    const { data: comment, error: commentError } = await supabase
+      .from('Comment')
+      .insert({
+        id: commentId,
         orderId: id,
         userId: session.user.id,
-        content,
-        isInternal: isInternal || false
-      },
-      include: {
-        user: {
-          select: {
-            name: true,
-            role: true
-          }
-        }
-      }
-    })
+        content: content.trim(),
+        isInternal: isInternal || false,
+        createdAt: now
+      })
+      .select(`
+        *,
+        user:User!Comment_userId_fkey(
+          name,
+          email
+        )
+      `)
+      .single()
+
+    if (commentError) {
+      console.error('❌ Error creating comment:', commentError)
+      return NextResponse.json(
+        { error: 'Kommentar konnte nicht erstellt werden', details: commentError.message },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json(comment, { status: 201 })
   } catch (error) {
-    console.error('Error creating comment:', error)
-    
-    // Return fallback comment on error
-    try {
-      const session = await getServerSession(robustAuthOptions)
-      const { id } = await params
-      const body = await request.json()
-      const { content, isInternal } = body
-      
-      if (session?.user && content) {
-        const fallbackComment = {
-          id: `fallback-comment-${Date.now()}`,
-          orderId: id,
-          userId: session.user.id,
-          content,
-          isInternal: isInternal || false,
-          createdAt: new Date(),
-          user: {
-            name: session.user.name,
-            role: session.user.role
-          }
-        }
-        
-        console.log('📝 Database error, returning fallback comment')
-        return NextResponse.json(fallbackComment, { status: 201 })
-      }
-    } catch (fallbackError) {
-      console.error('Fallback comment creation failed:', fallbackError)
-    }
-    
+    console.error('❌ Error creating comment:', error)
     return NextResponse.json(
       { error: 'Kommentar konnte nicht erstellt werden' },
       { status: 500 }
     )
   }
 }
-

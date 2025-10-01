@@ -76,9 +76,10 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { items, costCenter, specialRequest, justification } = body
+    const { items, costCenter, specialRequest, justification, businessCard } = body
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
+    // Allow empty items array for business card orders
+    if ((!items || !Array.isArray(items) || items.length === 0) && !businessCard) {
       return NextResponse.json({ error: 'Keine Artikel in der Bestellung' }, { status: 400 })
     }
 
@@ -98,47 +99,52 @@ export async function POST(request: Request) {
 
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Fetch products to check if they require approval
-    const productIds = items.map((item: any) => item.productId)
-    console.log('🔍 Checking products:', productIds)
-    
-    const { data: products, error: productsError } = await supabase
-      .from('Product')
-      .select('id, requiresApproval')
-      .in('id', productIds)
+    // Handle business card orders (no products needed)
+    let needsApproval = !!specialRequest || !!businessCard
+    let productIds: string[] = []
 
-    if (productsError) {
-      console.error('❌ Error fetching products:', productsError)
-      return NextResponse.json({ 
-        error: 'Fehler beim Laden der Produkte',
-        details: productsError.message 
-      }, { status: 500 })
+    if (items && items.length > 0) {
+      // Fetch products to check if they require approval
+      productIds = items.map((item: any) => item.productId)
+      console.log('🔍 Checking products:', productIds)
+      const { data: products, error: productsError } = await supabase
+        .from('Product')
+        .select('id, requiresApproval, isBundle, bundleItems:ProductBundle(productId, quantity)')
+        .in('id', productIds)
+
+      if (productsError) {
+        console.error('❌ Error fetching products:', productsError)
+        return NextResponse.json({ 
+          error: 'Fehler beim Laden der Produkte',
+          details: productsError.message 
+        }, { status: 500 })
+      }
+
+      console.log('📦 Found products:', products?.length || 0)
+      console.log('📦 Available product IDs:', products?.map(p => p.id) || [])
+      console.log('📦 Requested product IDs:', productIds)
+      
+      // Check if all requested products exist
+      const foundProductIds = products?.map(p => p.id) || []
+      const missingProducts = productIds.filter(id => !foundProductIds.includes(id))
+      
+      if (missingProducts.length > 0) {
+        console.error('❌ Missing products:', missingProducts)
+        return NextResponse.json({ 
+          error: `Produkte nicht gefunden: ${missingProducts.join(', ')}. Bitte aktualisieren Sie den Warenkorb.`,
+          missingProducts: missingProducts,
+          availableProducts: foundProductIds
+        }, { status: 400 })
+      }
+
+      const productMap = new Map(products?.map(p => [p.id, p]) || [])
+      
+      // Check if any item requires approval
+      needsApproval = needsApproval || items.some((item: any) => {
+        const product = productMap.get(item.productId)
+        return product?.requiresApproval || false
+      })
     }
-
-    console.log('📦 Found products:', products?.length || 0)
-    console.log('📦 Available product IDs:', products?.map(p => p.id) || [])
-    console.log('📦 Requested product IDs:', productIds)
-    
-    // Check if all requested products exist
-    const foundProductIds = products?.map(p => p.id) || []
-    const missingProducts = productIds.filter(id => !foundProductIds.includes(id))
-    
-    if (missingProducts.length > 0) {
-      console.error('❌ Missing products:', missingProducts)
-      return NextResponse.json({ 
-        error: `Produkte nicht gefunden: ${missingProducts.join(', ')}. Bitte aktualisieren Sie den Warenkorb.`,
-        missingProducts: missingProducts,
-        availableProducts: foundProductIds
-      }, { status: 400 })
-    }
-
-    const productMap = new Map(products?.map(p => [p.id, p]) || [])
-    
-    // Check if any item requires approval or if there's a special request
-    const needsApproval = items.some((item: any) => {
-      const product = productMap.get(item.productId)
-      return product?.requiresApproval || false
-    }) || !!specialRequest
 
     const orderNumber = `BEST-${Date.now()}`
     const orderStatus = needsApproval ? 'PENDING_APPROVAL' : 'IN_REVIEW'
@@ -171,25 +177,54 @@ export async function POST(request: Request) {
       }, { status: 500 })
     }
 
-    // Create order items
-    const orderItems = items.map((item: any, index: number) => ({
-      id: `orderitem_${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
-      orderId: order.id,
-      productId: item.productId,
-      quantity: item.quantity
-    }))
+    // Create order items (skip if business card only order)
+    if (items && items.length > 0) {
+      const orderItems = items.map((item: any, index: number) => ({
+        id: `orderitem_${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
+        orderId: order.id,
+        productId: item.productId,
+        quantity: item.quantity
+      }))
 
-    const { error: itemsError } = await supabase
-      .from('OrderItem')
-      .insert(orderItems)
+      const { error: itemsError } = await supabase
+        .from('OrderItem')
+        .insert(orderItems)
 
-    if (itemsError) {
-      console.error('❌ Error creating order items:', itemsError)
-      return NextResponse.json({ 
-        error: 'Fehler beim Erstellen der Bestellpositionen',
-        details: itemsError.message,
-        code: itemsError.code
-      }, { status: 500 })
+      if (itemsError) {
+        console.error('❌ Error creating order items:', itemsError)
+        return NextResponse.json({ 
+          error: 'Fehler beim Erstellen der Bestellpositionen',
+          details: itemsError.message,
+          code: itemsError.code
+        }, { status: 500 })
+      }
+    }
+
+    // Create business card order if provided
+    if (businessCard) {
+      const businessCardId = `businesscard_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      
+      const { error: businessCardError } = await supabase
+        .from('BusinessCardOrder')
+        .insert({
+          id: businessCardId,
+          orderId: order.id,
+          fullName: businessCard.fullName,
+          jobTitle: businessCard.jobTitle,
+          department: businessCard.department,
+          email: businessCard.email,
+          phone: businessCard.phone,
+          mobile: businessCard.mobile,
+          quantity: businessCard.quantity || 250,
+          specialNotes: businessCard.specialNotes,
+          createdAt: now,
+          updatedAt: now
+        })
+
+      if (businessCardError) {
+        console.error('❌ Error creating business card order:', businessCardError)
+        // Don't fail the whole order, just log
+      }
     }
 
     // Fetch the complete order with items and user data

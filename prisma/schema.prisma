@@ -22,35 +22,67 @@ model User {
 }
 
 model Product {
-  id               String      @id @default(cuid())
+  id               String           @id @default(cuid())
   name             String
   description      String?
   category         Category
   model            String?
   imageUrl         String?
-  isActive         Boolean     @default(true)
-  requiresApproval Boolean     @default(false)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  isActive         Boolean          @default(true)
+  requiresApproval Boolean          @default(false)
+  isBundle         Boolean          @default(false)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
   orderItems       OrderItem[]
+  bundleItems      ProductBundle[]  @relation("BundleParent")
+  includedInBundles ProductBundle[] @relation("BundleChild")
+}
+
+model ProductBundle {
+  id         String   @id @default(cuid())
+  bundleId   String
+  productId  String
+  quantity   Int      @default(1)
+  createdAt  DateTime @default(now())
+  bundle     Product  @relation("BundleParent", fields: [bundleId], references: [id], onDelete: Cascade)
+  product    Product  @relation("BundleChild", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([bundleId, productId])
+}
+
+model BusinessCardOrder {
+  id           String   @id @default(cuid())
+  orderId      String   @unique
+  fullName     String
+  jobTitle     String
+  department   String
+  email        String
+  phone        String?
+  mobile       String?
+  quantity     Int      @default(250)
+  specialNotes String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model Order {
-  id             String          @id @default(cuid())
-  orderNumber    String          @unique
-  status         OrderStatus     @default(NEW)
-  userId         String
-  costCenter     String
-  specialRequest String?
-  justification  String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  approvals      Approval[]
-  asset          Asset?
-  comments       Comment[]
-  user           User            @relation(fields: [userId], references: [id])
-  items          OrderItem[]
-  statusHistory  StatusHistory[]
+  id               String              @id @default(cuid())
+  orderNumber      String              @unique
+  status           OrderStatus         @default(NEW)
+  userId           String
+  costCenter       String
+  specialRequest   String?
+  justification    String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  approvals        Approval[]
+  asset            Asset?
+  comments         Comment[]
+  user             User                @relation(fields: [userId], references: [id])
+  items            OrderItem[]
+  statusHistory    StatusHistory[]
+  businessCardOrder BusinessCardOrder?
 }
 
 model OrderItem {
