@@ -21,6 +21,20 @@ export default function CartPage() {
   const [justification, setJustification] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   
+  // Business card details
+  const [businessCardDetails, setBusinessCardDetails] = useState({
+    fullName: session?.user?.name || '',
+    jobTitle: '',
+    department: session?.user?.department || '',
+    email: session?.user?.email || '',
+    phone: '',
+    mobile: ''
+  })
+  
+  // Check if cart contains business cards
+  const hasBusinessCards = items.some(item => 
+    item.name.toLowerCase().includes('visitenkarte')
+  )
 
   const handleCheckout = async () => {
     if (items.length === 0) {
@@ -29,6 +43,14 @@ export default function CartPage() {
       return
     }
 
+    // Check if business card details are complete
+    if (hasBusinessCards) {
+      if (!businessCardDetails.fullName || !businessCardDetails.jobTitle || !businessCardDetails.email) {
+        toast.error('Bitte füllen Sie alle Visitenkarten-Pflichtfelder aus')
+        return
+      }
+    }
+    
     // Check if justification is required for items that need approval
     const needsApproval = items.some(item => item.requiresApproval)
     if (needsApproval && !justification.trim()) {
@@ -54,6 +76,19 @@ export default function CartPage() {
         costCenter: 'CC-001', // Set default cost center
         specialRequest: specialRequest.trim() || undefined,
         justification: justification.trim() || undefined
+      }
+      
+      // Add business card details if ordering visitenkarten
+      if (hasBusinessCards) {
+        orderData.businessCard = {
+          fullName: businessCardDetails.fullName,
+          jobTitle: businessCardDetails.jobTitle,
+          department: businessCardDetails.department,
+          email: businessCardDetails.email,
+          phone: businessCardDetails.phone || null,
+          mobile: businessCardDetails.mobile || null,
+          quantity: 250
+        }
       }
 
       logger.debug('Sending order data', orderData)
@@ -239,6 +274,108 @@ export default function CartPage() {
                   </p>
                 )}
               </div>
+
+              {hasBusinessCards && (
+                <Card className="border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-white">
+                  <CardHeader className="bg-blue-100 border-b border-blue-200">
+                    <CardTitle className="text-lg font-bold text-blue-900 flex items-center gap-2">
+                      🪪 Visitenkarten-Details
+                    </CardTitle>
+                    <p className="text-sm text-blue-700 mt-1">
+                      Bitte geben Sie die Informationen ein, die auf den Visitenkarten erscheinen sollen
+                    </p>
+                  </CardHeader>
+                  <CardContent className="space-y-4 pt-6">
+                    <div className="space-y-4">
+                      <div>
+                        <label htmlFor="bc-fullName" className="text-sm font-bold text-gray-900 block mb-2">
+                          Name <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          id="bc-fullName"
+                          name="bc-fullName"
+                          value={businessCardDetails.fullName}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, fullName: e.target.value })}
+                          placeholder="Max Mustermann"
+                          className="text-base py-5 border-2"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="bc-jobTitle" className="text-sm font-bold text-gray-900 block mb-2">
+                          Berufsbezeichnung <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          id="bc-jobTitle"
+                          name="bc-jobTitle"
+                          value={businessCardDetails.jobTitle}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, jobTitle: e.target.value })}
+                          placeholder="Referent, Sachbearbeiter, Abteilungsleiter"
+                          className="text-base py-5 border-2"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="bc-email" className="text-sm font-bold text-gray-900 block mb-2">
+                          E-Mail <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          id="bc-email"
+                          name="bc-email"
+                          type="email"
+                          value={businessCardDetails.email}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, email: e.target.value })}
+                          placeholder="max.mustermann@bund.de"
+                          className="text-base py-5 border-2"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label htmlFor="bc-phone" className="text-sm font-bold text-gray-900 block mb-2">
+                            Telefon
+                          </label>
+                          <Input
+                            id="bc-phone"
+                            name="bc-phone"
+                            type="tel"
+                            value={businessCardDetails.phone}
+                            onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, phone: e.target.value })}
+                            placeholder="+49 30 123-456"
+                            className="text-base py-5 border-2"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="bc-mobile" className="text-sm font-bold text-gray-900 block mb-2">
+                            Mobil
+                          </label>
+                          <Input
+                            id="bc-mobile"
+                            name="bc-mobile"
+                            type="tel"
+                            value={businessCardDetails.mobile}
+                            onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, mobile: e.target.value })}
+                            placeholder="+49 170 123456"
+                            className="text-base py-5 border-2"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="mt-6 bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-600">
+                      <p className="text-xs text-gray-500 uppercase tracking-wide mb-4">Vorschau</p>
+                      <div className="space-y-2">
+                        <p className="font-bold text-xl text-gray-900">{businessCardDetails.fullName || 'Ihr Name'}</p>
+                        <p className="text-base text-gray-700">{businessCardDetails.jobTitle || 'Ihre Berufsbezeichnung'}</p>
+                        <p className="text-sm text-gray-600">{businessCardDetails.department || 'Ihre Abteilung'}</p>
+                        <div className="border-t pt-3 mt-3 space-y-1 text-sm">
+                          <p className="text-gray-700">{businessCardDetails.email || 'ihre.email@bund.de'}</p>
+                          {businessCardDetails.phone && <p className="text-gray-600">Tel: {businessCardDetails.phone}</p>}
+                          {businessCardDetails.mobile && <p className="text-gray-600">Mobil: {businessCardDetails.mobile}</p>}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {(hasItemsRequiringApproval || specialRequest.trim()) && (
                 <div className="space-y-2">
