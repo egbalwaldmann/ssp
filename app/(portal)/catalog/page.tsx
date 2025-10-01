@@ -88,14 +88,28 @@ export default function CatalogPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('/api/products')
-      if (res.ok) {
-        const data = await res.json()
-        setProducts(data)
-        setFilteredProducts(data)
+      const res = await fetch('/api/products', { cache: 'no-store' })
+      if (!res.ok) {
+        setProducts([])
+        setFilteredProducts([])
+        return
       }
+
+      const contentType = res.headers.get('content-type') || ''
+      if (!contentType.includes('application/json')) {
+        // Likely navigated away (e.g., after logout) and got HTML; fail gracefully
+        setProducts([])
+        setFilteredProducts([])
+        return
+      }
+
+      const data = await res.json()
+      setProducts(Array.isArray(data) ? data : [])
+      setFilteredProducts(Array.isArray(data) ? data : [])
     } catch (error) {
-      toast.error('Produkte konnten nicht geladen werden')
+      // Swallow JSON/HTML parse errors that can occur during logout navigation
+      setProducts([])
+      setFilteredProducts([])
     } finally {
       setIsLoading(false)
     }
