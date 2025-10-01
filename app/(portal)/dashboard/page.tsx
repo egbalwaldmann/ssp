@@ -67,13 +67,16 @@ export default function DashboardPage() {
   const [newStatus, setNewStatus] = useState<OrderStatus | ''>('')
   const [statusNote, setStatusNote] = useState('')
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
+  const [approvalComment, setApprovalComment] = useState('')
+  const [isProcessingApproval, setIsProcessingApproval] = useState(false)
+  const [approvalAction, setApprovalAction] = useState<'approve' | 'reject' | null>(null)
 
   useEffect(() => {
     if (status === 'authenticated') {
-      const isAgent = session?.user?.role && ['IT_AGENT', 'RECEPTION_AGENT', 'ADMIN'].includes(session.user.role)
+      const isAgent = session?.user?.role && ['IT_AGENT', 'RECEPTION_AGENT', 'APPROVER', 'ADMIN'].includes(session.user.role)
       
       if (!isAgent) {
-        toast.error('Zugriff verweigert. Nur für Agenten.')
+        toast.error('Zugriff verweigert. Nur für Agenten und Genehmiger.')
         router.push('/catalog')
         return
       }
@@ -127,6 +130,39 @@ export default function DashboardPage() {
       toast.error('Ein Fehler ist aufgetreten')
     } finally {
       setIsUpdatingStatus(false)
+    }
+  }
+
+  const handleApproval = async (approved: boolean) => {
+    if (!selectedOrder) {
+      return
+    }
+
+    setIsProcessingApproval(true)
+
+    try {
+      const res = await fetch(`/api/orders/${selectedOrder.id}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          approved,
+          comment: approvalComment.trim() || undefined
+        })
+      })
+
+      if (res.ok) {
+        toast.success(approved ? 'Bestellung genehmigt' : 'Bestellung abgelehnt')
+        setSelectedOrder(null)
+        setApprovalComment('')
+        fetchOrders()
+      } else {
+        const error = await res.json()
+        toast.error(error.error || 'Genehmigung konnte nicht bearbeitet werden')
+      }
+    } catch (error) {
+      toast.error('Ein Fehler ist aufgetreten')
+    } finally {
+      setIsProcessingApproval(false)
     }
   }
 
@@ -227,6 +263,86 @@ export default function DashboardPage() {
         </Card>
       </div>
 
+      {/* Approval Section for Approvers */}
+      {['APPROVER', 'ADMIN'].includes(session?.user?.role || '') && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              ⏳ Genehmigungen erforderlich
+              <Badge variant="destructive" className="ml-2">
+                {orders.filter(o => o.status === 'PENDING_APPROVAL').length}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {orders.filter(o => o.status === 'PENDING_APPROVAL').length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                Keine Bestellungen zur Genehmigung
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {orders.filter(o => o.status === 'PENDING_APPROVAL').map((order) => (
+                  <div
+                    key={order.id}
+                    className="flex items-center justify-between p-4 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 transition"
+                  >
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <span className="font-semibold">#{order.orderNumber}</span>
+                        <Badge className="bg-orange-600 text-white">
+                          ⏳ Wartet auf Genehmigung
+                        </Badge>
+                      </div>
+
+                      <div className="flex items-center gap-4 text-sm text-gray-600">
+                        <span>{order.user.name}</span>
+                        <span>•</span>
+                        <span>{order.user.department}</span>
+                        <span>•</span>
+                        <span>
+                          {order.items.reduce((sum, item) => sum + item.quantity, 0)} Artikel
+                        </span>
+                        <span>•</span>
+                        <span>{format(new Date(order.createdAt), 'MMM d, yyyy')}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="default"
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() => {
+                          setSelectedOrder(order)
+                          setApprovalAction('approve')
+                        }}
+                      >
+                        ✅ Genehmigen
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => {
+                          setSelectedOrder(order)
+                          setApprovalAction('reject')
+                        }}
+                      >
+                        ❌ Ablehnen
+                      </Button>
+                      <Link href={`/orders/${order.id}`}>
+                        <Button size="sm" variant="ghost">
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Pending Orders */}
       <Card>
         <CardHeader>
@@ -266,6 +382,31 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {order.status === 'PENDING_APPROVAL' && ['APPROVER', 'ADMIN'].includes(session?.user?.role || '') && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="default"
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => {
+                            setSelectedOrder(order)
+                            setApprovalAction('approve')
+                          }}
+                        >
+                          ✅ Genehmigen
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => {
+                            setSelectedOrder(order)
+                            setApprovalAction('reject')
+                          }}
+                        >
+                          ❌ Ablehnen
+                        </Button>
+                      </>
+                    )}
                     <Button
                       size="sm"
                       variant="outline"
@@ -321,10 +462,21 @@ export default function DashboardPage() {
       </Card>
 
       {/* Update Status Dialog */}
-      <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
+      <Dialog open={!!selectedOrder} onOpenChange={() => {
+        setSelectedOrder(null)
+        setApprovalAction(null)
+        setApprovalComment('')
+        setNewStatus('')
+        setStatusNote('')
+      }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Bestellstatus aktualisieren</DialogTitle>
+            <DialogTitle>
+              {approvalAction ? 
+                (approvalAction === 'approve' ? 'Bestellung genehmigen' : 'Bestellung ablehnen') : 
+                'Bestellstatus aktualisieren'
+              }
+            </DialogTitle>
             <DialogDescription>
               Bestellung #{selectedOrder?.orderNumber}
             </DialogDescription>
@@ -340,43 +492,81 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Neuer Status</label>
-              <Select value={newStatus} onValueChange={(val) => setNewStatus(val as OrderStatus)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Neuen Status auswählen" />
-                </SelectTrigger>
-                <SelectContent>
-                  {allowedTransitions.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {STATUS_LABELS[status]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {approvalAction ? (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  {approvalAction === 'approve' ? 'Genehmigungskommentar (Optional)' : 'Ablehnungsgrund (Optional)'}
+                </label>
+                <Textarea
+                  placeholder={
+                    approvalAction === 'approve' 
+                      ? 'Fügen Sie einen Kommentar zur Genehmigung hinzu...' 
+                      : 'Geben Sie den Grund für die Ablehnung an...'
+                  }
+                  value={approvalComment}
+                  onChange={(e) => setApprovalComment(e.target.value)}
+                  rows={3}
+                />
+              </div>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Neuer Status</label>
+                  <Select value={newStatus} onValueChange={(val) => setNewStatus(val as OrderStatus)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Neuen Status auswählen" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allowedTransitions.map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {STATUS_LABELS[status]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Notiz (Optional)</label>
-              <Textarea
-                placeholder="Fügen Sie eine Notiz zu dieser Statusänderung hinzu..."
-                value={statusNote}
-                onChange={(e) => setStatusNote(e.target.value)}
-                rows={3}
-              />
-            </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Notiz (Optional)</label>
+                  <Textarea
+                    placeholder="Fügen Sie eine Notiz zu dieser Statusänderung hinzu..."
+                    value={statusNote}
+                    onChange={(e) => setStatusNote(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedOrder(null)}>
+            <Button variant="outline" onClick={() => {
+              setSelectedOrder(null)
+              setApprovalAction(null)
+              setApprovalComment('')
+              setNewStatus('')
+              setStatusNote('')
+            }}>
               Abbrechen
             </Button>
-            <Button
-              onClick={handleUpdateStatus}
-              disabled={!newStatus || isUpdatingStatus}
-            >
-              {isUpdatingStatus ? 'Wird aktualisiert...' : 'Status aktualisieren'}
-            </Button>
+            {approvalAction ? (
+              <Button
+                onClick={() => handleApproval(approvalAction === 'approve')}
+                disabled={isProcessingApproval}
+                className={approvalAction === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}
+              >
+                {isProcessingApproval ? 'Wird bearbeitet...' : 
+                  (approvalAction === 'approve' ? '✅ Genehmigen' : '❌ Ablehnen')
+                }
+              </Button>
+            ) : (
+              <Button
+                onClick={handleUpdateStatus}
+                disabled={!newStatus || isUpdatingStatus}
+              >
+                {isUpdatingStatus ? 'Wird aktualisiert...' : 'Status aktualisieren'}
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

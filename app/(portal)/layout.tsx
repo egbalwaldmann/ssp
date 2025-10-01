@@ -49,7 +49,7 @@ export default function PortalLayout({
     return null
   }
 
-  const isAgent = ['IT_AGENT', 'RECEPTION_AGENT', 'ADMIN'].includes(session.user.role)
+  const isAgent = ['IT_AGENT', 'RECEPTION_AGENT', 'APPROVER', 'ADMIN'].includes(session.user.role)
   const cartItemsCount = getTotalItems()
 
   const getInitials = (name: string) => {
