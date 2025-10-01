@@ -277,8 +277,8 @@ export default function CatalogPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
-            <Card key={product.id} className="flex flex-col hover:shadow-lg transition-shadow">
-              <CardHeader>
+            <Card key={product.id} className="flex flex-col h-full hover:shadow-lg transition-shadow">
+              <CardHeader className="flex-1">
                 <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
                   {product.imageUrl && !imageFail[product.id] ? (
                     <img
@@ -295,7 +295,7 @@ export default function CatalogPage() {
                     </div>
                   )}
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-3 flex-1">
                   <div className="space-y-2">
                     <CardTitle className="text-lg font-bold line-clamp-2 text-gray-900 leading-tight">{product.name}</CardTitle>
                     {product.requiresApproval && (
@@ -307,22 +307,22 @@ export default function CatalogPage() {
                   {product.model && (
                     <p className="text-sm text-gray-700 font-medium">Modell: {product.model}</p>
                   )}
+                  {product.description && (
+                    <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                      {product.description}
+                    </p>
+                  )}
                 </div>
               </CardHeader>
-              <CardContent className="flex-1 space-y-3">
-                {product.description && (
-                  <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
-                    {product.description}
-                  </p>
-                )}
+              <CardContent className="pt-0 pb-2">
                 {product.price && (
-                  <div className="flex items-baseline gap-2 pt-2">
+                  <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-blue-600">{product.price.toFixed(0)} €</span>
                     <span className="text-sm text-gray-500">pro Stück</span>
                   </div>
                 )}
               </CardContent>
-              <CardFooter className="pt-4">
+              <CardFooter className="pt-2">
                 <Button
                   onClick={() => handleAddToCart(product)}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
