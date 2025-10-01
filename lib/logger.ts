@@ -28,9 +28,8 @@ class Logger {
           sessionId: this.sessionId
         })
       })
-    } catch (error) {
-      // Silently fail to avoid infinite loops
-      console.warn('Failed to send log to server:', error)
+    } catch (_error) {
+      // Intentionally swallow errors to avoid any logging loops
     }
   }
 
@@ -107,51 +106,5 @@ if (typeof window !== 'undefined') {
     })
   })
 
-  // Override console methods to capture all logs
-  const originalConsole = {
-    error: console.error,
-    warn: console.warn,
-    info: console.info,
-    log: console.log
-  }
-
-  console.error = (...args) => {
-    originalConsole.error(...args)
-    // Send to server without using console methods to avoid infinite loop
-    logger.sendToServer({
-      level: 'error',
-      message: args.join(' '),
-      timestamp: new Date().toISOString()
-    })
-  }
-
-  console.warn = (...args) => {
-    originalConsole.warn(...args)
-    // Send to server without using console methods to avoid infinite loop
-    logger.sendToServer({
-      level: 'warn',
-      message: args.join(' '),
-      timestamp: new Date().toISOString()
-    })
-  }
-
-  console.info = (...args) => {
-    originalConsole.info(...args)
-    // Send to server without using console methods to avoid infinite loop
-    logger.sendToServer({
-      level: 'info',
-      message: args.join(' '),
-      timestamp: new Date().toISOString()
-    })
-  }
-
-  console.log = (...args) => {
-    originalConsole.log(...args)
-    // Send to server without using console methods to avoid infinite loop
-    logger.sendToServer({
-      level: 'debug',
-      message: args.join(' '),
-      timestamp: new Date().toISOString()
-    })
-  }
+  // Note: We intentionally avoid overriding console methods to prevent feedback loops
 }
