@@ -11,12 +11,12 @@ export async function POST(
     const session = await getServerSession(authOptions)
     
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })
     }
 
     // Only approvers and admins can approve/reject
     if (!['APPROVER', 'ADMIN'].includes(session.user.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      return NextResponse.json({ error: 'Zugriff verweigert' }, { status: 403 })
     }
 
     const { id } = await params
@@ -34,7 +34,7 @@ export async function POST(
 
     if (!approval) {
       return NextResponse.json(
-        { error: 'No pending approval found' },
+        { error: 'Keine ausstehende Genehmigung gefunden' },
         { status: 404 }
       )
     }
@@ -61,7 +61,7 @@ export async function POST(
             fromStatus: 'PENDING_APPROVAL',
             toStatus: newOrderStatus,
             changedBy: session.user.id,
-            note: comment || (approved ? 'Approved' : 'Rejected')
+            note: comment || (approved ? 'Genehmigt' : 'Abgelehnt')
           }
         }
       }
@@ -71,7 +71,7 @@ export async function POST(
   } catch (error) {
     console.error('Error processing approval:', error)
     return NextResponse.json(
-      { error: 'Failed to process approval' },
+      { error: 'Genehmigung konnte nicht bearbeitet werden' },
       { status: 500 }
     )
   }

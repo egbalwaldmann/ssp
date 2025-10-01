@@ -13,12 +13,12 @@ export async function PUT(
     const session = await getServerSession(authOptions)
     
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })
     }
 
     // Only agents and admins can update status
     if (!['IT_AGENT', 'RECEPTION_AGENT', 'ADMIN'].includes(session.user.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      return NextResponse.json({ error: 'Zugriff verweigert' }, { status: 403 })
     }
 
     const { id } = await params
@@ -27,7 +27,7 @@ export async function PUT(
 
     if (!status) {
       return NextResponse.json(
-        { error: 'Status is required' },
+        { error: 'Status ist erforderlich' },
         { status: 400 }
       )
     }
@@ -38,13 +38,13 @@ export async function PUT(
     })
 
     if (!order) {
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Bestellung nicht gefunden' }, { status: 404 })
     }
 
     // Check if transition is allowed
     if (!canTransition(order.status, status as OrderStatus)) {
       return NextResponse.json(
-        { error: `Cannot transition from ${order.status} to ${status}` },
+        { error: `Übergang von ${order.status} zu ${status} nicht möglich` },
         { status: 400 }
       )
     }
@@ -82,7 +82,7 @@ export async function PUT(
   } catch (error) {
     console.error('Error updating order status:', error)
     return NextResponse.json(
-      { error: 'Failed to update order status' },
+      { error: 'Bestellstatus konnte nicht aktualisiert werden' },
       { status: 500 }
     )
   }

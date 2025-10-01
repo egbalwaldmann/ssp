@@ -92,10 +92,10 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         const data = await res.json()
         setOrder(data)
       } else {
-        toast.error('Failed to load order')
+        toast.error('Bestellung konnte nicht geladen werden')
       }
     } catch (error) {
-      toast.error('An error occurred')
+      toast.error('Ein Fehler ist aufgetreten')
     } finally {
       setIsLoading(false)
     }
@@ -103,7 +103,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
   const handleAddComment = async () => {
     if (!comment.trim()) {
-      toast.error('Please enter a comment')
+      toast.error('Bitte geben Sie einen Kommentar ein')
       return
     }
 
@@ -117,14 +117,14 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       })
 
       if (res.ok) {
-        toast.success('Comment added')
+        toast.success('Kommentar hinzugefügt')
         setComment('')
         fetchOrder()
       } else {
-        toast.error('Failed to add comment')
+        toast.error('Kommentar konnte nicht hinzugefügt werden')
       }
     } catch (error) {
-      toast.error('An error occurred')
+      toast.error('Ein Fehler ist aufgetreten')
     } finally {
       setIsSubmittingComment(false)
     }
@@ -135,7 +135,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading order...</p>
+          <p className="mt-4 text-gray-600">Bestellung wird geladen...</p>
         </div>
       </div>
     )
@@ -144,8 +144,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   if (!order) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Order not found</h2>
-        <p className="text-gray-600">This order doesn't exist or you don't have access to it</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Bestellung nicht gefunden</h2>
+        <p className="text-gray-600">Diese Bestellung existiert nicht oder Sie haben keinen Zugriff darauf</p>
       </div>
     )
   }
@@ -157,10 +157,10 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Order #{order.orderNumber}
+            Bestellung #{order.orderNumber}
           </h1>
           <p className="text-gray-600 mt-2">
-            Placed on {format(new Date(order.createdAt), 'MMMM d, yyyy h:mm a')}
+            Eingereicht am {format(new Date(order.createdAt), 'd. MMMM yyyy, HH:mm')}
           </p>
         </div>
         <Badge className={`${STATUS_COLORS[order.status]} text-base px-4 py-2`}>
@@ -175,7 +175,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
-                Order Timeline
+                Bestellungsverlauf
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -203,12 +203,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                           </span>
                           {isCurrent && (
                             <Badge variant="secondary" className="text-xs">
-                              Current
+                              Aktuell
                             </Badge>
                           )}
                         </div>
                         <p className="text-sm text-gray-600 mt-1">
-                          {format(new Date(history.createdAt), 'MMM d, yyyy h:mm a')}
+                          {format(new Date(history.createdAt), 'd. MMM yyyy, HH:mm')}
                         </p>
                         {history.note && (
                           <p className="text-sm text-gray-700 mt-2 bg-gray-50 p-2 rounded">
@@ -228,7 +228,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
-                Order Items
+                Bestellartikel
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -256,12 +256,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                       <h4 className="font-medium">{item.product.name}</h4>
                       {item.product.model && (
                         <p className="text-sm text-gray-600">
-                          Model: {item.product.model}
+                          Modell: {item.product.model}
                         </p>
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">Qty: {item.quantity}</p>
+                      <p className="font-medium">Anzahl: {item.quantity}</p>
                     </div>
                   </div>
                 ))}
@@ -274,7 +274,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MessageSquare className="h-5 w-5" />
-                Communication
+                Kommunikation
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -299,12 +299,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                           </Badge>
                           {comment.isInternal && (
                             <Badge variant="outline" className="text-xs">
-                              Internal
+                              Intern
                             </Badge>
                           )}
                         </div>
                         <span className="text-xs text-gray-500">
-                          {format(new Date(comment.createdAt), 'MMM d, h:mm a')}
+                          {format(new Date(comment.createdAt), 'd. MMM, HH:mm')}
                         </span>
                       </div>
                       <p className="text-sm text-gray-700">{comment.content}</p>
@@ -313,13 +313,13 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
               ) : (
                 <p className="text-sm text-gray-500 text-center py-4">
-                  No comments yet
+                  Noch keine Kommentare
                 </p>
               )}
 
               <div className="space-y-2 pt-4 border-t">
                 <Textarea
-                  placeholder="Add a comment or question..."
+                  placeholder="Kommentar oder Frage hinzufügen..."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   rows={3}
@@ -328,7 +328,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                   onClick={handleAddComment}
                   disabled={isSubmittingComment || !comment.trim()}
                 >
-                  {isSubmittingComment ? 'Adding...' : 'Add Comment'}
+                  {isSubmittingComment ? 'Wird hinzugefügt...' : 'Kommentar hinzufügen'}
                 </Button>
               </div>
             </CardContent>
@@ -339,13 +339,13 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Order Information</CardTitle>
+              <CardTitle className="text-base">Bestellinformationen</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div className="flex items-start gap-2">
                 <User className="h-4 w-4 text-gray-400 mt-0.5" />
                 <div>
-                  <p className="text-gray-600">Requester</p>
+                  <p className="text-gray-600">Antragsteller</p>
                   <p className="font-medium">{order.user.name}</p>
                   <p className="text-gray-500 text-xs">{order.user.email}</p>
                 </div>
@@ -353,14 +353,14 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
               <div className="flex items-start gap-2">
                 <Building className="h-4 w-4 text-gray-400 mt-0.5" />
                 <div>
-                  <p className="text-gray-600">Department</p>
+                  <p className="text-gray-600">Abteilung</p>
                   <p className="font-medium">{order.user.department}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <Calendar className="h-4 w-4 text-gray-400 mt-0.5" />
                 <div>
-                  <p className="text-gray-600">Cost Center</p>
+                  <p className="text-gray-600">Kostenstelle</p>
                   <p className="font-medium">{order.costCenter}</p>
                 </div>
               </div>
@@ -370,7 +370,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           {order.specialRequest && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Special Request</CardTitle>
+                <CardTitle className="text-base">Sonderwunsch</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-700">{order.specialRequest}</p>
@@ -381,7 +381,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           {order.justification && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Justification</CardTitle>
+                <CardTitle className="text-base">Begründung</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-700">{order.justification}</p>
@@ -392,7 +392,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           {order.approvals.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Approvals</CardTitle>
+                <CardTitle className="text-base">Genehmigungen</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -425,7 +425,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                       )}
                       {approval.decidedAt && (
                         <p className="text-xs text-gray-500">
-                          {format(new Date(approval.decidedAt), 'MMM d, yyyy')}
+                          {format(new Date(approval.decidedAt), 'd. MMM yyyy')}
                         </p>
                       )}
                     </div>

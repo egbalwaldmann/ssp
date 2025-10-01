@@ -11,7 +11,7 @@ export async function POST(
     const session = await getServerSession(authOptions)
     
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })
     }
 
     const { id } = await params
@@ -20,7 +20,7 @@ export async function POST(
 
     if (!content || content.trim() === '') {
       return NextResponse.json(
-        { error: 'Comment content is required' },
+        { error: 'Kommentarinhalt ist erforderlich' },
         { status: 400 }
       )
     }
@@ -31,7 +31,7 @@ export async function POST(
     })
 
     if (!order) {
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Bestellung nicht gefunden' }, { status: 404 })
     }
 
     // Only agents can create internal comments
@@ -41,7 +41,7 @@ export async function POST(
 
     if (isInternal && !canCreateInternalComment) {
       return NextResponse.json(
-        { error: 'Only agents can create internal comments' },
+        { error: 'Nur Agenten können interne Kommentare erstellen' },
         { status: 403 }
       )
     }
@@ -68,7 +68,7 @@ export async function POST(
   } catch (error) {
     console.error('Error creating comment:', error)
     return NextResponse.json(
-      { error: 'Failed to create comment' },
+      { error: 'Kommentar konnte nicht erstellt werden' },
       { status: 500 }
     )
   }

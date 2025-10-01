@@ -22,7 +22,7 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     if (items.length === 0) {
-      toast.error('Your cart is empty')
+      toast.error('Ihr Warenkorb ist leer')
       return
     }
 
@@ -47,14 +47,14 @@ export default function CartPage() {
       if (res.ok) {
         const order = await res.json()
         clearCart()
-        toast.success('Order submitted successfully!')
+        toast.success('Bestellung erfolgreich eingereicht!')
         router.push(`/orders/${order.id}`)
       } else {
         const error = await res.json()
-        toast.error(error.error || 'Failed to submit order')
+        toast.error(error.error || 'Bestellung konnte nicht eingereicht werden')
       }
     } catch (error) {
-      toast.error('An error occurred. Please try again.')
+      toast.error('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.')
     } finally {
       setIsSubmitting(false)
     }
@@ -69,14 +69,14 @@ export default function CartPage() {
           <div className="bg-gray-100 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-4">
             <ShoppingCart className="h-12 w-12 text-gray-400" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Ihr Warenkorb ist leer</h2>
           <p className="text-gray-600 mb-6">
-            Browse our catalog and add items to your cart
+            Durchsuchen Sie unseren Katalog und fügen Sie Artikel zu Ihrem Warenkorb hinzu
           </p>
           <Link href="/catalog">
             <Button>
               <Package className="h-4 w-4 mr-2" />
-              Browse Catalog
+              Katalog durchsuchen
             </Button>
           </Link>
         </div>
@@ -87,8 +87,8 @@ export default function CartPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
-        <p className="text-gray-600 mt-2">Review your items and submit your order</p>
+        <h1 className="text-3xl font-bold text-gray-900">Warenkorb</h1>
+        <p className="text-gray-600 mt-2">Überprüfen Sie Ihre Artikel und reichen Sie Ihre Bestellung ein</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
@@ -114,11 +114,11 @@ export default function CartPage() {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900">{item.name}</h3>
                     {item.model && (
-                      <p className="text-sm text-gray-500">Model: {item.model}</p>
+                      <p className="text-sm text-gray-500">Modell: {item.model}</p>
                     )}
                     {item.requiresApproval && (
                       <p className="text-xs text-orange-600 mt-1">
-                        ⚠️ Requires approval
+                        ⚠️ Genehmigung erforderlich
                       </p>
                     )}
                   </div>
@@ -166,36 +166,36 @@ export default function CartPage() {
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle>Bestellübersicht</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Total Items:</span>
+                  <span className="text-gray-600">Gesamtanzahl Artikel:</span>
                   <span className="font-medium">
                     {items.reduce((sum, item) => sum + item.quantity, 0)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Cost Center:</span>
+                  <span className="text-gray-600">Kostenstelle:</span>
                   <span className="font-medium">{session?.user.costCenter}</span>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="special-request" className="text-sm font-medium">
-                  Special Requests (Optional)
+                  Sonderwünsche (Optional)
                 </label>
                 <Textarea
                   id="special-request"
-                  placeholder="Any additional items or special requirements..."
+                  placeholder="Zusätzliche Artikel oder besondere Anforderungen..."
                   value={specialRequest}
                   onChange={(e) => setSpecialRequest(e.target.value)}
                   rows={3}
                 />
                 {specialRequest.trim() && (
                   <p className="text-xs text-orange-600">
-                    ⚠️ Special requests require approval
+                    ⚠️ Sonderwünsche erfordern eine Genehmigung
                   </p>
                 )}
               </div>
@@ -203,18 +203,18 @@ export default function CartPage() {
               {(hasItemsRequiringApproval || specialRequest.trim()) && (
                 <div className="space-y-2">
                   <label htmlFor="justification" className="text-sm font-medium">
-                    Justification <span className="text-red-500">*</span>
+                    Begründung <span className="text-red-500">*</span>
                   </label>
                   <Textarea
                     id="justification"
-                    placeholder="Please provide a justification for items requiring approval..."
+                    placeholder="Bitte geben Sie eine Begründung für Artikel an, die eine Genehmigung erfordern..."
                     value={justification}
                     onChange={(e) => setJustification(e.target.value)}
                     rows={3}
                     required={hasItemsRequiringApproval || !!specialRequest.trim()}
                   />
                   <p className="text-xs text-gray-500">
-                    Required for items needing approval
+                    Erforderlich für Artikel, die eine Genehmigung benötigen
                   </p>
                 </div>
               )}
@@ -229,21 +229,21 @@ export default function CartPage() {
                     justification.trim().length === 0)
                 }
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Order'}
+                {isSubmitting ? 'Wird eingereicht...' : 'Bestellung einreichen'}
               </Button>
             </CardFooter>
           </Card>
 
           <Card className="bg-blue-50 border-blue-200">
             <CardContent className="p-4 text-sm space-y-2">
-              <p className="font-medium text-blue-900">📋 Note:</p>
+              <p className="font-medium text-blue-900">📋 Hinweis:</p>
               <ul className="list-disc list-inside text-blue-800 space-y-1 text-xs">
-                <li>Orders are processed within 2-3 business days</li>
-                <li>You'll receive updates via email</li>
-                <li>Track your order status anytime</li>
+                <li>Bestellungen werden innerhalb von 2-3 Werktagen bearbeitet</li>
+                <li>Sie erhalten Updates per E-Mail</li>
+                <li>Verfolgen Sie Ihren Bestellstatus jederzeit</li>
                 {hasItemsRequiringApproval && (
                   <li className="text-orange-600 font-medium">
-                    This order requires manager approval
+                    Diese Bestellung erfordert eine Manager-Genehmigung
                   </li>
                 )}
               </ul>

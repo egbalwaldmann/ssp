@@ -11,7 +11,7 @@ async function main() {
     update: {},
     create: {
       email: 'user@bund.de',
-      name: 'Test User',
+      name: 'Testbenutzer',
       role: 'REQUESTER',
       costCenter: 'CC-001',
       department: 'Marketing'
@@ -23,7 +23,7 @@ async function main() {
     update: {},
     create: {
       email: 'it@bund.de',
-      name: 'IT Support',
+      name: 'IT-Support',
       role: 'IT_AGENT',
       costCenter: 'IT-001',
       department: 'IT'
@@ -35,10 +35,10 @@ async function main() {
     update: {},
     create: {
       email: 'reception@bund.de',
-      name: 'Reception Support',
+      name: 'Empfangssupport',
       role: 'RECEPTION_AGENT',
       costCenter: 'RCP-001',
-      department: 'Reception'
+      department: 'Empfang'
     }
   })
 
@@ -47,7 +47,7 @@ async function main() {
     update: {},
     create: {
       email: 'manager@bund.de',
-      name: 'Department Manager',
+      name: 'Abteilungsleiter',
       role: 'APPROVER',
       costCenter: 'CC-001',
       department: 'Marketing'
@@ -59,7 +59,7 @@ async function main() {
     update: {},
     create: {
       email: 'admin@bund.de',
-      name: 'System Admin',
+      name: 'Systemadministrator',
       role: 'ADMIN',
       costCenter: 'ADM-001',
       department: 'IT'
@@ -75,7 +75,7 @@ async function main() {
       category: 'WEBCAM',
       model: 'C270',
       imageUrl: '/products/webcam-logitech-c270.jpg',
-      description: 'HD webcam for video calls and conferences',
+      description: 'HD-Webcam für Videotelefonie und Konferenzen',
       requiresApproval: false
     },
     {
@@ -83,69 +83,69 @@ async function main() {
       category: 'HEADSET',
       model: 'Evolve2 65',
       imageUrl: '/products/headset-jabra-evolve2-65.jpg',
-      description: 'Wireless Bluetooth headset with active noise cancellation',
+      description: 'Kabelloses Bluetooth-Headset mit aktiver Geräuschunterdrückung',
       requiresApproval: false
     },
     {
-      name: 'Jabra Evolve2 40 (Wired)',
+      name: 'Jabra Evolve2 40 (Kabelgebunden)',
       category: 'HEADSET',
       model: 'Evolve2 40',
       imageUrl: '/products/headset-jabra-evolve2-40.jpg',
-      description: 'Wired USB headset with superior sound quality',
+      description: 'Kabelgebundenes USB-Headset mit überlegener Klangqualität',
       requiresApproval: false
     },
     {
-      name: 'Cherry GENTIX Silent Mouse',
+      name: 'Cherry GENTIX Silent Maus',
       category: 'MOUSE',
       model: 'GENTIX Silent',
       imageUrl: '/products/mouse-cherry-gentix.jpg',
-      description: 'Silent mouse for quiet office environments',
+      description: 'Leise Maus für ruhige Büroumgebungen',
       requiresApproval: false
     },
     {
-      name: 'Logitech Lift Ergonomic Mouse',
+      name: 'Logitech Lift Ergonomische Maus',
       category: 'MOUSE',
       model: 'Lift',
       imageUrl: '/products/mouse-logitech-lift.jpg',
-      description: 'Ergonomic vertical mouse for comfortable use',
+      description: 'Ergonomische vertikale Maus für komfortable Nutzung',
       requiresApproval: false
     },
     {
-      name: 'Cherry Stream Keyboard',
+      name: 'Cherry Stream Tastatur',
       category: 'KEYBOARD',
       model: 'JK-8500',
       imageUrl: '/products/keyboard-cherry-stream.jpg',
-      description: 'Professional keyboard with low-profile keys',
+      description: 'Professionelle Tastatur mit flachen Tasten',
       requiresApproval: false
     },
     {
-      name: 'Verbatim USB-C to HDMI Adapter',
+      name: 'Verbatim USB-C zu HDMI Adapter',
       category: 'ADAPTER',
       model: 'USB-C HDMI',
       imageUrl: '/products/adapter-usbc-hdmi.jpg',
-      description: 'Connect your USB-C device to HDMI displays',
+      description: 'Verbinden Sie Ihr USB-C-Gerät mit HDMI-Displays',
       requiresApproval: false
     },
     {
-      name: 'ROLINE HDMI Cable High Speed',
+      name: 'ROLINE HDMI Kabel High Speed',
       category: 'CABLE',
       model: 'HDMI 2.0',
       imageUrl: '/products/cable-hdmi-roline.jpg',
-      description: 'High-speed HDMI cable for 4K displays',
+      description: 'Hochgeschwindigkeits-HDMI-Kabel für 4K-Displays',
       requiresApproval: false
     },
     {
-      name: 'Printer Toner',
+      name: 'Druckertoner',
       category: 'PRINTER_TONER',
       imageUrl: '/products/toner-generic.jpg',
-      description: 'Various toner cartridges available for all office printers',
+      description: 'Verschiedene Tonerkartuschen für alle Bürodrucker verfügbar',
       requiresApproval: false
     },
     {
-      name: 'Desktop Speakers',
+      name: 'Desktop-Lautsprecher',
       category: 'SPEAKERS',
       imageUrl: '/products/speakers-generic.jpg',
-      description: 'Compact desktop speakers for multimedia',
+      description: 'Kompakte Desktop-Lautsprecher für Multimedia',
       requiresApproval: false
     },
     // Office Supplies
@@ -153,35 +153,35 @@ async function main() {
       name: 'Whiteboard',
       category: 'WHITEBOARD',
       imageUrl: '/products/whiteboard.jpg',
-      description: 'Various sizes available - specify in special requests',
+      description: 'Verschiedene Größen verfügbar - in Sonderwünschen angeben',
       requiresApproval: false
     },
     {
-      name: 'Pinboard',
+      name: 'Pinnwand',
       category: 'PINBOARD',
       imageUrl: '/products/pinboard.jpg',
-      description: 'Cork pinboard for notices and documents',
+      description: 'Korkpinnwand für Mitteilungen und Dokumente',
       requiresApproval: false
     },
     {
-      name: 'Flipchart Paper',
+      name: 'Flipchart-Papier',
       category: 'FLIPCHART',
       imageUrl: '/products/flipchart.jpg',
-      description: 'Flipchart paper pads for meetings and presentations',
+      description: 'Flipchart-Papierblöcke für Meetings und Präsentationen',
       requiresApproval: false
     },
     {
-      name: 'Office Chair',
+      name: 'Bürostuhl',
       category: 'CHAIR',
       imageUrl: '/products/chair.jpg',
-      description: 'Ergonomic office chair - requires manager approval',
+      description: 'Ergonomischer Bürostuhl - erfordert Manager-Genehmigung',
       requiresApproval: true
     },
     {
-      name: 'Business Prints & Envelopes',
+      name: 'Geschäftsausdrucke & Briefumschläge',
       category: 'BUSINESS_PRINTS',
       imageUrl: '/products/business-prints.jpg',
-      description: 'Business cards, letterheads, and envelopes',
+      description: 'Visitenkarten, Briefköpfe und Briefumschläge',
       requiresApproval: false
     }
   ]

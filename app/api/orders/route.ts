@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     const session = await getServerSession(authOptions)
     
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })
     }
 
     const { searchParams } = new URL(request.url)
@@ -56,7 +56,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Error fetching orders:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch orders' },
+        { error: 'Bestellungen konnten nicht abgerufen werden' },
       { status: 500 }
     )
   }
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions)
     
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })
     }
 
     const body = await request.json()
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
 
     if (!items || items.length === 0) {
       return NextResponse.json(
-        { error: 'Order must contain at least one item' },
+        { error: 'Bestellung muss mindestens einen Artikel enthalten' },
         { status: 400 }
       )
     }
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
           create: {
             toStatus: 'NEW',
             changedBy: session.user.id,
-            note: 'Order created'
+            note: 'Bestellung erstellt'
           }
         }
       },
@@ -145,7 +145,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error creating order:', error)
     return NextResponse.json(
-      { error: 'Failed to create order' },
+      { error: 'Bestellung konnte nicht erstellt werden' },
       { status: 500 }
     )
   }

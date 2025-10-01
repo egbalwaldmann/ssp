@@ -73,7 +73,7 @@ export default function DashboardPage() {
       const isAgent = session?.user?.role && ['IT_AGENT', 'RECEPTION_AGENT', 'ADMIN'].includes(session.user.role)
       
       if (!isAgent) {
-        toast.error('Access denied. Agents only.')
+        toast.error('Zugriff verweigert. Nur für Agenten.')
         router.push('/catalog')
         return
       }
@@ -90,7 +90,7 @@ export default function DashboardPage() {
         setOrders(data)
       }
     } catch (error) {
-      toast.error('Failed to load orders')
+      toast.error('Bestellungen konnten nicht geladen werden')
     } finally {
       setIsLoading(false)
     }
@@ -114,17 +114,17 @@ export default function DashboardPage() {
       })
 
       if (res.ok) {
-        toast.success('Order status updated')
+        toast.success('Bestellstatus aktualisiert')
         setSelectedOrder(null)
         setNewStatus('')
         setStatusNote('')
         fetchOrders()
       } else {
         const error = await res.json()
-        toast.error(error.error || 'Failed to update status')
+        toast.error(error.error || 'Status konnte nicht aktualisiert werden')
       }
     } catch (error) {
-      toast.error('An error occurred')
+      toast.error('Ein Fehler ist aufgetreten')
     } finally {
       setIsUpdatingStatus(false)
     }
@@ -135,7 +135,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+          <p className="mt-4 text-gray-600">Dashboard wird geladen...</p>
         </div>
       </div>
     )
@@ -160,8 +160,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Order Dashboard</h1>
-        <p className="text-gray-600 mt-2">Manage and process orders</p>
+        <h1 className="text-3xl font-bold text-gray-900">Bestellungs-Dashboard</h1>
+        <p className="text-gray-600 mt-2">Bestellungen verwalten und bearbeiten</p>
       </div>
 
       {/* Stats Cards */}
@@ -170,7 +170,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Orders</p>
+                <p className="text-sm text-gray-600">Gesamtbestellungen</p>
                 <p className="text-2xl font-bold">{stats.total}</p>
               </div>
               <Package className="h-8 w-8 text-blue-600" />
@@ -182,7 +182,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">New</p>
+                <p className="text-sm text-gray-600">Neu</p>
                 <p className="text-2xl font-bold">{stats.new}</p>
               </div>
               <Clock className="h-8 w-8 text-gray-600" />
@@ -194,7 +194,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">In Review</p>
+                <p className="text-sm text-gray-600">In Prüfung</p>
                 <p className="text-2xl font-bold">{stats.inReview}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-yellow-600" />
@@ -206,7 +206,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Pending Approval</p>
+                <p className="text-sm text-gray-600">Wartet auf Genehmigung</p>
                 <p className="text-2xl font-bold">{stats.pendingApproval}</p>
               </div>
               <Pause className="h-8 w-8 text-orange-600" />
@@ -218,7 +218,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Completed</p>
+                <p className="text-sm text-gray-600">Abgeschlossen</p>
                 <p className="text-2xl font-bold">{stats.completed}</p>
               </div>
               <CheckCircle2 className="h-8 w-8 text-green-600" />
@@ -230,12 +230,12 @@ export default function DashboardPage() {
       {/* Pending Orders */}
       <Card>
         <CardHeader>
-          <CardTitle>Pending Orders</CardTitle>
+          <CardTitle>Ausstehende Bestellungen</CardTitle>
         </CardHeader>
         <CardContent>
           {pendingOrders.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              No pending orders
+              Keine ausstehenden Bestellungen
             </div>
           ) : (
             <div className="space-y-3">
@@ -258,7 +258,7 @@ export default function DashboardPage() {
                       <span>{order.user.department}</span>
                       <span>•</span>
                       <span>
-                        {order.items.reduce((sum, item) => sum + item.quantity, 0)} items
+                        {order.items.reduce((sum, item) => sum + item.quantity, 0)} Artikel
                       </span>
                       <span>•</span>
                       <span>{format(new Date(order.createdAt), 'MMM d, yyyy')}</span>
@@ -271,7 +271,7 @@ export default function DashboardPage() {
                       variant="outline"
                       onClick={() => setSelectedOrder(order)}
                     >
-                      Update Status
+                      Status aktualisieren
                     </Button>
                     <Link href={`/orders/${order.id}`}>
                       <Button size="sm" variant="ghost">
@@ -289,7 +289,7 @@ export default function DashboardPage() {
       {/* All Orders Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Orders</CardTitle>
+          <CardTitle>Alle Bestellungen</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -311,7 +311,7 @@ export default function DashboardPage() {
                 </div>
                 <Link href={`/orders/${order.id}`}>
                   <Button size="sm" variant="ghost">
-                    View
+                    Anzeigen
                   </Button>
                 </Link>
               </div>
@@ -324,15 +324,15 @@ export default function DashboardPage() {
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Update Order Status</DialogTitle>
+            <DialogTitle>Bestellstatus aktualisieren</DialogTitle>
             <DialogDescription>
-              Order #{selectedOrder?.orderNumber}
+              Bestellung #{selectedOrder?.orderNumber}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Current Status</label>
+              <label className="text-sm font-medium">Aktueller Status</label>
               <div>
                 <Badge className={selectedOrder ? STATUS_COLORS[selectedOrder.status] : ''}>
                   {selectedOrder ? STATUS_LABELS[selectedOrder.status] : ''}
@@ -341,10 +341,10 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">New Status</label>
+              <label className="text-sm font-medium">Neuer Status</label>
               <Select value={newStatus} onValueChange={(val) => setNewStatus(val as OrderStatus)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select new status" />
+                  <SelectValue placeholder="Neuen Status auswählen" />
                 </SelectTrigger>
                 <SelectContent>
                   {allowedTransitions.map((status) => (
@@ -357,9 +357,9 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Note (Optional)</label>
+              <label className="text-sm font-medium">Notiz (Optional)</label>
               <Textarea
-                placeholder="Add a note about this status change..."
+                placeholder="Fügen Sie eine Notiz zu dieser Statusänderung hinzu..."
                 value={statusNote}
                 onChange={(e) => setStatusNote(e.target.value)}
                 rows={3}
@@ -369,13 +369,13 @@ export default function DashboardPage() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setSelectedOrder(null)}>
-              Cancel
+              Abbrechen
             </Button>
             <Button
               onClick={handleUpdateStatus}
               disabled={!newStatus || isUpdatingStatus}
             >
-              {isUpdatingStatus ? 'Updating...' : 'Update Status'}
+              {isUpdatingStatus ? 'Wird aktualisiert...' : 'Status aktualisieren'}
             </Button>
           </DialogFooter>
         </DialogContent>

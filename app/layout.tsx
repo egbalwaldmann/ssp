@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Self-Service Portal - IT Equipment & Office Supplies",
-  description: "Order IT equipment and office supplies online with automated approval workflows",
+  title: "Self-Service Portal - IT-Equipment & Büromaterial",
+  description: "IT-Equipment und Büromaterial online bestellen mit automatisierten Genehmigungsworkflows",
 };
 
 export default function RootLayout({
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="de">
       <body className={`${inter.variable} antialiased`}>
         <SessionProvider>
           {children}

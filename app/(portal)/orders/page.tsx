@@ -53,7 +53,7 @@ export default function OrdersPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading orders...</p>
+          <p className="mt-4 text-gray-600">Bestellungen werden geladen...</p>
         </div>
       </div>
     )
@@ -66,12 +66,12 @@ export default function OrdersPage() {
           <div className="bg-gray-100 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-4">
             <Package className="h-12 w-12 text-gray-400" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">No orders yet</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Noch keine Bestellungen</h2>
           <p className="text-gray-600 mb-6">
-            Start shopping to create your first order
+            Beginnen Sie mit dem Einkaufen, um Ihre erste Bestellung zu erstellen
           </p>
           <Link href="/catalog">
-            <Button>Browse Catalog</Button>
+            <Button>Katalog durchsuchen</Button>
           </Link>
         </div>
       </div>
@@ -81,8 +81,8 @@ export default function OrdersPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
-        <p className="text-gray-600 mt-2">Track and manage your orders</p>
+        <h1 className="text-3xl font-bold text-gray-900">Meine Bestellungen</h1>
+        <p className="text-gray-600 mt-2">Verfolgen und verwalten Sie Ihre Bestellungen</p>
       </div>
 
       <div className="space-y-4">
@@ -93,7 +93,7 @@ export default function OrdersPage() {
                 <div className="flex-1 min-w-0 space-y-3">
                   <div className="flex items-center gap-3 flex-wrap">
                     <h3 className="font-semibold text-lg">
-                      Order #{order.orderNumber}
+                      Bestellung #{order.orderNumber}
                     </h3>
                     <Badge className={STATUS_COLORS[order.status]}>
                       {STATUS_LABELS[order.status]}
@@ -107,11 +107,11 @@ export default function OrdersPage() {
                     </div>
                     <div className="flex items-center gap-1">
                       <Package className="h-4 w-4" />
-                      {order.items.reduce((sum, item) => sum + item.quantity, 0)} items
+                      {order.items.reduce((sum, item) => sum + item.quantity, 0)} Artikel
                     </div>
                     {order._count.comments > 0 && (
                       <div className="flex items-center gap-1">
-                        💬 {order._count.comments} comments
+                        💬 {order._count.comments} Kommentare
                       </div>
                     )}
                   </div>
@@ -127,7 +127,7 @@ export default function OrdersPage() {
                     ))}
                     {order.items.length > 3 && (
                       <span className="text-sm text-gray-500 px-2 py-1">
-                        +{order.items.length - 3} more
+                        +{order.items.length - 3} weitere
                       </span>
                     )}
                   </div>
@@ -135,7 +135,7 @@ export default function OrdersPage() {
 
                 <Link href={`/orders/${order.id}`}>
                   <Button variant="outline">
-                    View Details
+                    Details anzeigen
                     <ChevronRight className="h-4 w-4 ml-2" />
                   </Button>
                 </Link>

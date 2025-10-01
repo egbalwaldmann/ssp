@@ -18,21 +18,21 @@ import { toast } from 'sonner'
 import { Search, ShoppingCart, Package } from 'lucide-react'
 
 const CATEGORIES = [
-  { value: 'ALL', label: 'All Products' },
+  { value: 'ALL', label: 'Alle Produkte' },
   { value: 'WEBCAM', label: 'Webcams' },
   { value: 'HEADSET', label: 'Headsets' },
-  { value: 'MOUSE', label: 'Mice' },
-  { value: 'KEYBOARD', label: 'Keyboards' },
-  { value: 'PRINTER_TONER', label: 'Printer Toner' },
-  { value: 'SPEAKERS', label: 'Speakers' },
-  { value: 'ADAPTER', label: 'Adapters' },
-  { value: 'CABLE', label: 'Cables' },
+  { value: 'MOUSE', label: 'Mäuse' },
+  { value: 'KEYBOARD', label: 'Tastaturen' },
+  { value: 'PRINTER_TONER', label: 'Druckertoner' },
+  { value: 'SPEAKERS', label: 'Lautsprecher' },
+  { value: 'ADAPTER', label: 'Adapter' },
+  { value: 'CABLE', label: 'Kabel' },
   { value: 'WHITEBOARD', label: 'Whiteboards' },
-  { value: 'PINBOARD', label: 'Pinboards' },
+  { value: 'PINBOARD', label: 'Pinnwände' },
   { value: 'FLIPCHART', label: 'Flipcharts' },
-  { value: 'CHAIR', label: 'Chairs' },
-  { value: 'BUSINESS_PRINTS', label: 'Business Prints' },
-  { value: 'OFFICE_MISC', label: 'Office Misc' },
+  { value: 'CHAIR', label: 'Stühle' },
+  { value: 'BUSINESS_PRINTS', label: 'Geschäftsausdrucke' },
+  { value: 'OFFICE_MISC', label: 'Büro-Sonstiges' },
 ]
 
 export default function CatalogPage() {
@@ -61,7 +61,7 @@ export default function CatalogPage() {
         setFilteredProducts(data)
       }
     } catch (error) {
-      toast.error('Failed to load products')
+      toast.error('Produkte konnten nicht geladen werden')
     } finally {
       setIsLoading(false)
     }
@@ -89,7 +89,7 @@ export default function CatalogPage() {
 
   const handleAddToCart = (product: Product) => {
     addItem(product)
-    toast.success(`${product.name} added to cart`)
+    toast.success(`${product.name} zum Warenkorb hinzugefügt`)
   }
 
   if (isLoading) {
@@ -97,7 +97,7 @@ export default function CatalogPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading products...</p>
+          <p className="mt-4 text-gray-600">Produkte werden geladen...</p>
         </div>
       </div>
     )
@@ -106,9 +106,9 @@ export default function CatalogPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Product Catalog</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Produktkatalog</h1>
         <p className="text-gray-600 mt-2">
-          Browse and order IT equipment and office supplies
+          IT-Equipment und Büromaterial durchsuchen und bestellen
         </p>
       </div>
 
@@ -116,7 +116,7 @@ export default function CatalogPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search products..."
+            placeholder="Produkte suchen..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -124,7 +124,7 @@ export default function CatalogPage() {
         </div>
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className="w-full md:w-[200px]">
-            <SelectValue placeholder="Category" />
+            <SelectValue placeholder="Kategorie" />
           </SelectTrigger>
           <SelectContent>
             {CATEGORIES.map((cat) => (
@@ -137,14 +137,14 @@ export default function CatalogPage() {
       </div>
 
       <div className="text-sm text-gray-600">
-        Showing {filteredProducts.length} of {products.length} products
+        {filteredProducts.length} von {products.length} Produkten angezeigt
       </div>
 
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
           <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-          <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Keine Produkte gefunden</h3>
+          <p className="text-gray-600">Versuchen Sie, Ihre Such- oder Filterkriterien anzupassen</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
