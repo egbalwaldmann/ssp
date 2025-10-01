@@ -49,6 +49,46 @@ function LoginForm() {
     }
   }, [searchParams])
 
+  // Auto-login after hard reload initiated by quick login
+  useEffect(() => {
+    const autoEmail = typeof window !== 'undefined' ? sessionStorage.getItem('autoLoginEmail') : null
+    const shouldReloadLogin = searchParams.get('reload')
+    if (autoEmail && shouldReloadLogin && !isLoading) {
+      const run = async () => {
+        setIsLoading(true)
+        setLastError(null)
+        try {
+          console.log(`🔁 Auto login after hard reload for: ${autoEmail}`)
+          const result = await signIn('credentials', {
+            email: autoEmail,
+            redirect: false
+          })
+
+          if (result?.ok) {
+            toast.success('Anmeldung erfolgreich!')
+            sessionStorage.removeItem('autoLoginEmail')
+            router.push('/catalog')
+            router.refresh()
+          } else {
+            const msg = result?.error ? getErrorMessage(result.error) : 'Schnell-Anmeldung fehlgeschlagen'
+            toast.error(msg)
+            setLastError(msg)
+            sessionStorage.removeItem('autoLoginEmail')
+          }
+        } catch (e) {
+          console.error('Auto login exception:', e)
+          const msg = 'Netzwerkfehler bei der Schnell-Anmeldung'
+          toast.error(msg)
+          setLastError(msg)
+          sessionStorage.removeItem('autoLoginEmail')
+        } finally {
+          setIsLoading(false)
+        }
+      }
+      run()
+    }
+  }, [searchParams])
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -117,54 +157,17 @@ function LoginForm() {
     }
   }
 
-  const quickLogin = async (userEmail: string) => {
-    setEmail(userEmail)
-    setLastError(null)
-    setIsLoading(true)
-
+  const quickLogin = (userEmail: string) => {
     try {
-      console.log(`🚀 Quick login for: ${userEmail}`)
-      
-      // Attempt login
-      const result = await signIn('credentials', {
-        email: userEmail,
-        redirect: false
-      })
-
-      console.log('Quick login result:', result)
-
-      if (result?.error) {
-        const errorMessage = getErrorMessage(result.error)
-        console.error('Quick login failed:', result.error)
-        toast.error(errorMessage)
-        setLastError(errorMessage)
-        setRetryCount(prev => prev + 1)
-      } else if (result?.ok) {
-        console.log('✅ Quick login successful')
-        toast.success('Anmeldung erfolgreich!')
-        setRetryCount(0)
-        setLastError(null)
-        
-        // Small delay then redirect
-        setTimeout(() => {
-          router.push('/catalog')
-          router.refresh()
-        }, 300)
-      } else {
-        const errorMessage = 'Schnell-Anmeldung fehlgeschlagen'
-        console.error('Quick login failed - unknown error')
-        toast.error(errorMessage)
-        setLastError(errorMessage)
-        setRetryCount(prev => prev + 1)
-      }
+      console.log(`🚀 Quick login requested for: ${userEmail} (forcing hard reload)`) 
+      // Store intended email and force a full reload with cache-busting param
+      sessionStorage.setItem('autoLoginEmail', userEmail)
+      window.location.replace(`/login?reload=1&ts=${Date.now()}`)
     } catch (error) {
-      console.error('Quick login exception:', error)
-      const errorMessage = 'Netzwerkfehler bei der Schnell-Anmeldung'
+      console.error('Quick login setup failed:', error)
+      const errorMessage = 'Seite konnte nicht neu geladen werden. Bitte manuell aktualisieren.'
       toast.error(errorMessage)
       setLastError(errorMessage)
-      setRetryCount(prev => prev + 1)
-    } finally {
-      setIsLoading(false)
     }
   }
 
