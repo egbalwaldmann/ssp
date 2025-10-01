@@ -142,11 +142,13 @@ export async function POST(request: Request) {
 
     const orderNumber = `BEST-${Date.now()}`
     const orderStatus = needsApproval ? 'PENDING_APPROVAL' : 'IN_REVIEW'
+    const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 
     // Create order
     const { data: order, error: orderError } = await supabase
       .from('Order')
       .insert({
+        id: orderId,
         orderNumber,
         userId: session.user.id,
         costCenter,
@@ -167,7 +169,8 @@ export async function POST(request: Request) {
     }
 
     // Create order items
-    const orderItems = items.map((item: any) => ({
+    const orderItems = items.map((item: any, index: number) => ({
+      id: `orderitem_${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
       orderId: order.id,
       productId: item.productId,
       quantity: item.quantity
