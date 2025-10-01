@@ -13,7 +13,7 @@ const getFallbackProducts = () => {
       model: 'C270',
       imageUrl: '/products/webcam-logitech-c270.jpg',
       description: 'HD-Webcam für Videotelefonie und Konferenzen',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -25,7 +25,7 @@ const getFallbackProducts = () => {
       model: 'Evolve2 65',
       imageUrl: '/products/headset-jabra-evolve2-65.jpg',
       description: 'Kabelloses Bluetooth-Headset mit aktiver Geräuschunterdrückung',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -37,7 +37,7 @@ const getFallbackProducts = () => {
       model: 'Evolve2 40',
       imageUrl: '/products/headset-jabra-evolve2-40.jpg',
       description: 'Kabelgebundenes USB-Headset mit überlegener Klangqualität',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -49,7 +49,7 @@ const getFallbackProducts = () => {
       model: 'GENTIX Silent',
       imageUrl: '/products/mouse-cherry-gentix.jpg',
       description: 'Leise Maus für ruhige Büroumgebungen',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -61,7 +61,7 @@ const getFallbackProducts = () => {
       model: 'Lift',
       imageUrl: '/products/mouse-logitech-lift.jpg',
       description: 'Ergonomische vertikale Maus für komfortable Nutzung',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -73,7 +73,7 @@ const getFallbackProducts = () => {
       model: 'JK-8500',
       imageUrl: '/products/keyboard-cherry-stream.jpg',
       description: 'Professionelle Tastatur mit flachen Tasten',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -85,7 +85,7 @@ const getFallbackProducts = () => {
       model: 'USB-C-HDMI',
       imageUrl: '/products/adapter-usb-c-hdmi.jpg',
       description: 'Verbinden Sie Ihr USB-C-Gerät mit HDMI-Displays',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -97,7 +97,7 @@ const getFallbackProducts = () => {
       model: 'HDMI-2M',
       imageUrl: '/products/cable-hdmi.jpg',
       description: 'Hochgeschwindigkeits-HDMI-Kabel für 4K-Displays',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -109,7 +109,7 @@ const getFallbackProducts = () => {
       model: 'Toner-001',
       imageUrl: '/products/toner.jpg',
       description: 'Verschiedene Tonerkartuschen für alle Bürodrucker verfügbar',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -121,7 +121,7 @@ const getFallbackProducts = () => {
       model: 'Speaker-001',
       imageUrl: '/products/speakers.jpg',
       description: 'Kompakte Desktop-Lautsprecher für Multimedia',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -133,7 +133,7 @@ const getFallbackProducts = () => {
       model: 'WB-001',
       imageUrl: '/products/whiteboard.jpg',
       description: 'Verschiedene Größen verfügbar - in Sonderwünschen angeben',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -145,7 +145,7 @@ const getFallbackProducts = () => {
       model: 'PB-001',
       imageUrl: '/products/pinboard.jpg',
       description: 'Korkpinnwand für Mitteilungen und Dokumente',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -157,7 +157,7 @@ const getFallbackProducts = () => {
       model: 'FC-001',
       imageUrl: '/products/flipchart.jpg',
       description: 'Flipchart-Papierblöcke für Meetings und Präsentationen',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -181,7 +181,7 @@ const getFallbackProducts = () => {
       model: 'BP-001',
       imageUrl: '/products/business-prints.jpg',
       description: 'Visitenkarten, Briefköpfe und Briefumschläge',
-      requiresApproval: false,
+      requiresApproval: true,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()

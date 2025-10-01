@@ -15,16 +15,112 @@ export async function GET(request: Request) {
 
     console.log('📋 Fetching orders for user:', session.user.email)
 
+    const { searchParams } = new URL(request.url)
+    const status = searchParams.get('status')
+
     // Check database health first
     const dbHealthy = await robustAuth.checkDatabaseHealth()
     
     if (!dbHealthy) {
-      console.warn('⚠️ Database unhealthy, returning empty orders list')
-      return NextResponse.json([])
+      console.warn('⚠️ Database unhealthy, returning fallback orders list')
+      
+      // Return some demo orders for testing
+      const fallbackOrders = [
+        {
+          id: 'fallback-order-1',
+          orderNumber: 'BEST-20250101-0001',
+          userId: 'demo-user-1',
+          costCenter: 'CC-001',
+          specialRequest: null,
+          justification: null,
+          status: 'PENDING_APPROVAL',
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+          updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+          items: [
+            {
+              id: 'fallback-item-1',
+              productId: 'demo-1',
+              quantity: 2,
+              product: {
+                id: 'demo-1',
+                name: 'Logitech C270 HD-Webcam',
+                category: 'WEBCAM',
+                model: 'C270',
+                description: 'HD-Webcam für Videotelefonie und Konferenzen',
+                imageUrl: '/products/webcam-logitech-c270.jpg',
+                requiresApproval: true,
+                isActive: true,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              }
+            }
+          ],
+          user: {
+            name: 'Testbenutzer',
+            email: 'user@bund.de',
+            department: 'Marketing'
+          },
+          _count: {
+            comments: 0
+          }
+        },
+        {
+          id: 'fallback-order-2',
+          orderNumber: 'BEST-20250101-0002',
+          userId: 'demo-user-1',
+          costCenter: 'CC-001',
+          specialRequest: 'Sonderwunsch: Express-Lieferung',
+          justification: 'Dringend benötigt für wichtiges Meeting',
+          status: 'PENDING_APPROVAL',
+          createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
+          updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
+          items: [
+            {
+              id: 'fallback-item-2',
+              productId: 'demo-2',
+              quantity: 1,
+              product: {
+                id: 'demo-2',
+                name: 'Jabra Evolve2 65 (Bluetooth)',
+                category: 'HEADSET',
+                model: 'Evolve2 65',
+                description: 'Kabelloses Bluetooth-Headset mit aktiver Geräuschunterdrückung',
+                imageUrl: '/products/headset-jabra-evolve2-65.jpg',
+                requiresApproval: true,
+                isActive: true,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              }
+            }
+          ],
+          user: {
+            name: 'Testbenutzer',
+            email: 'user@bund.de',
+            department: 'Marketing'
+          },
+          _count: {
+            comments: 0
+          }
+        }
+      ]
+      
+      // Filter orders based on user role and status
+      let filteredOrders = fallbackOrders
+      
+      if (session.user.role === 'REQUESTER') {
+        // Regular users can only see their own orders
+        filteredOrders = fallbackOrders.filter(order => order.userId === session.user.id)
+      } else if (['APPROVER', 'ADMIN', 'IT_AGENT', 'RECEPTION_AGENT'].includes(session.user.role)) {
+        // Agents and approvers can see all orders
+        filteredOrders = fallbackOrders
+      }
+      
+      if (status) {
+        filteredOrders = filteredOrders.filter(order => order.status === status)
+      }
+      
+      return NextResponse.json(filteredOrders)
     }
-
-    const { searchParams } = new URL(request.url)
-    const status = searchParams.get('status')
 
     const where: any = {}
 
@@ -79,6 +175,9 @@ const createFallbackOrder = (session: any, items: any[], specialRequest?: string
   const orderNumber = generateOrderNumber()
   const now = new Date()
   
+  // Check if approval is required for fallback order
+  const needsApproval = items.some((item: any) => item.requiresApproval) || !!specialRequest
+  
   return {
     id: `fallback-${Date.now()}`,
     orderNumber,
@@ -86,7 +185,7 @@ const createFallbackOrder = (session: any, items: any[], specialRequest?: string
     costCenter: session.user.costCenter,
     specialRequest,
     justification,
-    status: 'NEW',
+    status: needsApproval ? 'PENDING_APPROVAL' : 'NEW',
     createdAt: now,
     updatedAt: now,
     items: items.map((item: any) => ({
