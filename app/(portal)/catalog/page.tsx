@@ -44,20 +44,20 @@ const CATEGORIES = [
   { value: 'REQUIRES_APPROVAL', label: '🔒 Genehmigung erforderlich' },
   { value: 'NO_APPROVAL', label: '✅ Keine Genehmigung' },
   { value: 'BUSINESS_CARDS', label: '💳 Visitenkarten' },
-  { value: 'WEBCAM', label: '📹 Webcams' },
+  { value: 'ADAPTER', label: '🔌 Adapter' },
+  { value: 'BUSINESS_PRINTS', label: '📄 Geschäftsausdrucke' },
+  { value: 'CABLE', label: '🔗 Kabel' },
+  { value: 'CHAIR', label: '🪑 Stühle' },
+  { value: 'FLIPCHART', label: '📊 Flipcharts' },
   { value: 'HEADSET', label: '🎧 Headsets' },
-  { value: 'MOUSE', label: '🖱️ Mäuse' },
   { value: 'KEYBOARD', label: '⌨️ Tastaturen' },
+  { value: 'MOUSE', label: '🖱️ Mäuse' },
+  { value: 'OFFICE_MISC', label: '📦 Büro-Sonstiges' },
+  { value: 'PINBOARD', label: '📌 Pinnwände' },
   { value: 'PRINTER_TONER', label: '🖨️ Druckertoner' },
   { value: 'SPEAKERS', label: '🔊 Lautsprecher' },
-  { value: 'ADAPTER', label: '🔌 Adapter' },
-  { value: 'CABLE', label: '🔗 Kabel' },
+  { value: 'WEBCAM', label: '📹 Webcams' },
   { value: 'WHITEBOARD', label: '📋 Whiteboards' },
-  { value: 'PINBOARD', label: '📌 Pinnwände' },
-  { value: 'FLIPCHART', label: '📊 Flipcharts' },
-  { value: 'CHAIR', label: '🪑 Stühle' },
-  { value: 'BUSINESS_PRINTS', label: '📄 Geschäftsausdrucke' },
-  { value: 'OFFICE_MISC', label: '📦 Büro-Sonstiges' },
 ]
 
 export default function CatalogPage() {
@@ -172,7 +172,7 @@ export default function CatalogPage() {
         <div className="sticky top-6 space-y-4">
           <Card className="border shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold text-gray-900">📂 Kategorien</CardTitle>
+              <CardTitle className="text-sm font-bold text-gray-600 uppercase tracking-wide">Kategorien</CardTitle>
             </CardHeader>
             <CardContent className="space-y-1 p-0">
               {CATEGORIES.filter(cat => cat.value !== 'ALL').map((cat, index) => {
