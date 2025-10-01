@@ -191,9 +191,6 @@ export default function DashboardPage() {
     completed: orders.filter((o) => o.status === 'COMPLETED').length
   }
 
-  const pendingOrders = orders.filter((o) =>
-    ['NEW', 'IN_REVIEW', 'PENDING_APPROVAL', 'APPROVED', 'ORDERED'].includes(o.status)
-  )
 
   const allowedTransitions = selectedOrder
     ? ALLOWED_TRANSITIONS[selectedOrder.status] || []
@@ -435,19 +432,19 @@ export default function DashboardPage() {
         </Card>
       )}
 
-      {/* Pending Orders */}
+      {/* All Orders */}
       <Card className="border-l-4 border-l-blue-500">
         <CardHeader className="bg-blue-50 border-b border-blue-200">
-          <CardTitle className="text-blue-900">📋 Ausstehende Bestellungen</CardTitle>
+          <CardTitle className="text-blue-900">📋 Alle Bestellungen</CardTitle>
         </CardHeader>
         <CardContent>
-          {pendingOrders.length === 0 ? (
+          {orders.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              Keine ausstehenden Bestellungen
+              Keine Bestellungen vorhanden
             </div>
           ) : (
             <div className="space-y-3">
-              {pendingOrders.map((order) => (
+              {orders.map((order) => (
                 <div
                   key={order.id}
                   className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all shadow-sm hover:shadow-md"
@@ -516,40 +513,6 @@ export default function DashboardPage() {
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      {/* All Orders Table */}
-      <Card className="border-l-4 border-l-gray-500">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
-          <CardTitle className="text-gray-900">📊 Alle Bestellungen</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {orders.map((order) => (
-              <div
-                key={order.id}
-                className="flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3">
-                    <span className="font-medium">#{order.orderNumber}</span>
-                    <Badge className={`${STATUS_COLORS[order.status]} text-xs`}>
-                      {STATUS_LABELS[order.status]}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {order.user.name} • {format(new Date(order.createdAt), 'MMM d, yyyy')}
-                  </p>
-                </div>
-                <Link href={`/orders/${order.id}`}>
-                  <Button size="sm" variant="ghost">
-                    Anzeigen
-                  </Button>
-                </Link>
-              </div>
-            ))}
-          </div>
         </CardContent>
       </Card>
 
