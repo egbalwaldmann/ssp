@@ -149,6 +149,8 @@ export default function CartPage() {
                       <Minus className="h-4 w-4" />
                     </Button>
                     <Input
+                      id={`quantity-${item.id}`}
+                      name={`quantity-${item.id}`}
                       type="number"
                       value={item.quantity}
                       onChange={(e) => {
@@ -205,6 +207,7 @@ export default function CartPage() {
                 </label>
                 <Textarea
                   id="special-request"
+                  name="special-request"
                   placeholder="Zusätzliche Artikel oder besondere Anforderungen..."
                   value={specialRequest}
                   onChange={(e) => setSpecialRequest(e.target.value)}
@@ -224,6 +227,7 @@ export default function CartPage() {
                   </label>
                   <Textarea
                     id="justification"
+                    name="justification"
                     placeholder="Bitte geben Sie eine Begründung für Artikel an, die eine Genehmigung erfordern..."
                     value={justification}
                     onChange={(e) => setJustification(e.target.value)}

@@ -1,0 +1,2 @@
+# ♿ Fix form accessibility - Wed Oct  1 17:15:49 CEST 2025
+Added id and name attributes to all form fields

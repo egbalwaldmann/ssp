@@ -319,6 +319,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
               <div className="space-y-2 pt-4 border-t">
                 <Textarea
+                  id="order-comment"
+                  name="order-comment"
                   placeholder="Kommentar oder Frage hinzufügen..."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}

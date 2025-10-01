@@ -578,6 +578,8 @@ export default function DashboardPage() {
                   {approvalAction === 'approve' ? 'Genehmigungskommentar (Optional)' : 'Ablehnungsgrund (Optional)'}
                 </label>
                 <Textarea
+                  id="approval-comment"
+                  name="approval-comment"
                   placeholder={
                     approvalAction === 'approve' 
                       ? 'Fügen Sie einen Kommentar zur Genehmigung hinzu...' 
@@ -609,6 +611,8 @@ export default function DashboardPage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Notiz (Optional)</label>
                   <Textarea
+                    id="status-note"
+                    name="status-note"
                     placeholder="Fügen Sie eine Notiz zu dieser Statusänderung hinzu..."
                     value={statusNote}
                     onChange={(e) => setStatusNote(e.target.value)}
