@@ -59,7 +59,16 @@ export default function CartPage() {
         router.push(`/orders/${order.id}`)
       } else {
         const error = await res.json()
-        toast.error(error.error || 'Bestellung konnte nicht eingereicht werden')
+        console.error('Order creation error:', error)
+        
+        // If products are missing, clear the cart and redirect to catalog
+        if (error.error && error.error.includes('Produkte nicht gefunden')) {
+          clearCart()
+          toast.error('Einige Produkte sind nicht mehr verfügbar. Warenkorb wurde geleert.')
+          router.push('/catalog')
+        } else {
+          toast.error(error.error || 'Bestellung konnte nicht eingereicht werden')
+        }
       }
     } catch (error) {
       toast.error('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.')

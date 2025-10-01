@@ -100,6 +100,8 @@ export async function POST(request: Request) {
 
     // Fetch products to check if they require approval
     const productIds = items.map((item: any) => item.productId)
+    console.log('🔍 Checking products:', productIds)
+    
     const { data: products, error: productsError } = await supabase
       .from('Product')
       .select('id, requiresApproval')
@@ -108,6 +110,19 @@ export async function POST(request: Request) {
     if (productsError) {
       console.error('❌ Error fetching products:', productsError)
       return NextResponse.json({ error: 'Fehler beim Laden der Produkte' }, { status: 500 })
+    }
+
+    console.log('📦 Found products:', products?.length || 0)
+    
+    // Check if all requested products exist
+    const foundProductIds = products?.map(p => p.id) || []
+    const missingProducts = productIds.filter(id => !foundProductIds.includes(id))
+    
+    if (missingProducts.length > 0) {
+      console.error('❌ Missing products:', missingProducts)
+      return NextResponse.json({ 
+        error: `Produkte nicht gefunden: ${missingProducts.join(', ')}. Bitte aktualisieren Sie den Warenkorb.` 
+      }, { status: 400 })
     }
 
     const productMap = new Map(products?.map(p => [p.id, p]) || [])

@@ -1,0 +1,2 @@
+# 🔧 Fix order creation error handling - Wed Oct  1 16:57:38 CEST 2025
+Improved error handling for missing products after cleanup
