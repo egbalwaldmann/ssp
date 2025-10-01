@@ -256,10 +256,9 @@ export default function CartPage() {
                   Ihre Angaben für die professionellen Visitenkarten im Corporate Design
                 </p>
               </CardHeader>
-              <CardContent className="p-8">
-                <div className="grid lg:grid-cols-2 gap-8">
-                  {/* Left: Form */}
-                  <div className="space-y-6">
+              <CardContent className="p-8 space-y-8">
+                {/* Form Fields */}
+                <div className="space-y-6">
                     <div>
                       <label htmlFor="bc-fullName" className="text-base font-bold text-gray-900 block mb-3">
                         👤 Vollständiger Name <span className="text-red-500">*</span>
@@ -367,53 +366,54 @@ export default function CartPage() {
                         Standard: 250 Stück (Min: 50, Max: 1000)
                       </p>
                     </div>
-                  </div>
+                </div>
 
-                  {/* Right: Live Preview */}
-                  <div>
-                    <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-6">
-                      <p className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">👁️ Live-Vorschau</p>
-                      
-                      {/* Business Card Preview */}
-                      <div className="bg-white rounded-xl shadow-2xl p-6 space-y-3 border-l-8 border-blue-600">
-                        <div className="space-y-2">
-                          <h2 className="font-bold text-2xl text-gray-900">
-                            {businessCardDetails.fullName || 'Ihr Name'}
-                          </h2>
-                          <p className="text-lg text-gray-700 font-medium">
-                            {businessCardDetails.jobTitle || 'Ihre Berufsbezeichnung'}
-                          </p>
-                          <p className="text-base text-gray-600">
-                            {businessCardDetails.department || 'Ihre Abteilung'}
-                          </p>
-                        </div>
-
-                        <div className="border-t-2 border-gray-200 pt-3 space-y-2 text-sm">
-                          <p className="text-gray-700 font-medium">
-                            ✉️ {businessCardDetails.email || 'ihre.email@bund.de'}
-                          </p>
-                          {businessCardDetails.phone && (
-                            <p className="text-gray-700">
-                              📞 {businessCardDetails.phone}
-                            </p>
-                          )}
-                          {businessCardDetails.mobile && (
-                            <p className="text-gray-700">
-                              📱 {businessCardDetails.mobile}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="pt-3 text-xs text-gray-400 border-t">
-                          <p className="font-semibold">Bundesrepublik Deutschland</p>
-                          <p>Corporate Design 2025</p>
-                        </div>
+                {/* Live Preview - Below Form */}
+                <div className="border-t-2 border-blue-200 pt-8">
+                  <p className="text-base font-bold text-gray-900 uppercase tracking-wide mb-6 flex items-center gap-2">
+                    👁️ Live-Vorschau Ihrer Visitenkarte
+                  </p>
+                  
+                  <div className="max-w-md mx-auto">
+                    {/* Business Card Preview */}
+                    <div className="bg-white rounded-xl shadow-2xl p-8 space-y-4 border-l-8 border-blue-600">
+                      <div className="space-y-3">
+                        <h2 className="font-bold text-3xl text-gray-900">
+                          {businessCardDetails.fullName || 'Ihr Name'}
+                        </h2>
+                        <p className="text-xl text-gray-700 font-medium">
+                          {businessCardDetails.jobTitle || 'Ihre Berufsbezeichnung'}
+                        </p>
+                        <p className="text-lg text-gray-600">
+                          {businessCardDetails.department || 'Ihre Abteilung'}
+                        </p>
                       </div>
-                      
-                      <p className="text-xs text-center text-gray-600 mt-4">
-                        Vereinfachte Vorschau - Finales Design professionell gestaltet
-                      </p>
+
+                      <div className="border-t-2 border-gray-200 pt-4 space-y-2">
+                        <p className="text-gray-700 font-medium flex items-center gap-2 text-base">
+                          ✉️ {businessCardDetails.email || 'ihre.email@bund.de'}
+                        </p>
+                        {businessCardDetails.phone && (
+                          <p className="text-gray-700 flex items-center gap-2">
+                            📞 {businessCardDetails.phone}
+                          </p>
+                        )}
+                        {businessCardDetails.mobile && (
+                          <p className="text-gray-700 flex items-center gap-2">
+                            📱 {businessCardDetails.mobile}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="pt-4 text-xs text-gray-400 border-t">
+                        <p className="font-semibold">Bundesrepublik Deutschland</p>
+                        <p>Corporate Design 2025</p>
+                      </div>
                     </div>
+                    
+                    <p className="text-xs text-center text-gray-600 mt-4">
+                      Vereinfachte Vorschau - Finales Design professionell gestaltet
+                    </p>
                   </div>
                 </div>
               </CardContent>
