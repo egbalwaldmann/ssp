@@ -63,6 +63,7 @@ export default function CatalogPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState<'name' | 'price-low' | 'price-high'>('name')
   const [imageFail, setImageFail] = useState<Record<string, boolean>>({})
   const { addItem } = useCart()
   
@@ -80,7 +81,7 @@ export default function CatalogPage() {
 
   useEffect(() => {
     filterProducts()
-  }, [products, selectedCategories, searchQuery])
+  }, [products, selectedCategories, searchQuery, sortBy])
 
   const fetchProducts = async () => {
     try {
@@ -112,6 +113,15 @@ export default function CatalogPage() {
           p.description?.toLowerCase().includes(query) ||
           p.model?.toLowerCase().includes(query)
       )
+    }
+
+    // Sort products
+    if (sortBy === 'name') {
+      filtered = filtered.sort((a, b) => a.name.localeCompare(b.name))
+    } else if (sortBy === 'price-low') {
+      filtered = filtered.sort((a, b) => (a.price || 0) - (b.price || 0))
+    } else if (sortBy === 'price-high') {
+      filtered = filtered.sort((a, b) => (b.price || 0) - (a.price || 0))
     }
 
     setFilteredProducts(filtered)
@@ -189,16 +199,35 @@ export default function CatalogPage() {
           </p>
         </div>
 
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            id="product-search"
-            name="product-search"
-            placeholder="Produkte suchen..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+        <div className="flex gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              id="product-search"
+              name="product-search"
+              placeholder="Produkte suchen..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          
+          <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+            <SelectTrigger className="w-[220px] bg-white border-2 border-gray-300 font-semibold text-gray-900">
+              <SelectValue placeholder="Sortieren" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="name" className="font-medium text-gray-800">
+                🔤 Alphabetisch (A-Z)
+              </SelectItem>
+              <SelectItem value="price-low" className="font-medium text-gray-800">
+                💰 Preis aufsteigend
+              </SelectItem>
+              <SelectItem value="price-high" className="font-medium text-gray-800">
+                💰 Preis absteigend
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex items-center justify-between text-sm text-[var(--jira-gray-500)]">
