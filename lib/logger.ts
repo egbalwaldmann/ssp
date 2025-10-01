@@ -16,7 +16,7 @@ class Logger {
     return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
-  private async sendToServer(entry: LogEntry) {
+  async sendToServer(entry: LogEntry) {
     try {
       await fetch('/api/logs', {
         method: 'POST',
@@ -117,21 +117,41 @@ if (typeof window !== 'undefined') {
 
   console.error = (...args) => {
     originalConsole.error(...args)
-    logger.error(args.join(' '))
+    // Send to server without using console methods to avoid infinite loop
+    logger.sendToServer({
+      level: 'error',
+      message: args.join(' '),
+      timestamp: new Date().toISOString()
+    })
   }
 
   console.warn = (...args) => {
     originalConsole.warn(...args)
-    logger.warn(args.join(' '))
+    // Send to server without using console methods to avoid infinite loop
+    logger.sendToServer({
+      level: 'warn',
+      message: args.join(' '),
+      timestamp: new Date().toISOString()
+    })
   }
 
   console.info = (...args) => {
     originalConsole.info(...args)
-    logger.info(args.join(' '))
+    // Send to server without using console methods to avoid infinite loop
+    logger.sendToServer({
+      level: 'info',
+      message: args.join(' '),
+      timestamp: new Date().toISOString()
+    })
   }
 
   console.log = (...args) => {
     originalConsole.log(...args)
-    logger.debug(args.join(' '))
+    // Send to server without using console methods to avoid infinite loop
+    logger.sendToServer({
+      level: 'debug',
+      message: args.join(' '),
+      timestamp: new Date().toISOString()
+    })
   }
 }
