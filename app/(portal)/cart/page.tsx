@@ -113,21 +113,20 @@ export default function CartPage() {
         router.push('/orders')
       } else {
         const error = await res.json()
-        logger.error('Order creation failed', { 
-          status: res.status, 
-          error, 
-          orderData,
-          userId: session?.user?.id 
+        console.error('Order creation failed:', {
+          status: res.status,
+          statusText: res.statusText,
+          error,
+          orderData
         })
         
         // If products are missing, clear the cart and redirect to catalog
         if (error.error && error.error.includes('Produkte nicht gefunden')) {
-          logger.warn('Products not found, clearing cart', { missingProducts: error.missingProducts })
           clearCart()
           toast.error('Einige Produkte sind nicht mehr verfügbar. Warenkorb wurde geleert.')
           router.push('/catalog')
         } else {
-          toast.error(error.error || 'Bestellung konnte nicht eingereicht werden')
+          toast.error(error.error || error.details || 'Bestellung konnte nicht eingereicht werden')
         }
       }
     } catch (error) {
