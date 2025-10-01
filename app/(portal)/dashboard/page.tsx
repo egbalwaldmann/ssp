@@ -225,62 +225,72 @@ export default function DashboardPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card className="border-l-4 border-l-blue-500 bg-blue-50/30">
-          <CardContent className="p-6">
+        <Card className="border-l-4 border-l-blue-500 bg-blue-50/30 h-32">
+          <CardContent className="p-6 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex-1">
                 <p className="text-sm text-blue-700 font-medium">📦 Gesamtbestellungen</p>
-                <p className="text-2xl font-bold text-blue-900">{stats.total}</p>
               </div>
               <Package className="h-8 w-8 text-blue-600" />
             </div>
+            <div className="mt-auto">
+              <p className="text-2xl font-bold text-blue-900">{stats.total}</p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-gray-500 bg-gray-50/30">
-          <CardContent className="p-6">
+        <Card className="border-l-4 border-l-gray-500 bg-gray-50/30 h-32">
+          <CardContent className="p-6 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex-1">
                 <p className="text-sm text-gray-700 font-medium">🆕 Neu</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.new}</p>
               </div>
               <Clock className="h-8 w-8 text-gray-600" />
             </div>
+            <div className="mt-auto">
+              <p className="text-2xl font-bold text-gray-900">{stats.new}</p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-yellow-500 bg-yellow-50/30">
-          <CardContent className="p-6">
+        <Card className="border-l-4 border-l-yellow-500 bg-yellow-50/30 h-32">
+          <CardContent className="p-6 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex-1">
                 <p className="text-sm text-yellow-700 font-medium">🔍 In Prüfung</p>
-                <p className="text-2xl font-bold text-yellow-900">{stats.inReview}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-yellow-600" />
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-orange-500 bg-orange-50/30">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-orange-700 font-medium">⏳ Wartet auf Genehmigung</p>
-                <p className="text-2xl font-bold text-orange-900">{stats.pendingApproval}</p>
-              </div>
-              <Pause className="h-8 w-8 text-orange-600" />
+            <div className="mt-auto">
+              <p className="text-2xl font-bold text-yellow-900">{stats.inReview}</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-green-500 bg-green-50/30">
-          <CardContent className="p-6">
+        <Card className="border-l-4 border-l-orange-500 bg-orange-50/30 h-32">
+          <CardContent className="p-6 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex-1">
+                <p className="text-sm text-orange-700 font-medium">⏳ Wartet auf Genehmigung</p>
+              </div>
+              <Pause className="h-8 w-8 text-orange-600" />
+            </div>
+            <div className="mt-auto">
+              <p className="text-2xl font-bold text-orange-900">{stats.pendingApproval}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-green-500 bg-green-50/30 h-32">
+          <CardContent className="p-6 h-full flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
                 <p className="text-sm text-green-700 font-medium">✅ Abgeschlossen</p>
-                <p className="text-2xl font-bold text-green-900">{stats.completed}</p>
               </div>
               <CheckCircle2 className="h-8 w-8 text-green-600" />
+            </div>
+            <div className="mt-auto">
+              <p className="text-2xl font-bold text-green-900">{stats.completed}</p>
             </div>
           </CardContent>
         </Card>
