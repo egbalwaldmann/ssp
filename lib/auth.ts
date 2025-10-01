@@ -84,7 +84,18 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login'
   },
   session: {
-    strategy: 'jwt'
+    strategy: 'jwt',
+    maxAge: 24 * 60 * 60, // 24 hours
+    updateAge: 60 * 60 // 1 hour
   },
-  secret: env.NEXTAUTH_SECRET
+  secret: env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === 'development',
+  events: {
+    async signOut(message) {
+      console.log('🔐 [auth][event] signOut:', message)
+    },
+    async session(message) {
+      console.log('🔄 [auth][event] session updated:', message?.session?.user?.email)
+    }
+  }
 }

@@ -74,6 +74,7 @@ function LoginForm() {
     try {
       console.log(`🔐 Login attempt for: ${email}`)
       
+      // Attempt login
       const result = await signIn('credentials', {
         email: email.trim(),
         redirect: false
@@ -93,13 +94,14 @@ function LoginForm() {
         setRetryCount(0)
         setLastError(null)
         
-        // Small delay to show success message
+        // Small delay then redirect
         setTimeout(() => {
           router.push('/catalog')
           router.refresh()
-        }, 500)
+        }, 300)
       } else {
         const errorMessage = 'Unbekannter Fehler bei der Anmeldung'
+        console.error('Login failed - unknown error')
         toast.error(errorMessage)
         setLastError(errorMessage)
         setRetryCount(prev => prev + 1)
@@ -123,10 +125,13 @@ function LoginForm() {
     try {
       console.log(`🚀 Quick login for: ${userEmail}`)
       
+      // Attempt login
       const result = await signIn('credentials', {
         email: userEmail,
         redirect: false
       })
+
+      console.log('Quick login result:', result)
 
       if (result?.error) {
         const errorMessage = getErrorMessage(result.error)
@@ -140,12 +145,14 @@ function LoginForm() {
         setRetryCount(0)
         setLastError(null)
         
+        // Small delay then redirect
         setTimeout(() => {
           router.push('/catalog')
           router.refresh()
-        }, 500)
+        }, 300)
       } else {
         const errorMessage = 'Schnell-Anmeldung fehlgeschlagen'
+        console.error('Quick login failed - unknown error')
         toast.error(errorMessage)
         setLastError(errorMessage)
         setRetryCount(prev => prev + 1)

@@ -202,7 +202,12 @@ export default function PortalLayout({
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/login' })}>
+                  <DropdownMenuItem onClick={() => {
+                    signOut({ 
+                      callbackUrl: '/login',
+                      redirect: true 
+                    })
+                  }}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Abmelden
                   </DropdownMenuItem>
