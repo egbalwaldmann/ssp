@@ -1,277 +1,183 @@
-# Self-Service Portal MVP
+# Supabase CLI
 
-A modern web application for IT equipment and office supplies ordering with automated approval workflows and real-time order tracking.
+[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
+](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
 
-## 🚀 Features
+[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
 
-### User Features
-- **Product Catalog** - Browse IT equipment and office supplies with images and descriptions
-- **Shopping Cart** - Add items, adjust quantities, and manage your cart
-- **Order Submission** - Submit orders with automatic cost center assignment
-- **Order Tracking** - Real-time status updates with visual timeline
-- **Communication** - Comment system for order-related discussions
-- **Order History** - View all your past and current orders
+This repository contains all the functionality for Supabase CLI.
 
-### Agent Features (IT Support / Reception)
-- **Dashboard** - Overview of all orders with statistics
-- **Order Management** - Process orders through workflow stages
-- **Status Updates** - Update order status with notes
-- **Queue Management** - View pending, in-review, and active orders
+- [x] Running Supabase locally
+- [x] Managing database migrations
+- [x] Creating and deploying Supabase Functions
+- [x] Generating types directly from your database schema
+- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
 
-### Approver Features
-- **Approval Workflow** - Review and approve/reject orders requiring approval
-- **Justification Review** - View requester justifications for special items
+## Getting started
 
-## 🛠️ Tech Stack
+### Install the CLI
 
-- **Framework:** Next.js 15 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS v4
-- **Database:** PostgreSQL with Prisma ORM
-- **Authentication:** NextAuth.js (simulates Azure AD/Entra ID)
-- **State Management:** Zustand (for cart)
-- **UI Components:** shadcn/ui
-- **Form Handling:** React Hook Form + Zod
-- **API:** Next.js API routes (RESTful)
-
-## 📦 Installation
-
-### Prerequisites
-- Node.js 18+ and npm
-- PostgreSQL database
-
-### Setup
-
-1. **Clone and install dependencies:**
-```bash
-npm install
-```
-
-2. **Configure environment variables:**
-Create a `.env.local` file in the root directory:
-```env
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/service_portal?schema=public"
-
-# NextAuth
-NEXTAUTH_SECRET="your-secret-key-change-this-in-production"
-NEXTAUTH_URL="http://localhost:3000"
-```
-
-3. **Set up the database:**
-```bash
-# Push the schema to the database
-npx prisma db push
-
-# Generate Prisma Client
-npx prisma generate
-
-# Seed the database with test data
-npm run prisma:seed
-```
-
-4. **Run the development server:**
-```bash
-npm run dev
-```
-
-5. **Open the application:**
-Navigate to [http://localhost:3000](http://localhost:3000)
-
-## 👥 Test Accounts
-
-The seed script creates the following test accounts:
-
-| Email | Role | Description |
-|-------|------|-------------|
-| user@bund.de | Requester | Regular employee - can browse catalog and create orders |
-| it@bund.de | IT Agent | IT support - can process and manage orders |
-| reception@bund.de | Reception Agent | Reception support - can process orders |
-| manager@bund.de | Approver | Department manager - can approve/reject orders |
-| admin@bund.de | Admin | System administrator - full access |
-
-**Note:** For MVP demo purposes, you only need to enter the email address to log in (no password required).
-
-## 📋 Order Workflow
-
-### Status Flow
-
-```
-NEW → IN_REVIEW → PENDING_APPROVAL (if approval required) → APPROVED → 
-ORDERED → IN_TRANSIT → READY_FOR_PICKUP → DELIVERED → COMPLETED
-```
-
-Alternative paths:
-- `NEW/IN_REVIEW/PENDING_APPROVAL` → `REJECTED`
-- Any status → `ON_HOLD` → `IN_REVIEW`
-- `APPROVED/ORDERED` → `CANCELLED`
-
-### Approval Requirements
-
-Orders require approval when:
-1. Cart contains products marked as requiring approval (e.g., Office Chairs)
-2. Special requests are added in the checkout form
-
-## 🗂️ Project Structure
-
-```
-app/
-├── (portal)/               # Authenticated portal pages
-│   ├── layout.tsx          # Portal layout with navigation
-│   ├── catalog/            # Product catalog
-│   ├── cart/               # Shopping cart
-│   ├── orders/             # Order history and details
-│   └── dashboard/          # Agent dashboard
-├── api/                    # API routes
-│   ├── auth/               # NextAuth authentication
-│   ├── products/           # Product endpoints
-│   └── orders/             # Order endpoints
-├── login/                  # Login page
-└── layout.tsx              # Root layout
-
-components/
-├── ui/                     # shadcn/ui components
-└── session-provider.tsx    # Auth session provider
-
-lib/
-├── auth.ts                 # NextAuth configuration
-├── prisma.ts               # Prisma client
-├── utils.ts                # Utility functions
-├── workflow.ts             # Order workflow logic
-└── store/
-    └── cart-store.ts       # Zustand cart store
-
-prisma/
-├── schema.prisma           # Database schema
-└── seed.ts                 # Database seed script
-```
-
-## 🎨 Key Components
-
-### Product Catalog
-- Grid layout with product cards
-- Category filtering
-- Search functionality
-- Add to cart functionality
-
-### Shopping Cart
-- Quantity management
-- Special request field
-- Justification field (for items requiring approval)
-- Order summary with cost center
-
-### Order Tracking
-- Visual timeline of status changes
-- Order items display
-- Communication/comments section
-- Order information sidebar
-
-### Agent Dashboard
-- Statistics cards (total, new, in review, etc.)
-- Pending orders queue
-- Status update dialog
-- All orders overview
-
-## 🔐 Role-Based Access Control
-
-| Feature | Requester | Agent | Approver | Admin |
-|---------|-----------|-------|----------|-------|
-| Browse Catalog | ✅ | ✅ | ✅ | ✅ |
-| Create Orders | ✅ | ✅ | ✅ | ✅ |
-| View Own Orders | ✅ | ✅ | ✅ | ✅ |
-| View All Orders | ❌ | ✅ | ❌ | ✅ |
-| Update Status | ❌ | ✅ | ❌ | ✅ |
-| Approve/Reject | ❌ | ❌ | ✅ | ✅ |
-| Dashboard | ❌ | ✅ | ❌ | ✅ |
-
-## 📊 Database Schema
-
-### Main Models
-- **User** - User accounts with roles and departments
-- **Product** - Product catalog with categories
-- **Order** - Orders with items, status, and workflow
-- **OrderItem** - Individual items within orders
-- **Comment** - Communication on orders
-- **Approval** - Approval requests and decisions
-- **StatusHistory** - Audit trail of status changes
-- **Asset** - Linked assets for completed orders
-
-### Enums
-- **Role** - REQUESTER, IT_AGENT, RECEPTION_AGENT, APPROVER, ADMIN
-- **Category** - Product categories (WEBCAM, HEADSET, MOUSE, etc.)
-- **OrderStatus** - Order workflow statuses
-- **ApprovalStatus** - PENDING, APPROVED, REJECTED
-
-## 🚀 Deployment
-
-### Database Migration
-```bash
-npx prisma migrate dev --name init
-```
-
-### Production Build
-```bash
-npm run build
-npm start
-```
-
-### Environment Variables for Production
-- Update `NEXTAUTH_URL` to your production URL
-- Use a strong random string for `NEXTAUTH_SECRET`
-- Ensure `DATABASE_URL` points to your production database
-
-## 🔮 Future Enhancements
-
-- [ ] Email notifications via SendGrid/Resend
-- [ ] File upload for special requests
-- [ ] Product packages/bundles
-- [ ] Advanced search with Algolia
-- [ ] Analytics dashboard
-- [ ] Export orders to CSV
-- [ ] Asset management integration
-- [ ] Automated inventory tracking
-- [ ] Multi-language support (i18n)
-- [ ] Dark mode
-- [ ] Mobile app (React Native)
-- [ ] Integration with real Azure AD/Entra ID
-
-## 📝 Scripts
+Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
 
 ```bash
-npm run dev              # Start development server
-npm run build            # Build for production
-npm run start            # Start production server
-npm run prisma:generate  # Generate Prisma Client
-npm run prisma:push      # Push schema to database
-npm run prisma:seed      # Seed database with test data
+npm i supabase --save-dev
 ```
 
-## 🐛 Troubleshooting
+To install the beta release channel:
 
-### Database Connection Issues
-- Ensure PostgreSQL is running
-- Verify `DATABASE_URL` in `.env.local`
-- Check database user permissions
+```bash
+npm i supabase@beta --save-dev
+```
 
-### Authentication Issues
-- Clear browser cookies and localStorage
-- Verify `NEXTAUTH_SECRET` is set
-- Check that seed data was created successfully
+When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
 
-### Cart Not Persisting
-- Cart uses localStorage - ensure it's not disabled
-- Check browser console for errors
+```
+NODE_OPTIONS=--no-experimental-fetch yarn add supabase
+```
 
-## 📄 License
+> **Note**
+For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
 
-This project is for demonstration purposes only.
+<details>
+  <summary><b>macOS</b></summary>
 
-## 👨‍💻 Development
+  Available via [Homebrew](https://brew.sh). To install:
 
-Built with ❤️ using Next.js, TypeScript, and Tailwind CSS.
+  ```sh
+  brew install supabase/tap/supabase
+  ```
 
-For questions or support, please contact your IT department.
-# Trigger new build Wed Oct  1 01:40:16 CEST 2025
-# Fix database connection Wed Oct  1 01:48:17 CEST 2025
-# Force redeploy with hardcoded env vars Wed Oct  1 02:00:24 CEST 2025
-# Force redeploy with Supabase env vars Wed Oct  1 02:07:39 CEST 2025
+  To install the beta release channel:
+  
+  ```sh
+  brew install supabase/tap/supabase-beta
+  brew link --overwrite supabase-beta
+  ```
+  
+  To upgrade:
+
+  ```sh
+  brew upgrade supabase
+  ```
+</details>
+
+<details>
+  <summary><b>Windows</b></summary>
+
+  Available via [Scoop](https://scoop.sh). To install:
+
+  ```powershell
+  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+  scoop install supabase
+  ```
+
+  To upgrade:
+
+  ```powershell
+  scoop update supabase
+  ```
+</details>
+
+<details>
+  <summary><b>Linux</b></summary>
+
+  Available via [Homebrew](https://brew.sh) and Linux packages.
+
+  #### via Homebrew
+
+  To install:
+
+  ```sh
+  brew install supabase/tap/supabase
+  ```
+
+  To upgrade:
+
+  ```sh
+  brew upgrade supabase
+  ```
+
+  #### via Linux packages
+
+  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
+
+  ```sh
+  sudo apk add --allow-untrusted <...>.apk
+  ```
+
+  ```sh
+  sudo dpkg -i <...>.deb
+  ```
+
+  ```sh
+  sudo rpm -i <...>.rpm
+  ```
+
+  ```sh
+  sudo pacman -U <...>.pkg.tar.zst
+  ```
+</details>
+
+<details>
+  <summary><b>Other Platforms</b></summary>
+
+  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
+
+  ```sh
+  go install github.com/supabase/cli@latest
+  ```
+
+  Add a symlink to the binary in `$PATH` for easier access:
+
+  ```sh
+  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
+  ```
+
+  This works on other non-standard Linux distros.
+</details>
+
+<details>
+  <summary><b>Community Maintained Packages</b></summary>
+
+  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
+  To install in your working directory:
+
+  ```bash
+  pkgx install supabase
+  ```
+
+  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
+</details>
+
+### Run the CLI
+
+```bash
+supabase bootstrap
+```
+
+Or using npx:
+
+```bash
+npx supabase bootstrap
+```
+
+The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+
+## Docs
+
+Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
+
+## Breaking changes
+
+We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
+
+However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
+
+## Developing
+
+To run from source:
+
+```sh
+# Go >= 1.22
+go run . help
+```
