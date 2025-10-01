@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Self-Service Portal - IT-Equipment & Büromaterial",
-  description: "IT-Equipment und Büromaterial online bestellen mit automatisierten Genehmigungsworkflows",
+  title: "SSP - Self-Service Portal",
+  description: "IT-Equipment und Büromaterial online bestellen",
 };
 
 export default function RootLayout({

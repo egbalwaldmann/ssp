@@ -83,7 +83,7 @@ export default function PortalLayout({
                   <ShoppingCart className="h-6 w-6 text-white" />
                 </div>
                 <span className="font-bold text-xl text-gray-900">
-                  Self-Service-Portal
+                  SSP
                 </span>
               </Link>
 
@@ -104,15 +104,6 @@ export default function PortalLayout({
                   >
                     <Package className="h-4 w-4" />
                     <span>Meine Bestellungen</span>
-                  </Button>
-                </Link>
-                <Link href="/business-cards">
-                  <Button
-                    variant={pathname === '/business-cards' ? 'default' : 'ghost'}
-                    className="flex items-center space-x-2"
-                  >
-                    <span>🪪</span>
-                    <span>Visitenkarten</span>
                   </Button>
                 </Link>
                 {isAgent && (
@@ -149,12 +140,6 @@ export default function PortalLayout({
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Fallback Status Indicator */}
-              <div className="flex items-center space-x-2 text-xs">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                <span className="text-yellow-600 font-medium">Demo-Modus</span>
-              </div>
-              
               <Link href="/cart">
                 <Button variant="outline" className="relative">
                   <ShoppingCart className="h-5 w-5" />

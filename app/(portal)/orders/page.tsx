@@ -116,29 +116,22 @@ export default function OrdersPage() {
                     )}
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    {order.items.slice(0, 3).map((item, idx) => (
-                      <span
-                        key={idx}
-                        className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded"
-                      >
-                        {item.quantity}× {item.product.name}
-                      </span>
-                    ))}
-                    {order.items.length > 3 && (
-                      <span className="text-sm text-gray-500 px-2 py-1">
-                        +{order.items.length - 3} weitere
-                      </span>
-                    )}
+                  {/* Bestellte Artikel - Prominent anzeigen */}
+                  <div className="mt-3 space-y-2">
+                    <h4 className="text-sm font-semibold text-gray-700">📦 Bestellte Artikel:</h4>
+                    <div className="space-y-1">
+                      {order.items.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-2 text-base font-medium text-gray-800 bg-blue-50 px-3 py-2 rounded-lg border border-blue-100"
+                        >
+                          <span className="font-bold text-blue-600">{item.quantity}×</span>
+                          <span>{item.product.name}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-
-                <Link href={`/orders/${order.id}`}>
-                  <Button variant="outline">
-                    Details anzeigen
-                    <ChevronRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </Link>
               </div>
             </CardContent>
           </Card>
