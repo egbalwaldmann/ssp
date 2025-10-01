@@ -14,8 +14,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 401 })
     }
 
-    // Only agents and admins can update status
-    if (!['IT_AGENT', 'RECEPTION_AGENT', 'ADMIN'].includes(session.user.role)) {
+    // Only agents, approvers and admins can update status
+    if (!['IT_AGENT', 'RECEPTION_AGENT', 'APPROVER', 'ADMIN'].includes(session.user.role)) {
       return NextResponse.json({ error: 'Zugriff verweigert' }, { status: 403 })
     }
 
@@ -62,14 +62,7 @@ export async function PUT(
           *,
           product:Product(*)
         ),
-        user:User(*),
-        statusHistory:OrderStatusHistory(
-          *,
-          changedByUser:User(
-            name,
-            email
-          )
-        )
+        user:User(*)
       `)
       .single()
 
@@ -79,14 +72,18 @@ export async function PUT(
     }
 
     // Create status history entry
+    const historyId = `history_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    const now = new Date().toISOString()
     const { error: historyError } = await supabase
-      .from('OrderStatusHistory')
+      .from('StatusHistory')
       .insert({
+        id: historyId,
         orderId: id,
         fromStatus: order.status,
         toStatus: status,
-        changedBy: session.user.id,
-        note
+        changedById: session.user.id,
+        note,
+        changedAt: now
       })
 
     if (historyError) {
