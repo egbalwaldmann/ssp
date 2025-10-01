@@ -28,6 +28,7 @@ model Product {
   category         Category
   model            String?
   imageUrl         String?
+  price            Float?
   isActive         Boolean          @default(true)
   requiresApproval Boolean          @default(false)
   isBundle         Boolean          @default(false)

@@ -123,10 +123,17 @@ export default function OrdersPage() {
                       {order.items.map((item, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center gap-2 text-base font-medium text-gray-800 bg-blue-50 px-3 py-2 rounded-lg border border-blue-100"
+                          className="flex items-center justify-between gap-2 text-base font-medium text-gray-800 bg-blue-50 px-3 py-2 rounded-lg border border-blue-100"
                         >
-                          <span className="font-bold text-blue-600">{item.quantity}×</span>
-                          <span>{item.product.name}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-blue-600">{item.quantity}×</span>
+                            <span>{item.product.name}</span>
+                          </div>
+                          {item.product.price && (
+                            <span className="font-bold text-blue-600">
+                              {(item.product.price * item.quantity).toFixed(0)} €
+                            </span>
+                          )}
                         </div>
                       ))}
                     </div>

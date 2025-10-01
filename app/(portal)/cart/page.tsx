@@ -191,9 +191,14 @@ export default function CartPage() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                    <h3 className="font-semibold text-gray-900 text-lg">{item.name}</h3>
                     {item.model && (
                       <p className="text-sm text-gray-500">Modell: {item.model}</p>
+                    )}
+                    {item.price && (
+                      <p className="text-lg font-bold text-blue-600 mt-1">
+                        {item.price.toFixed(0)} € <span className="text-sm text-gray-500 font-normal">pro Stück</span>
+                      </p>
                     )}
                     {item.requiresApproval && (
                       <p className="text-xs text-orange-600 mt-1">
@@ -426,13 +431,21 @@ export default function CartPage() {
               <CardTitle className="text-xl font-bold text-blue-900">📋 Bestellübersicht</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-700 font-medium">Gesamtanzahl Artikel:</span>
                   <span className="font-bold text-blue-600">
                     {items.reduce((sum, item) => sum + item.quantity, 0)}
                   </span>
                 </div>
+                {items.some(item => item.price) && (
+                  <div className="flex justify-between text-lg border-t pt-3">
+                    <span className="text-gray-900 font-bold">Gesamtsumme:</span>
+                    <span className="font-bold text-blue-600 text-2xl">
+                      {items.reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0).toFixed(0)} €
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-700 font-medium">Kostenstelle:</span>
                   <span className="font-bold text-blue-600">{session?.user.costCenter}</span>

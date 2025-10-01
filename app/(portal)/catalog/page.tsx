@@ -205,11 +205,17 @@ export default function CatalogPage() {
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="flex-1">
+              <CardContent className="flex-1 space-y-3">
                 {product.description && (
                   <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
                     {product.description}
                   </p>
+                )}
+                {product.price && (
+                  <div className="flex items-baseline gap-2 pt-2">
+                    <span className="text-2xl font-bold text-blue-600">{product.price.toFixed(0)} €</span>
+                    <span className="text-sm text-gray-500">pro Stück</span>
+                  </div>
                 )}
               </CardContent>
               <CardFooter className="pt-4">
