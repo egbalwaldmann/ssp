@@ -41,6 +41,9 @@ const getProductEmoji = (category: string): string => {
 
 const CATEGORIES = [
   { value: 'ALL', label: 'Alle Produkte' },
+  { value: 'REQUIRES_APPROVAL', label: '🔒 Genehmigung erforderlich' },
+  { value: 'NO_APPROVAL', label: '✅ Keine Genehmigung' },
+  { value: 'BUSINESS_CARDS', label: '💳 Visitenkarten' },
   { value: 'WEBCAM', label: 'Webcams' },
   { value: 'HEADSET', label: 'Headsets' },
   { value: 'MOUSE', label: 'Mäuse' },
@@ -55,8 +58,6 @@ const CATEGORIES = [
   { value: 'CHAIR', label: 'Stühle' },
   { value: 'BUSINESS_PRINTS', label: 'Geschäftsausdrucke' },
   { value: 'OFFICE_MISC', label: 'Büro-Sonstiges' },
-  { value: 'REQUIRES_APPROVAL', label: 'Genehmigung erforderlich' },
-  { value: 'NO_APPROVAL', label: 'Keine Genehmigung' },
 ]
 
 export default function CatalogPage() {
@@ -111,6 +112,11 @@ export default function CatalogPage() {
         }
         if (selectedCategories.includes('NO_APPROVAL')) {
           return p.requiresApproval === false
+        }
+        // Handle business cards category
+        if (selectedCategories.includes('BUSINESS_CARDS')) {
+          return p.name.toLowerCase().includes('visitenkarte') || 
+                 p.name.toLowerCase().includes('business card')
         }
         // Handle regular categories
         return selectedCategories.includes(p.category)
@@ -173,6 +179,8 @@ export default function CatalogPage() {
                   ? products.filter(p => p.requiresApproval === true).length
                   : cat.value === 'NO_APPROVAL'
                   ? products.filter(p => p.requiresApproval === false).length
+                  : cat.value === 'BUSINESS_CARDS'
+                  ? products.filter(p => p.name.toLowerCase().includes('visitenkarte') || p.name.toLowerCase().includes('business card')).length
                   : products.filter(p => p.category === cat.value).length
                 
                 return (
