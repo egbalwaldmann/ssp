@@ -18,7 +18,7 @@ import { toast } from 'sonner'
 import { Search, ShoppingCart, Package } from 'lucide-react'
 
 // Produkt-spezifische Emojis
-const getProductEmoji = (category: string, name: string): string => {
+const getProductEmoji = (category: string): string => {
   const categoryEmojis: Record<string, string> = {
     'WEBCAM': '📹',
     'HEADSET': '🎧',
@@ -35,21 +35,6 @@ const getProductEmoji = (category: string, name: string): string => {
     'BUSINESS_PRINTS': '📄',
     'OFFICE_MISC': '📦'
   }
-  
-  // Spezielle Emojis für bestimmte Produkte
-  if (name.toLowerCase().includes('webcam')) return '📹'
-  if (name.toLowerCase().includes('headset') || name.toLowerCase().includes('jabra')) return '🎧'
-  if (name.toLowerCase().includes('mouse') || name.toLowerCase().includes('maus')) return '🖱️'
-  if (name.toLowerCase().includes('keyboard') || name.toLowerCase().includes('tastatur')) return '⌨️'
-  if (name.toLowerCase().includes('toner')) return '🖨️'
-  if (name.toLowerCase().includes('speaker') || name.toLowerCase().includes('lautsprecher')) return '🔊'
-  if (name.toLowerCase().includes('adapter')) return '🔌'
-  if (name.toLowerCase().includes('cable') || name.toLowerCase().includes('kabel')) return '🔗'
-  if (name.toLowerCase().includes('whiteboard')) return '📋'
-  if (name.toLowerCase().includes('pinboard') || name.toLowerCase().includes('pinnwand')) return '📌'
-  if (name.toLowerCase().includes('flipchart')) return '📊'
-  if (name.toLowerCase().includes('chair') || name.toLowerCase().includes('stuhl')) return '🪑'
-  if (name.toLowerCase().includes('business') || name.toLowerCase().includes('geschäft')) return '📄'
   
   return categoryEmojis[category] || '📦'
 }
@@ -199,7 +184,7 @@ export default function CatalogPage() {
                   ) : (
                     <div className="flex flex-col items-center justify-center">
                       <div className="text-6xl mb-2">
-                        {getProductEmoji(product.category, product.name)}
+                        {getProductEmoji(product.category)}
                       </div>
                       <p className="text-gray-600 text-sm mt-2 text-center px-4 font-medium">
                         {product.name}
