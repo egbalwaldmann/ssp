@@ -42,6 +42,8 @@ interface Order {
   orderNumber: string
   status: OrderStatus
   createdAt: string
+  specialRequest?: string | null
+  justification?: string | null
   user: {
     name: string
     email: string
@@ -51,6 +53,10 @@ interface Order {
     quantity: number
     product: {
       name: string
+      model: string
+      category: string
+      description: string
+      requiresApproval: boolean
     }
   }>
   _count: {
@@ -196,8 +202,15 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">📊 Bestellungs-Dashboard</h1>
-        <p className="text-gray-700 mt-2 font-medium">Bestellungen verwalten und bearbeiten</p>
+        <h1 className="text-3xl font-bold text-gray-900">
+          {session?.user?.role === 'APPROVER' ? '⏳ Genehmiger-Dashboard' : '📊 Bestellungs-Dashboard'}
+        </h1>
+        <p className="text-gray-700 mt-2 font-medium">
+          {session?.user?.role === 'APPROVER' 
+            ? 'Bestellungen genehmigen und ablehnen' 
+            : 'Bestellungen verwalten und bearbeiten'
+          }
+        </p>
       </div>
 
       {/* Stats Cards */}
@@ -265,14 +278,20 @@ export default function DashboardPage() {
 
       {/* Approval Section for Approvers */}
       {['APPROVER', 'ADMIN'].includes(session?.user?.role || '') && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border-2 border-orange-200 shadow-lg">
+          <CardHeader className="bg-orange-50 border-b border-orange-200">
+            <CardTitle className="flex items-center gap-2 text-xl">
               ⏳ Genehmigungen erforderlich
-              <Badge variant="destructive" className="ml-2">
+              <Badge variant="destructive" className="ml-2 text-lg px-3 py-1">
                 {orders.filter(o => o.status === 'PENDING_APPROVAL').length}
               </Badge>
             </CardTitle>
+            <p className="text-orange-700 mt-2">
+              {orders.filter(o => o.status === 'PENDING_APPROVAL').length === 0 
+                ? 'Alle Bestellungen wurden bearbeitet' 
+                : `${orders.filter(o => o.status === 'PENDING_APPROVAL').length} Bestellung(en) warten auf Ihre Genehmigung`
+              }
+            </p>
           </CardHeader>
           <CardContent>
             {orders.filter(o => o.status === 'PENDING_APPROVAL').length === 0 ? (
@@ -284,28 +303,79 @@ export default function DashboardPage() {
                 {orders.filter(o => o.status === 'PENDING_APPROVAL').map((order) => (
                   <div
                     key={order.id}
-                    className="flex items-center justify-between p-4 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 transition"
+                    className="p-6 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 transition"
                   >
-                    <div className="flex-1 min-w-0 space-y-2">
-                      <div className="flex items-center gap-3 flex-wrap">
-                        <span className="font-semibold">#{order.orderNumber}</span>
-                        <Badge className="bg-orange-600 text-white">
-                          ⏳ Wartet auf Genehmigung
-                        </Badge>
-                      </div>
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 flex-wrap mb-2">
+                          <span className="font-bold text-lg">#{order.orderNumber}</span>
+                          <Badge className="bg-orange-600 text-white">
+                            ⏳ Wartet auf Genehmigung
+                          </Badge>
+                        </div>
 
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span>{order.user.name}</span>
-                        <span>•</span>
-                        <span>{order.user.department}</span>
-                        <span>•</span>
-                        <span>
-                          {order.items.reduce((sum, item) => sum + item.quantity, 0)} Artikel
-                        </span>
-                        <span>•</span>
-                        <span>{format(new Date(order.createdAt), 'MMM d, yyyy')}</span>
+                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                          <span className="font-medium">{order.user.name}</span>
+                          <span>•</span>
+                          <span>{order.user.department}</span>
+                          <span>•</span>
+                          <span>
+                            {order.items.reduce((sum, item) => sum + item.quantity, 0)} Artikel
+                          </span>
+                          <span>•</span>
+                          <span>{format(new Date(order.createdAt), 'MMM d, yyyy')}</span>
+                        </div>
                       </div>
                     </div>
+
+                    {/* Bestellte Artikel */}
+                    <div className="mb-4">
+                      <h4 className="font-semibold text-gray-800 mb-2">📦 Bestellte Artikel:</h4>
+                      <div className="space-y-2">
+                        {order.items.map((item, index) => (
+                          <div key={index} className="flex items-center justify-between bg-white p-3 rounded border">
+                            <div className="flex-1">
+                              <div className="font-medium">{item.product.name}</div>
+                              <div className="text-sm text-gray-600">
+                                Modell: {item.product.model} • Kategorie: {item.product.category}
+                              </div>
+                              <div className="text-sm text-gray-500 mt-1">
+                                {item.product.description}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-semibold">Menge: {item.quantity}</div>
+                              {item.product.requiresApproval && (
+                                <Badge variant="destructive" className="text-xs mt-1">
+                                  Genehmigung erforderlich
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Sonderwünsche und Begründung */}
+                    {(order.specialRequest || order.justification) && (
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-gray-800 mb-2">📝 Zusätzliche Informationen:</h4>
+                        <div className="space-y-2">
+                          {order.specialRequest && (
+                            <div className="bg-blue-50 p-3 rounded border border-blue-200">
+                              <div className="font-medium text-blue-800">Sonderwunsch:</div>
+                              <div className="text-blue-700">{order.specialRequest}</div>
+                            </div>
+                          )}
+                          {order.justification && (
+                            <div className="bg-green-50 p-3 rounded border border-green-200">
+                              <div className="font-medium text-green-800">Begründung:</div>
+                              <div className="text-green-700">{order.justification}</div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
                     <div className="flex items-center gap-2">
                       <Button
