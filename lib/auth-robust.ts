@@ -123,7 +123,7 @@ class RobustAuth {
         id: 'demo-user-2',
         email: 'it@bund.de',
         name: 'IT-Support',
-        role: 'IT_AGENT',
+        role: 'IT_SUPPORT',
         costCenter: 'IT-001',
         department: 'IT'
       },
@@ -131,7 +131,7 @@ class RobustAuth {
         id: 'demo-user-3',
         email: 'reception@bund.de',
         name: 'Empfangssupport',
-        role: 'RECEPTION_AGENT',
+        role: 'EMPFANG',
         costCenter: 'RCP-001',
         department: 'Empfang'
       },
