@@ -11,6 +11,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { toast } from 'sonner'
 import { ShoppingCart, Trash2, Plus, Minus, Package } from 'lucide-react'
 import Link from 'next/link'
+import { logger } from '@/lib/logger'
 
 export default function CartPage() {
   const router = useRouter()
@@ -23,6 +24,7 @@ export default function CartPage() {
   const handleCheckout = async () => {
     if (items.length === 0) {
       toast.error('Ihr Warenkorb ist leer')
+      logger.warn('Checkout attempted with empty cart')
       return
     }
 
@@ -30,10 +32,17 @@ export default function CartPage() {
     const needsApproval = items.some(item => item.requiresApproval)
     if (needsApproval && !justification.trim()) {
       toast.error('Begründung ist für Artikel mit Genehmigungspflicht erforderlich')
+      logger.warn('Checkout attempted without required justification', { needsApproval, hasJustification: !!justification.trim() })
       return
     }
 
     setIsSubmitting(true)
+    logger.info('Starting checkout process', { 
+      itemCount: items.length, 
+      needsApproval, 
+      hasSpecialRequest: !!specialRequest.trim(),
+      userId: session?.user?.id 
+    })
 
     try {
       const orderData = {
@@ -46,6 +55,8 @@ export default function CartPage() {
         justification: justification.trim() || undefined
       }
 
+      logger.debug('Sending order data', orderData)
+
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -54,15 +65,22 @@ export default function CartPage() {
 
       if (res.ok) {
         const order = await res.json()
+        logger.info('Order created successfully', { orderId: order.id, orderNumber: order.orderNumber })
         clearCart()
         toast.success('Bestellung erfolgreich eingereicht!')
         router.push(`/orders/${order.id}`)
       } else {
         const error = await res.json()
-        console.error('Order creation error:', error)
+        logger.error('Order creation failed', { 
+          status: res.status, 
+          error, 
+          orderData,
+          userId: session?.user?.id 
+        })
         
         // If products are missing, clear the cart and redirect to catalog
         if (error.error && error.error.includes('Produkte nicht gefunden')) {
+          logger.warn('Products not found, clearing cart', { missingProducts: error.missingProducts })
           clearCart()
           toast.error('Einige Produkte sind nicht mehr verfügbar. Warenkorb wurde geleert.')
           router.push('/catalog')
@@ -71,6 +89,7 @@ export default function CartPage() {
         }
       }
     } catch (error) {
+      logger.captureError(error instanceof Error ? error : new Error(String(error)), 'Checkout process')
       toast.error('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.')
     } finally {
       setIsSubmitting(false)

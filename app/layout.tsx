@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "@/components/session-provider";
+import "@/lib/logger"; // Initialize logger
 
 const inter = Inter({
   subsets: ["latin"],

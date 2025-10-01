@@ -125,6 +125,17 @@ export default function PortalLayout({
                     </Button>
                   </Link>
                 )}
+                {session?.user?.role === 'ADMIN' && (
+                  <Link href="/admin/logs">
+                    <Button
+                      variant={pathname === '/admin/logs' ? 'default' : 'ghost'}
+                      className="flex items-center space-x-2"
+                    >
+                      <span>📊</span>
+                      <span>Logs</span>
+                    </Button>
+                  </Link>
+                )}
               </nav>
             </div>
 
