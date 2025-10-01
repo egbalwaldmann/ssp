@@ -130,8 +130,7 @@ export default function CatalogPage() {
           <p className="mt-4 text-gray-600">Produkte werden geladen...</p>
         </div>
       </div>
-      </div>
-    </div>
+    )
   }
 
   return (
