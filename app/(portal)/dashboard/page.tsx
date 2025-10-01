@@ -225,60 +225,60 @@ export default function DashboardPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card>
+        <Card className="border-l-4 border-l-blue-500 bg-blue-50/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-700 font-medium">📦 Gesamtbestellungen</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
+                <p className="text-sm text-blue-700 font-medium">📦 Gesamtbestellungen</p>
+                <p className="text-2xl font-bold text-blue-900">{stats.total}</p>
               </div>
               <Package className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-gray-500 bg-gray-50/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-700 font-medium">🆕 Neu</p>
-                <p className="text-2xl font-bold">{stats.new}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.new}</p>
               </div>
               <Clock className="h-8 w-8 text-gray-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-yellow-500 bg-yellow-50/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-700 font-medium">🔍 In Prüfung</p>
-                <p className="text-2xl font-bold">{stats.inReview}</p>
+                <p className="text-sm text-yellow-700 font-medium">🔍 In Prüfung</p>
+                <p className="text-2xl font-bold text-yellow-900">{stats.inReview}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-yellow-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-orange-500 bg-orange-50/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-700 font-medium">⏳ Wartet auf Genehmigung</p>
-                <p className="text-2xl font-bold">{stats.pendingApproval}</p>
+                <p className="text-sm text-orange-700 font-medium">⏳ Wartet auf Genehmigung</p>
+                <p className="text-2xl font-bold text-orange-900">{stats.pendingApproval}</p>
               </div>
               <Pause className="h-8 w-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-green-500 bg-green-50/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-700 font-medium">✅ Abgeschlossen</p>
-                <p className="text-2xl font-bold">{stats.completed}</p>
+                <p className="text-sm text-green-700 font-medium">✅ Abgeschlossen</p>
+                <p className="text-2xl font-bold text-green-900">{stats.completed}</p>
               </div>
               <CheckCircle2 className="h-8 w-8 text-green-600" />
             </div>
@@ -288,15 +288,15 @@ export default function DashboardPage() {
 
       {/* Approval Section for Approvers */}
       {['APPROVER', 'ADMIN'].includes(session?.user?.role || '') && (
-        <Card className="border-2 border-orange-200 shadow-lg">
-          <CardHeader className="bg-orange-50 border-b border-orange-200">
-            <CardTitle className="flex items-center gap-2 text-xl">
+        <Card className="border-2 border-orange-300 shadow-lg bg-gradient-to-r from-orange-50 to-orange-100/50">
+          <CardHeader className="bg-gradient-to-r from-orange-100 to-orange-200 border-b border-orange-300">
+            <CardTitle className="flex items-center gap-2 text-xl text-orange-900">
               ⏳ Genehmigungen erforderlich
-              <Badge variant="destructive" className="ml-2 text-lg px-3 py-1">
+              <Badge className="ml-2 text-lg px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white border-orange-700">
                 {orders.filter(o => o.status === 'PENDING_APPROVAL').length}
               </Badge>
             </CardTitle>
-            <p className="text-orange-700 mt-2">
+            <p className="text-orange-800 mt-2 font-medium">
               {orders.filter(o => o.status === 'PENDING_APPROVAL').length === 0 
                 ? 'Alle Bestellungen wurden bearbeitet' 
                 : `${orders.filter(o => o.status === 'PENDING_APPROVAL').length} Bestellung(en) warten auf Ihre Genehmigung`
@@ -313,7 +313,7 @@ export default function DashboardPage() {
                 {orders.filter(o => o.status === 'PENDING_APPROVAL').map((order) => (
                   <div
                     key={order.id}
-                    className="p-6 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 transition"
+                    className="p-6 bg-white border-2 border-orange-200 rounded-lg hover:bg-orange-50 transition-all shadow-sm hover:shadow-md"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1 min-w-0">
@@ -343,21 +343,23 @@ export default function DashboardPage() {
                       <h4 className="font-semibold text-gray-800 mb-2">📦 Bestellte Artikel:</h4>
                       <div className="space-y-2">
                         {order.items.map((item, index) => (
-                          <div key={index} className="flex items-center justify-between bg-white p-3 rounded border">
+                          <div key={index} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg border border-gray-200 hover:bg-gray-100 transition">
                             <div className="flex-1">
-                              <div className="font-medium">{item.product.name}</div>
-                              <div className="text-sm text-gray-600">
-                                Modell: {item.product.model} • Kategorie: {item.product.category}
+                              <div className="font-semibold text-gray-900">{item.product.name}</div>
+                              <div className="text-sm text-gray-600 mt-1">
+                                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">Modell: {item.product.model}</span>
+                                <span className="mx-2">•</span>
+                                <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium">Kategorie: {item.product.category}</span>
                               </div>
-                              <div className="text-sm text-gray-500 mt-1">
+                              <div className="text-sm text-gray-500 mt-2 bg-white p-2 rounded border">
                                 {item.product.description}
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="font-semibold">Menge: {item.quantity}</div>
+                              <div className="font-bold text-lg text-blue-600">Menge: {item.quantity}</div>
                               {item.product.requiresApproval && (
-                                <Badge variant="destructive" className="text-xs mt-1">
-                                  Genehmigung erforderlich
+                                <Badge className="text-xs mt-2 bg-red-100 text-red-800 border-red-200">
+                                  ⚠️ Genehmigung erforderlich
                                 </Badge>
                               )}
                             </div>
@@ -372,26 +374,25 @@ export default function DashboardPage() {
                         <h4 className="font-semibold text-gray-800 mb-2">📝 Zusätzliche Informationen:</h4>
                         <div className="space-y-2">
                           {order.specialRequest && (
-                            <div className="bg-blue-50 p-3 rounded border border-blue-200">
-                              <div className="font-medium text-blue-800">Sonderwunsch:</div>
-                              <div className="text-blue-700">{order.specialRequest}</div>
+                            <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200 shadow-sm">
+                              <div className="font-semibold text-blue-900 mb-2">💡 Sonderwunsch:</div>
+                              <div className="text-blue-800 bg-white p-3 rounded border">{order.specialRequest}</div>
                             </div>
                           )}
                           {order.justification && (
-                            <div className="bg-green-50 p-3 rounded border border-green-200">
-                              <div className="font-medium text-green-800">Begründung:</div>
-                              <div className="text-green-700">{order.justification}</div>
+                            <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200 shadow-sm">
+                              <div className="font-semibold text-green-900 mb-2">📝 Begründung:</div>
+                              <div className="text-green-800 bg-white p-3 rounded border">{order.justification}</div>
                             </div>
                           )}
                         </div>
                       </div>
                     )}
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3 pt-4 border-t border-orange-200">
                       <Button
                         size="sm"
-                        variant="default"
-                        className="bg-green-600 hover:bg-green-700"
+                        className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all"
                         onClick={() => {
                           setSelectedOrder(order)
                           setApprovalAction('approve')
@@ -401,7 +402,7 @@ export default function DashboardPage() {
                       </Button>
                       <Button
                         size="sm"
-                        variant="destructive"
+                        className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all"
                         onClick={() => {
                           setSelectedOrder(order)
                           setApprovalAction('reject')
@@ -410,8 +411,9 @@ export default function DashboardPage() {
                         ❌ Ablehnen
                       </Button>
                       <Link href={`/orders/${order.id}`}>
-                        <Button size="sm" variant="ghost">
-                          <ChevronRight className="h-4 w-4" />
+                        <Button size="sm" className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-3 py-2 rounded-lg border border-gray-300 transition-all">
+                          <ChevronRight className="h-4 w-4 mr-1" />
+                          Details
                         </Button>
                       </Link>
                     </div>
@@ -424,9 +426,9 @@ export default function DashboardPage() {
       )}
 
       {/* Pending Orders */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ausstehende Bestellungen</CardTitle>
+      <Card className="border-l-4 border-l-blue-500">
+        <CardHeader className="bg-blue-50 border-b border-blue-200">
+          <CardTitle className="text-blue-900">📋 Ausstehende Bestellungen</CardTitle>
         </CardHeader>
         <CardContent>
           {pendingOrders.length === 0 ? (
@@ -438,7 +440,7 @@ export default function DashboardPage() {
               {pendingOrders.map((order) => (
                 <div
                   key={order.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                  className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all shadow-sm hover:shadow-md"
                 >
                   <div className="flex-1 min-w-0 space-y-2">
                     <div className="flex items-center gap-3 flex-wrap">
@@ -508,16 +510,16 @@ export default function DashboardPage() {
       </Card>
 
       {/* All Orders Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Alle Bestellungen</CardTitle>
+      <Card className="border-l-4 border-l-gray-500">
+        <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <CardTitle className="text-gray-900">📊 Alle Bestellungen</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {orders.map((order) => (
               <div
                 key={order.id}
-                className="flex items-center justify-between p-3 border-b last:border-b-0 hover:bg-gray-50"
+                className="flex items-center justify-between p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3">
