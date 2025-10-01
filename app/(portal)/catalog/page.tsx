@@ -128,20 +128,10 @@ export default function CatalogPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">🛍️ Produktkatalog</h1>
-            <p className="text-gray-700 mt-2 font-medium">
-              IT-Equipment und Büromaterial durchsuchen und bestellen
-            </p>
-          </div>
-          
-          {/* Fallback Status Indicator */}
-          <div className="flex items-center space-x-2 text-sm bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
-            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-            <span className="text-yellow-700 font-medium">Demo-Produkte</span>
-          </div>
-        </div>
+        <h1 className="text-3xl font-bold text-gray-900">🛍️ Produktkatalog</h1>
+        <p className="text-gray-700 mt-2 font-medium">
+          IT-Equipment und Büromaterial durchsuchen und bestellen
+        </p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4">
@@ -157,12 +147,12 @@ export default function CatalogPage() {
           />
         </div>
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-full md:w-[200px]">
-            <SelectValue placeholder="Kategorie" />
+          <SelectTrigger className="w-full md:w-[250px] bg-white border-2 border-gray-300 font-semibold text-gray-900">
+            <SelectValue placeholder="📂 Alle Kategorien" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white">
             {CATEGORIES.map((cat) => (
-              <SelectItem key={cat.value} value={cat.value}>
+              <SelectItem key={cat.value} value={cat.value} className="font-medium text-gray-800">
                 {cat.label}
               </SelectItem>
             ))}
@@ -185,7 +175,7 @@ export default function CatalogPage() {
           {filteredProducts.map((product) => (
             <Card key={product.id} className="flex flex-col hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="aspect-square bg-gray-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
                   {product.imageUrl && !imageFail[product.id] ? (
                     <img
                       src={product.imageUrl}
@@ -194,8 +184,8 @@ export default function CatalogPage() {
                       onError={() => setImageFail((prev) => ({ ...prev, [product.id]: true }))}
                     />
                   ) : (
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="text-6xl">
+                    <div className="flex flex-col items-center justify-center h-full w-full">
+                      <div className="text-9xl">
                         {getProductEmoji(product.category)}
                       </div>
                     </div>
