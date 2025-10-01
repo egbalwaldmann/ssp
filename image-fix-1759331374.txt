@@ -1,0 +1,2 @@
+# 🖼️ Fix product image 404 errors - Wed Oct  1 17:09:34 CEST 2025
+Removed broken imageUrl references from database
