@@ -183,12 +183,9 @@ export default function CatalogPage() {
                     />
                   ) : (
                     <div className="flex flex-col items-center justify-center">
-                      <div className="text-6xl mb-2">
+                      <div className="text-6xl">
                         {getProductEmoji(product.category)}
                       </div>
-                      <p className="text-gray-600 text-sm mt-2 text-center px-4 font-medium">
-                        {product.name}
-                      </p>
                     </div>
                   )}
                 </div>
