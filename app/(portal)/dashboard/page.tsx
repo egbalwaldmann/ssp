@@ -79,7 +79,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      const isAgent = session?.user?.role && ['IT_AGENT', 'RECEPTION_AGENT', 'APPROVER', 'ADMIN'].includes(session.user.role)
+      const isAgent = session?.user?.role && ['IT_SUPPORT', 'EMPFANG', 'APPROVER', 'ADMIN'].includes(session.user.role)
       
       if (!isAgent) {
         toast.error('Zugriff verweigert. Nur für Agenten und Genehmiger.')

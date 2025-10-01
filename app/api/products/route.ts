@@ -57,7 +57,8 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session || !['IT_SUPPORT', 'EMPFANG', 'ADMIN'].includes(session.user?.role || '')) {
+    // Allow all roles except REQUESTER to create products
+    if (!session || session.user?.role === 'REQUESTER') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -81,9 +82,14 @@ export async function POST(request: NextRequest) {
 
     const supabase = createClient(supabaseUrl, supabaseKey)
 
+    // Generate a unique ID for the product
+    const productId = `product_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    const now = new Date().toISOString()
+    
     const { data: product, error } = await supabase
       .from('Product')
       .insert({
+        id: productId,
         name,
         description: description || null,
         category,
@@ -91,7 +97,9 @@ export async function POST(request: NextRequest) {
         price: price || null,
         requiresApproval: requiresApproval || false,
         responsibleRole: responsibleRole || (session.user?.role === 'IT_SUPPORT' ? 'IT_SUPPORT' : 'EMPFANG'),
-        isActive: true
+        isActive: true,
+        createdAt: now,
+        updatedAt: now
       })
       .select()
       .single()

@@ -150,7 +150,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     )
   }
 
-  const isAgent = session?.user?.role && ['IT_AGENT', 'RECEPTION_AGENT', 'ADMIN'].includes(session.user.role)
+  const isAgent = session?.user?.role && ['IT_SUPPORT', 'EMPFANG', 'APPROVER', 'ADMIN'].includes(session.user.role)
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">

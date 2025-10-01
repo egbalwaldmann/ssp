@@ -33,31 +33,60 @@ export async function POST(
 
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Find pending approval for this order
-    const { data: approval, error: approvalError } = await supabase
+    // First, check if the order exists and its status
+    const { data: order, error: orderError } = await supabase
+      .from('Order')
+      .select('id, status, orderNumber')
+      .eq('id', id)
+      .single()
+
+    if (orderError || !order) {
+      return NextResponse.json(
+        { error: 'Bestellung nicht gefunden' },
+        { status: 404 }
+      )
+    }
+
+    console.log('🔍 Checking approval for order:', order.orderNumber, 'Status:', order.status)
+
+    // Find pending approval for this order (any approver can approve)
+    const { data: approvals, error: approvalError } = await supabase
       .from('Approval')
       .select('*')
       .eq('orderId', id)
-      .eq('approverId', session.user.id)
       .eq('status', 'PENDING')
-      .single()
 
-    if (approvalError || !approval) {
+    console.log('🔍 Approval query result:', { approvals, approvalError, orderId: id })
+
+    if (approvalError) {
+      console.error('❌ Error fetching approvals:', approvalError)
+      return NextResponse.json(
+        { error: 'Fehler beim Laden der Genehmigungen' },
+        { status: 500 }
+      )
+    }
+
+    if (!approvals || approvals.length === 0) {
+      console.log('❌ No pending approvals found for order:', id)
       return NextResponse.json(
         { error: 'Keine ausstehende Genehmigung gefunden' },
         { status: 404 }
       )
     }
 
+    // Use the first pending approval
+    const approval = approvals[0]
+
     const now = new Date().toISOString()
 
-    // Update approval
+    // Update approval with the actual approver who made the decision
     const { data: updatedApproval, error: updateError } = await supabase
       .from('Approval')
       .update({
         status: approved ? 'APPROVED' : 'REJECTED',
         comment: comment || null,
-        decidedAt: now
+        decidedAt: now,
+        approverId: session.user.id  // Update to reflect who actually approved
       })
       .eq('id', approval.id)
       .select(`

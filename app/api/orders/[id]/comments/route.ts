@@ -47,7 +47,7 @@ export async function POST(
     }
 
     // Only agents can create internal comments
-    const canCreateInternalComment = ['IT_AGENT', 'RECEPTION_AGENT', 'ADMIN'].includes(
+    const canCreateInternalComment = ['IT_SUPPORT', 'EMPFANG', 'APPROVER', 'ADMIN'].includes(
       session.user.role
     )
 

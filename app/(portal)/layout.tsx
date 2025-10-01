@@ -136,15 +136,6 @@ export default function PortalLayout({
                         <span>Nutzer</span>
                       </Button>
                     </Link>
-                    <Link href="/admin/products">
-                      <Button
-                        variant={pathname === '/admin/products' ? 'default' : 'ghost'}
-                        className="flex items-center space-x-2"
-                      >
-                        <span>📦</span>
-                        <span>Produkte</span>
-                      </Button>
-                    </Link>
                     <Link href="/admin/logs">
                       <Button
                         variant={pathname === '/admin/logs' ? 'default' : 'ghost'}
@@ -156,14 +147,14 @@ export default function PortalLayout({
                     </Link>
                   </>
                 )}
-                {['IT_SUPPORT', 'EMPFANG'].includes(session?.user?.role || '') && (
-                  <Link href="/admin/create-product">
+                {session?.user?.role && session.user.role !== 'REQUESTER' && (
+                  <Link href="/admin/products">
                     <Button
-                      variant={pathname === '/admin/create-product' ? 'default' : 'ghost'}
+                      variant={pathname === '/admin/products' ? 'default' : 'ghost'}
                       className="flex items-center space-x-2"
                     >
-                      <span>➕</span>
-                      <span>Produkt hinzufügen</span>
+                      <span>📦</span>
+                      <span>Produkte verwalten</span>
                     </Button>
                   </Link>
                 )}

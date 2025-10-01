@@ -201,24 +201,29 @@ export async function POST(request: Request) {
     }
 
     // Create approval if needed
+    console.log('🔍 Order needs approval:', needsApproval, 'Order ID:', order.id)
     if (needsApproval) {
-      // Find an approver - get first user with APPROVER role
+      // Check if there are any approvers in the system
       const { data: approvers, error: approverError } = await supabase
         .from('User')
-        .select('id')
+        .select('id, name, email')
         .eq('role', 'APPROVER')
         .limit(1)
+      
+      console.log('🔍 Found approvers:', approvers, 'Error:', approverError)
       
       if (!approverError && approvers && approvers.length > 0) {
         const approvalId = `approval_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
         
+        console.log('🔍 Creating approval with ID:', approvalId, 'for order:', order.id, 'assigned to:', approvers[0].id)
+        
+        // Create approval record - any APPROVER can approve this order
         const { error: approvalError } = await supabase
           .from('Approval')
           .insert({
             id: approvalId,
             orderId: order.id,
-            approverId: approvers[0].id,
-            level: 1,
+            approverId: approvers[0].id, // Initial assignment, but any approver can take over
             status: 'PENDING',
             createdAt: now
           })
@@ -227,9 +232,13 @@ export async function POST(request: Request) {
           console.error('❌ Error creating approval:', approvalError)
           // Don't fail the request, order is already created
         } else {
-          console.log('✅ Created approval for order:', order.orderNumber)
+          console.log('✅ Created approval for order:', order.orderNumber, 'with ID:', approvalId)
         }
+      } else {
+        console.warn('⚠️ No approvers found in system - order created without approval workflow')
       }
+    } else {
+      console.log('ℹ️ Order does not need approval')
     }
 
     // Create business card order if provided

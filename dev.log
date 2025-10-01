@@ -8,9 +8,276 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 766ms
+ ✓ Ready in 808ms
  ⚠ Webpack is configured while Turbopack is not, which may cause problems.
  ⚠ See instructions if you need to configure Turbopack:
   https://nextjs.org/docs/app/api-reference/next-config-js/turbopack
 
+ ○ Compiling / ...
+ ✓ Compiled / in 1327ms
+ GET / 307 in 1547ms
+ ✓ Compiled /login in 210ms
+ GET /login 200 in 274ms
+ ✓ Compiled /api/auth/[...nextauth] in 195ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 376ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+⚠️ [auth][logger][warn] DEBUG_ENABLED
+🔄 [auth][event] session updated: manager@bund.de
+ GET /api/auth/session 200 in 934ms
+ GET /api/auth/providers 200 in 235ms
+ GET /api/auth/csrf 200 in 230ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+🔐 Authentication attempt for: user@bund.de
+🔄 Database Health Check - Attempt 1/3
+🔄 User Lookup - Attempt 1/3
+🔍 Looking up user: user@bund.de
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+✅ User found: Test User (REQUESTER)
+✅ [auth][event] signIn successful: user@bund.de
+ POST /api/auth/callback/credentials 200 in 668ms
+🔄 [auth][event] session updated: user@bund.de
+ GET /api/auth/session 200 in 234ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+ ✓ Compiled /catalog in 353ms
+ GET /catalog 200 in 382ms
+ GET /catalog 200 in 46ms
+ ✓ Compiled /api/products in 146ms
+🛍️ Fetching products with filters: { category: null, search: null }
+✅ Fetched 15 products from Supabase
+📦 Returning 15 products
+ GET /api/products 200 in 690ms
+🛍️ Fetching products with filters: { category: null, search: null }
+✅ Fetched 15 products from Supabase
+📦 Returning 15 products
+ GET /api/products 200 in 338ms
+ GET /api/auth/csrf 200 in 238ms
+👋 [auth][event] signOut: undefined
+ POST /api/auth/signout 200 in 228ms
+ GET /login?_=1759355418839 200 in 58ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+ GET /api/auth/session?_=1759355419251 200 in 234ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+ ✓ Compiled /_not-found/page in 143ms
+ GET /sw.js?1758568088127 404 in 197ms
+ GET /api/auth/providers?_=1759355421187 200 in 228ms
+ GET /api/auth/csrf?_=1759355421418 200 in 226ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+ GET /api/auth/callback/credentials?_=1759355421652 500 in 229ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+ GET /api/auth/providers?_=1759355427587 200 in 236ms
+ GET /api/auth/csrf?_=1759355427837 200 in 229ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+ GET /api/auth/callback/credentials?_=1759355428070 500 in 229ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+ GET /login 200 in 79ms
+ GET /api/auth/session 200 in 230ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 228ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+ GET /api/auth/providers 200 in 237ms
+ GET /api/auth/csrf 200 in 226ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+🔐 Authentication attempt for: manager@bund.de
+🔄 Database Health Check - Attempt 1/3
+🔄 User Lookup - Attempt 1/3
+🔍 Looking up user: manager@bund.de
+✅ User found: Department Manager (APPROVER)
+✅ [auth][event] signIn successful: manager@bund.de
+ POST /api/auth/callback/credentials 200 in 324ms
+🔄 [auth][event] session updated: manager@bund.de
+ GET /api/auth/session 200 in 228ms
+🔐 Initializing Robust Authentication System...
+Environment variables status:
+DATABASE_URL: SET
+NEXTAUTH_URL: http://localhost:3000
+NEXTAUTH_SECRET: SET
+AUTH_TRUST_HOST: true
+NEXTAUTH_DEBUG: true
+NEXTAUTH_CSRF_CHECK_ORIGIN: false
+NEXTAUTH_URL_INTERNAL: https://weilesgeht.de
+NEXT_PUBLIC_SUPABASE_URL: SET
+NEXT_PUBLIC_SUPABASE_ANON_KEY: SET
+✅ Environment validation passed
+ GET /catalog 200 in 32ms
+ GET /catalog 200 in 55ms
+🛍️ Fetching products with filters: { category: null, search: null }
+✅ Fetched 15 products from Supabase
+📦 Returning 15 products
+ GET /api/products 200 in 336ms
+🛍️ Fetching products with filters: { category: null, search: null }
+✅ Fetched 15 products from Supabase
+📦 Returning 15 products
+ GET /api/products 200 in 287ms
+ ✓ Compiled /dashboard in 278ms
+ GET /dashboard 200 in 303ms
+ ✓ Compiled /api/orders in 107ms
+📋 Fetching orders for user: manager@bund.de
+✅ Fetched 23 orders from Supabase
+ GET /api/orders 200 in 485ms
+📋 Fetching orders for user: manager@bund.de
+✅ Fetched 23 orders from Supabase
+ GET /api/orders 200 in 293ms
+ ✓ Compiled /api/orders/[id]/approve in 104ms
+ POST /api/orders/order_1759354942883_euh92izl0/approve 404 in 897ms
+ GET /sw.js?1758568088127 404 in 49ms
+ ✓ Compiled /orders in 207ms
+ GET /orders 200 in 235ms
+📋 Fetching orders for user: manager@bund.de
+✅ Fetched 23 orders from Supabase
+ GET /api/orders 200 in 830ms
+📋 Fetching orders for user: manager@bund.de
+✅ Fetched 23 orders from Supabase
+ GET /api/orders 200 in 396ms
+ GET /dashboard 200 in 37ms
+📋 Fetching orders for user: manager@bund.de
+✅ Fetched 23 orders from Supabase
+ GET /api/orders 200 in 384ms
+📋 Fetching orders for user: manager@bund.de
+✅ Fetched 23 orders from Supabase
+ GET /api/orders 200 in 418ms
+ POST /api/orders/order_1759354942883_euh92izl0/approve 404 in 409ms
+ GET /sw.js?1758568088127 404 in 45ms
 [?25h

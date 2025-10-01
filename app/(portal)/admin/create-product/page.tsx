@@ -41,9 +41,9 @@ export default function CreateProductPage() {
     requiresApproval: false
   })
 
-  // Check if user has permission
+  // Check if user has permission (all roles except REQUESTER)
   useEffect(() => {
-    if (!session || !['IT_SUPPORT', 'EMPFANG', 'ADMIN'].includes(session.user?.role || '')) {
+    if (!session || session.user?.role === 'REQUESTER') {
       router.push('/catalog')
     }
   }, [session, router])
@@ -67,7 +67,8 @@ export default function CreateProductPage() {
         body: JSON.stringify({
           ...product,
           price: product.price ? parseFloat(product.price) : null,
-          responsibleRole: session?.user?.role === 'IT_SUPPORT' ? 'IT_SUPPORT' : 'EMPFANG'
+          responsibleRole: session?.user?.role === 'IT_SUPPORT' ? 'IT_SUPPORT' : 
+                          session?.user?.role === 'APPROVER' ? 'EMPFANG' : 'EMPFANG'
         }),
       })
 
@@ -89,6 +90,7 @@ export default function CreateProductPage() {
   const getResponsibleRole = () => {
     if (session?.user?.role === 'IT_SUPPORT') return '💻 IT-Support'
     if (session?.user?.role === 'EMPFANG') return '🏢 Empfang'
+    if (session?.user?.role === 'APPROVER') return '👔 Führungskraft'
     return '⚙️ Admin'
   }
 
