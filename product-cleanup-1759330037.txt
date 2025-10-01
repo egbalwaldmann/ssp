@@ -1,0 +1,2 @@
+# 🧹 Product Cleanup Complete - Wed Oct  1 16:47:17 CEST 2025
+Removed 18 duplicate English products, kept 12 German products
