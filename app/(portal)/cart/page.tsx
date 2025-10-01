@@ -26,6 +26,13 @@ export default function CartPage() {
       return
     }
 
+    // Check if justification is required for items that need approval
+    const needsApproval = items.some(item => item.requiresApproval)
+    if (needsApproval && !justification.trim()) {
+      toast.error('Begründung ist für Artikel mit Genehmigungspflicht erforderlich')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -34,6 +41,7 @@ export default function CartPage() {
           productId: item.id,
           quantity: item.quantity
         })),
+        costCenter: 'CC-001', // Set default cost center
         specialRequest: specialRequest.trim() || undefined,
         justification: justification.trim() || undefined
       }
