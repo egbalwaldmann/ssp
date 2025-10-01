@@ -17,6 +17,43 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from 'sonner'
 import { Search, ShoppingCart, Package } from 'lucide-react'
 
+// Produkt-spezifische Emojis
+const getProductEmoji = (category: string, name: string): string => {
+  const categoryEmojis: Record<string, string> = {
+    'WEBCAM': '📹',
+    'HEADSET': '🎧',
+    'MOUSE': '🖱️',
+    'KEYBOARD': '⌨️',
+    'PRINTER_TONER': '🖨️',
+    'SPEAKERS': '🔊',
+    'ADAPTER': '🔌',
+    'CABLE': '🔗',
+    'WHITEBOARD': '📋',
+    'PINBOARD': '📌',
+    'FLIPCHART': '📊',
+    'CHAIR': '🪑',
+    'BUSINESS_PRINTS': '📄',
+    'OFFICE_MISC': '📦'
+  }
+  
+  // Spezielle Emojis für bestimmte Produkte
+  if (name.toLowerCase().includes('webcam')) return '📹'
+  if (name.toLowerCase().includes('headset') || name.toLowerCase().includes('jabra')) return '🎧'
+  if (name.toLowerCase().includes('mouse') || name.toLowerCase().includes('maus')) return '🖱️'
+  if (name.toLowerCase().includes('keyboard') || name.toLowerCase().includes('tastatur')) return '⌨️'
+  if (name.toLowerCase().includes('toner')) return '🖨️'
+  if (name.toLowerCase().includes('speaker') || name.toLowerCase().includes('lautsprecher')) return '🔊'
+  if (name.toLowerCase().includes('adapter')) return '🔌'
+  if (name.toLowerCase().includes('cable') || name.toLowerCase().includes('kabel')) return '🔗'
+  if (name.toLowerCase().includes('whiteboard')) return '📋'
+  if (name.toLowerCase().includes('pinboard') || name.toLowerCase().includes('pinnwand')) return '📌'
+  if (name.toLowerCase().includes('flipchart')) return '📊'
+  if (name.toLowerCase().includes('chair') || name.toLowerCase().includes('stuhl')) return '🪑'
+  if (name.toLowerCase().includes('business') || name.toLowerCase().includes('geschäft')) return '📄'
+  
+  return categoryEmojis[category] || '📦'
+}
+
 const CATEGORIES = [
   { value: 'ALL', label: 'Alle Produkte' },
   { value: 'WEBCAM', label: 'Webcams' },
@@ -106,8 +143,8 @@ export default function CatalogPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Produktkatalog</h1>
-        <p className="text-gray-600 mt-2">
+        <h1 className="text-3xl font-bold text-gray-900">🛍️ Produktkatalog</h1>
+        <p className="text-gray-700 mt-2 font-medium">
           IT-Equipment und Büromaterial durchsuchen und bestellen
         </p>
       </div>
@@ -161,38 +198,40 @@ export default function CatalogPage() {
                     />
                   ) : (
                     <div className="flex flex-col items-center justify-center">
-                      <Package className="h-16 w-16 text-gray-300" />
-                      <p className="text-gray-400 text-sm mt-2 text-center px-4">
+                      <div className="text-6xl mb-2">
+                        {getProductEmoji(product.category, product.name)}
+                      </div>
+                      <p className="text-gray-600 text-sm mt-2 text-center px-4 font-medium">
                         {product.name}
                       </p>
                     </div>
                   )}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base line-clamp-2 text-gray-900">{product.name}</CardTitle>
+                    <CardTitle className="text-lg font-bold line-clamp-2 text-gray-900 leading-tight">{product.name}</CardTitle>
                     {product.requiresApproval && (
-                      <Badge variant="secondary" className="text-xs shrink-0">
-                        Genehmigung
+                      <Badge variant="secondary" className="text-xs shrink-0 bg-orange-100 text-orange-800 border-orange-200">
+                        ⚠️ Genehmigung
                       </Badge>
                     )}
                   </div>
                   {product.model && (
-                    <p className="text-sm text-gray-600">Modell: {product.model}</p>
+                    <p className="text-sm text-gray-700 font-medium">Modell: {product.model}</p>
                   )}
                 </div>
               </CardHeader>
               <CardContent className="flex-1">
                 {product.description && (
-                  <p className="text-sm text-gray-700 line-clamp-3">
+                  <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
                     {product.description}
                   </p>
                 )}
               </CardContent>
-              <CardFooter>
+              <CardFooter className="pt-4">
                 <Button
                   onClick={() => handleAddToCart(product)}
-                  className="w-full"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   In Warenkorb

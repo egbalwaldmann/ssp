@@ -87,8 +87,8 @@ export default function CartPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Warenkorb</h1>
-        <p className="text-gray-600 mt-2">Überprüfen Sie Ihre Artikel und reichen Sie Ihre Bestellung ein</p>
+        <h1 className="text-3xl font-bold text-gray-900">🛒 Warenkorb</h1>
+        <p className="text-gray-700 mt-2 font-medium">Überprüfen Sie Ihre Artikel und reichen Sie Ihre Bestellung ein</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
@@ -165,26 +165,26 @@ export default function CartPage() {
 
         <div className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Bestellübersicht</CardTitle>
+            <CardHeader className="bg-blue-50 border-b border-blue-200">
+              <CardTitle className="text-xl font-bold text-blue-900">📋 Bestellübersicht</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Gesamtanzahl Artikel:</span>
-                  <span className="font-medium">
+                  <span className="text-gray-700 font-medium">Gesamtanzahl Artikel:</span>
+                  <span className="font-bold text-blue-600">
                     {items.reduce((sum, item) => sum + item.quantity, 0)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Kostenstelle:</span>
-                  <span className="font-medium">{session?.user.costCenter}</span>
+                  <span className="text-gray-700 font-medium">Kostenstelle:</span>
+                  <span className="font-bold text-blue-600">{session?.user.costCenter}</span>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="special-request" className="text-sm font-medium">
-                  Sonderwünsche (Optional)
+                <label htmlFor="special-request" className="text-sm font-semibold text-gray-800">
+                  💬 Sonderwünsche (Optional)
                 </label>
                 <Textarea
                   id="special-request"
@@ -202,8 +202,8 @@ export default function CartPage() {
 
               {(hasItemsRequiringApproval || specialRequest.trim()) && (
                 <div className="space-y-2">
-                  <label htmlFor="justification" className="text-sm font-medium">
-                    Begründung <span className="text-red-500">*</span>
+                  <label htmlFor="justification" className="text-sm font-semibold text-gray-800">
+                    📝 Begründung <span className="text-red-500">*</span>
                   </label>
                   <Textarea
                     id="justification"
@@ -229,7 +229,7 @@ export default function CartPage() {
                     justification.trim().length === 0)
                 }
               >
-                {isSubmitting ? 'Wird eingereicht...' : 'Bestellung einreichen'}
+                {isSubmitting ? '⏳ Wird eingereicht...' : '✅ Bestellung einreichen'}
               </Button>
             </CardFooter>
           </Card>
