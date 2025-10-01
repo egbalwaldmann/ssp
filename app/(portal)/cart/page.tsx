@@ -170,8 +170,10 @@ export default function CartPage() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 space-y-4">
-          {items.map((item) => (
+        <div className="md:col-span-2 space-y-6">
+          {/* Cart Items */}
+          <div className="space-y-4">
+            {items.map((item) => (
             <Card key={item.id}>
               <CardContent className="p-6">
                 <div className="flex gap-4">
@@ -240,7 +242,183 @@ export default function CartPage() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            ))}
+          </div>
+
+          {/* Business Cards Form - Directly under cart items */}
+          {hasBusinessCards && (
+            <Card className="border-2 border-blue-400 bg-gradient-to-br from-blue-50 via-white to-blue-50 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white border-b-0">
+                <CardTitle className="text-2xl font-bold flex items-center gap-3">
+                  🪪 Visitenkarten-Informationen
+                </CardTitle>
+                <p className="text-blue-100 mt-2 text-base">
+                  Ihre Angaben für die professionellen Visitenkarten im Corporate Design
+                </p>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="grid lg:grid-cols-2 gap-8">
+                  {/* Left: Form */}
+                  <div className="space-y-6">
+                    <div>
+                      <label htmlFor="bc-fullName" className="text-base font-bold text-gray-900 block mb-3">
+                        👤 Vollständiger Name <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        id="bc-fullName"
+                        name="bc-fullName"
+                        value={businessCardDetails.fullName}
+                        onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, fullName: e.target.value })}
+                        placeholder="Max Mustermann"
+                        className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="bc-jobTitle" className="text-base font-bold text-gray-900 block mb-3">
+                        💼 Berufsbezeichnung <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        id="bc-jobTitle"
+                        name="bc-jobTitle"
+                        value={businessCardDetails.jobTitle}
+                        onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, jobTitle: e.target.value })}
+                        placeholder="z.B. Referent, Sachbearbeiter, Abteilungsleiter"
+                        className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="bc-department" className="text-base font-bold text-gray-900 block mb-3">
+                        🏢 Abteilung <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        id="bc-department"
+                        name="bc-department"
+                        value={businessCardDetails.department}
+                        onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, department: e.target.value })}
+                        placeholder="z.B. Marketing, IT, Verwaltung"
+                        className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="bc-email" className="text-base font-bold text-gray-900 block mb-3">
+                        ✉️ E-Mail-Adresse <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        id="bc-email"
+                        name="bc-email"
+                        type="email"
+                        value={businessCardDetails.email}
+                        onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, email: e.target.value })}
+                        placeholder="max.mustermann@bund.de"
+                        className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="bc-phone" className="text-base font-bold text-gray-900 block mb-3">
+                          📞 Festnetz
+                        </label>
+                        <Input
+                          id="bc-phone"
+                          name="bc-phone"
+                          type="tel"
+                          value={businessCardDetails.phone}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, phone: e.target.value })}
+                          placeholder="+49 30 123-456"
+                          className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="bc-mobile" className="text-base font-bold text-gray-900 block mb-3">
+                          📱 Mobil
+                        </label>
+                        <Input
+                          id="bc-mobile"
+                          name="bc-mobile"
+                          type="tel"
+                          value={businessCardDetails.mobile}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, mobile: e.target.value })}
+                          placeholder="+49 170 123456"
+                          className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="bc-quantity" className="text-base font-bold text-gray-900 block mb-3">
+                        📦 Anzahl Visitenkarten
+                      </label>
+                      <Input
+                        id="bc-quantity"
+                        name="bc-quantity"
+                        type="number"
+                        min="50"
+                        max="1000"
+                        step="50"
+                        value={businessCardDetails.quantity}
+                        onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, quantity: e.target.value })}
+                        className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
+                      />
+                      <p className="text-sm text-gray-600 mt-2">
+                        Standard: 250 Stück (Min: 50, Max: 1000)
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right: Live Preview */}
+                  <div>
+                    <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-6">
+                      <p className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">👁️ Live-Vorschau</p>
+                      
+                      {/* Business Card Preview */}
+                      <div className="bg-white rounded-xl shadow-2xl p-6 space-y-3 border-l-8 border-blue-600">
+                        <div className="space-y-2">
+                          <h2 className="font-bold text-2xl text-gray-900">
+                            {businessCardDetails.fullName || 'Ihr Name'}
+                          </h2>
+                          <p className="text-lg text-gray-700 font-medium">
+                            {businessCardDetails.jobTitle || 'Ihre Berufsbezeichnung'}
+                          </p>
+                          <p className="text-base text-gray-600">
+                            {businessCardDetails.department || 'Ihre Abteilung'}
+                          </p>
+                        </div>
+
+                        <div className="border-t-2 border-gray-200 pt-3 space-y-2 text-sm">
+                          <p className="text-gray-700 font-medium">
+                            ✉️ {businessCardDetails.email || 'ihre.email@bund.de'}
+                          </p>
+                          {businessCardDetails.phone && (
+                            <p className="text-gray-700">
+                              📞 {businessCardDetails.phone}
+                            </p>
+                          )}
+                          {businessCardDetails.mobile && (
+                            <p className="text-gray-700">
+                              📱 {businessCardDetails.mobile}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="pt-3 text-xs text-gray-400 border-t">
+                          <p className="font-semibold">Bundesrepublik Deutschland</p>
+                          <p>Corporate Design 2025</p>
+                        </div>
+                      </div>
+                      
+                      <p className="text-xs text-center text-gray-600 mt-4">
+                        Vereinfachte Vorschau - Finales Design professionell gestaltet
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         <div className="space-y-4">
@@ -280,208 +458,6 @@ export default function CartPage() {
                   </p>
                 )}
               </div>
-
-              {hasBusinessCards && (
-                <div className="col-span-full">
-                  <Card className="border-2 border-blue-400 bg-gradient-to-br from-blue-50 via-white to-blue-50 shadow-lg">
-                    <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white border-b-0">
-                      <CardTitle className="text-2xl font-bold flex items-center gap-3">
-                        🪪 Visitenkarten-Informationen
-                      </CardTitle>
-                      <p className="text-blue-100 mt-2 text-base">
-                        Ihre Angaben für die professionellen Visitenkarten im Corporate Design
-                      </p>
-                    </CardHeader>
-                    <CardContent className="p-8">
-                      <div className="grid lg:grid-cols-2 gap-8">
-                        {/* Left: Form */}
-                        <div className="space-y-6">
-                          <div>
-                            <label htmlFor="bc-fullName" className="text-base font-bold text-gray-900 block mb-3">
-                              👤 Vollständiger Name <span className="text-red-500">*</span>
-                            </label>
-                            <Input
-                              id="bc-fullName"
-                              name="bc-fullName"
-                              value={businessCardDetails.fullName}
-                              onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, fullName: e.target.value })}
-                              placeholder="Max Mustermann"
-                              className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
-                            />
-                          </div>
-                          
-                          <div>
-                            <label htmlFor="bc-jobTitle" className="text-base font-bold text-gray-900 block mb-3">
-                              💼 Berufsbezeichnung <span className="text-red-500">*</span>
-                            </label>
-                            <Input
-                              id="bc-jobTitle"
-                              name="bc-jobTitle"
-                              value={businessCardDetails.jobTitle}
-                              onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, jobTitle: e.target.value })}
-                              placeholder="z.B. Referent, Sachbearbeiter, Abteilungsleiter"
-                              className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
-                            />
-                          </div>
-                          
-                          <div>
-                            <label htmlFor="bc-department" className="text-base font-bold text-gray-900 block mb-3">
-                              🏢 Abteilung <span className="text-red-500">*</span>
-                            </label>
-                            <Input
-                              id="bc-department"
-                              name="bc-department"
-                              value={businessCardDetails.department}
-                              onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, department: e.target.value })}
-                              placeholder="z.B. Marketing, IT, Verwaltung"
-                              className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
-                            />
-                          </div>
-                          
-                          <div>
-                            <label htmlFor="bc-email" className="text-base font-bold text-gray-900 block mb-3">
-                              ✉️ E-Mail-Adresse <span className="text-red-500">*</span>
-                            </label>
-                            <Input
-                              id="bc-email"
-                              name="bc-email"
-                              type="email"
-                              value={businessCardDetails.email}
-                              onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, email: e.target.value })}
-                              placeholder="max.mustermann@bund.de"
-                              className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
-                            />
-                          </div>
-                          
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label htmlFor="bc-phone" className="text-base font-bold text-gray-900 block mb-3">
-                                📞 Festnetz
-                              </label>
-                              <Input
-                                id="bc-phone"
-                                name="bc-phone"
-                                type="tel"
-                                value={businessCardDetails.phone}
-                                onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, phone: e.target.value })}
-                                placeholder="+49 30 123-456"
-                                className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
-                              />
-                            </div>
-                            <div>
-                              <label htmlFor="bc-mobile" className="text-base font-bold text-gray-900 block mb-3">
-                                📱 Mobil
-                              </label>
-                              <Input
-                                id="bc-mobile"
-                                name="bc-mobile"
-                                type="tel"
-                                value={businessCardDetails.mobile}
-                                onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, mobile: e.target.value })}
-                                placeholder="+49 170 123456"
-                                className="text-lg py-6 border-2 border-2 border-gray-300 focus:border-blue-500"
-                              />
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <label htmlFor="bc-quantity" className="text-base font-bold text-gray-900 block mb-3">
-                              📦 Anzahl Visitenkarten
-                            </label>
-                            <Input
-                              id="bc-quantity"
-                              name="bc-quantity"
-                              type="number"
-                              min="50"
-                              max="1000"
-                              step="50"
-                              value={businessCardDetails.quantity}
-                              onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, quantity: e.target.value })}
-                              className="text-lg py-6 border-2 border-gray-300 focus:border-blue-500"
-                            />
-                            <p className="text-sm text-gray-600 mt-2">
-                              Standard: 250 Stück (Min: 50, Max: 1000)
-                            </p>
-                          </div>
-                          
-                          <div>
-                            <label htmlFor="bc-notes" className="text-base font-bold text-gray-900 block mb-3">
-                              💬 Besondere Hinweise (Optional)
-                            </label>
-                            <Textarea
-                              id="bc-notes"
-                              name="bc-notes"
-                              value={businessCardDetails.specialNotes}
-                              onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, specialNotes: e.target.value })}
-                              placeholder="z.B. Besondere Formatwünsche, Logo-Varianten, etc."
-                              rows={3}
-                              className="text-base border-2 border-gray-300 focus:border-blue-500"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Right: Live Preview */}
-                        <div className="lg:sticky lg:top-6 h-fit">
-                          <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-8">
-                            <p className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-6">👁️ Live-Vorschau</p>
-                            
-                            {/* Business Card Preview */}
-                            <div className="bg-white rounded-xl shadow-2xl p-8 space-y-4 border-l-8 border-blue-600">
-                              <div className="space-y-3">
-                                <h2 className="font-bold text-3xl text-gray-900">
-                                  {businessCardDetails.fullName || 'Ihr Name'}
-                                </h2>
-                                <p className="text-xl text-gray-700 font-medium">
-                                  {businessCardDetails.jobTitle || 'Ihre Berufsbezeichnung'}
-                                </p>
-                                <p className="text-lg text-gray-600">
-                                  {businessCardDetails.department || 'Ihre Abteilung'}
-                                </p>
-                              </div>
-
-                              <div className="border-t-2 border-gray-200 pt-4 space-y-2">
-                                <p className="text-gray-700 font-medium flex items-center gap-2 text-base">
-                                  ✉️ {businessCardDetails.email || 'ihre.email@bund.de'}
-                                </p>
-                                {businessCardDetails.phone && (
-                                  <p className="text-gray-700 flex items-center gap-2">
-                                    📞 {businessCardDetails.phone}
-                                  </p>
-                                )}
-                                {businessCardDetails.mobile && (
-                                  <p className="text-gray-700 flex items-center gap-2">
-                                    📱 {businessCardDetails.mobile}
-                                  </p>
-                                )}
-                              </div>
-
-                              <div className="pt-4 text-xs text-gray-400 border-t">
-                                <p className="font-semibold">Bundesrepublik Deutschland</p>
-                                <p>Corporate Design 2025</p>
-                              </div>
-                            </div>
-                            
-                            <p className="text-xs text-center text-gray-600 mt-4 leading-relaxed">
-                              Dies ist eine vereinfachte Vorschau. Das finale Design wird professionell im Corporate Design gestaltet.
-                            </p>
-                            
-                            {/* Info Box */}
-                            <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-                              <h3 className="font-bold text-blue-900 mb-3 text-sm">ℹ️ Wichtige Informationen</h3>
-                              <ul className="text-sm text-blue-800 space-y-2">
-                                <li>• Corporate Design der Behörde</li>
-                                <li>• Lieferzeit: ca. 5-7 Werktage</li>
-                                <li>• Genehmigung erforderlich</li>
-                                <li>• Standard-Menge: 250 Stück</li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
 
               {(hasItemsRequiringApproval || specialRequest.trim()) && (
                 <div className="space-y-2">
