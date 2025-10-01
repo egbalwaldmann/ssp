@@ -109,50 +109,16 @@ function LoginForm() {
       return
     }
 
-    setIsLoading(true)
-
     try {
-      console.log(`🔐 Login attempt for: ${email}`)
-      
-      // Attempt login
-      const result = await signIn('credentials', {
-        email: email.trim(),
-        redirect: false
-      })
-
-      console.log('Login result:', result)
-
-      if (result?.error) {
-        const errorMessage = getErrorMessage(result.error)
-        console.error('Login failed:', result.error)
-        toast.error(errorMessage)
-        setLastError(errorMessage)
-        setRetryCount(prev => prev + 1)
-      } else if (result?.ok) {
-        console.log('✅ Login successful')
-        toast.success('Anmeldung erfolgreich!')
-        setRetryCount(0)
-        setLastError(null)
-        
-        // Small delay then redirect
-        setTimeout(() => {
-          router.push('/catalog')
-          router.refresh()
-        }, 300)
-      } else {
-        const errorMessage = 'Unbekannter Fehler bei der Anmeldung'
-        console.error('Login failed - unknown error')
-        toast.error(errorMessage)
-        setLastError(errorMessage)
-        setRetryCount(prev => prev + 1)
-      }
+      setIsLoading(true)
+      console.log(`🔐 Login requested for: ${email} (forcing hard reload)`) 
+      sessionStorage.setItem('autoLoginEmail', email.trim())
+      window.location.replace(`/login?reload=1&ts=${Date.now()}`)
     } catch (error) {
-      console.error('Login exception:', error)
-      const errorMessage = 'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.'
+      console.error('Login setup failed:', error)
+      const errorMessage = 'Seite konnte nicht neu geladen werden. Bitte manuell aktualisieren.'
       toast.error(errorMessage)
       setLastError(errorMessage)
-      setRetryCount(prev => prev + 1)
-    } finally {
       setIsLoading(false)
     }
   }
