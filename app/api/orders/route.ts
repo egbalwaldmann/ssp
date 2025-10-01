@@ -200,6 +200,38 @@ export async function POST(request: Request) {
       }
     }
 
+    // Create approval if needed
+    if (needsApproval) {
+      // Find an approver - get first user with APPROVER role
+      const { data: approvers, error: approverError } = await supabase
+        .from('User')
+        .select('id')
+        .eq('role', 'APPROVER')
+        .limit(1)
+      
+      if (!approverError && approvers && approvers.length > 0) {
+        const approvalId = `approval_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        
+        const { error: approvalError } = await supabase
+          .from('Approval')
+          .insert({
+            id: approvalId,
+            orderId: order.id,
+            approverId: approvers[0].id,
+            level: 1,
+            status: 'PENDING',
+            createdAt: now
+          })
+        
+        if (approvalError) {
+          console.error('❌ Error creating approval:', approvalError)
+          // Don't fail the request, order is already created
+        } else {
+          console.log('✅ Created approval for order:', order.orderNumber)
+        }
+      }
+    }
+
     // Create business card order if provided
     if (businessCard) {
       const businessCardId = `businesscard_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`

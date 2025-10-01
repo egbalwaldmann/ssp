@@ -15,7 +15,7 @@ export async function PUT(
     }
 
     // Only agents, approvers and admins can update status
-    if (!['IT_AGENT', 'RECEPTION_AGENT', 'APPROVER', 'ADMIN'].includes(session.user.role)) {
+    if (!['IT_SUPPORT', 'EMPFANG', 'APPROVER', 'ADMIN'].includes(session.user.role)) {
       return NextResponse.json({ error: 'Zugriff verweigert' }, { status: 403 })
     }
 
