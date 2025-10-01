@@ -129,9 +129,9 @@ export default function OrdersPage() {
                             <span className="font-bold text-blue-600">{item.quantity}×</span>
                             <span>{item.product.name}</span>
                           </div>
-                          {item.product.price && (
+                          {(item.product as any).price && (
                             <span className="font-bold text-blue-600">
-                              {(item.product.price * item.quantity).toFixed(0)} €
+                              {((item.product as any).price * item.quantity).toFixed(0)} €
                             </span>
                           )}
                         </div>
