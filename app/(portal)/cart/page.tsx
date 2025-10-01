@@ -20,6 +20,21 @@ export default function CartPage() {
   const [specialRequest, setSpecialRequest] = useState('')
   const [justification, setJustification] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // Business card details
+  const [businessCardDetails, setBusinessCardDetails] = useState({
+    fullName: session?.user?.name || '',
+    jobTitle: '',
+    department: session?.user?.department || '',
+    email: session?.user?.email || '',
+    phone: '',
+    mobile: ''
+  })
+  
+  // Check if cart contains business cards
+  const hasBusinessCards = items.some(item => 
+    item.name.toLowerCase().includes('visitenkarte')
+  )
 
   const handleCheckout = async () => {
     if (items.length === 0) {
@@ -35,6 +50,14 @@ export default function CartPage() {
       logger.warn('Checkout attempted without required justification', { needsApproval, hasJustification: !!justification.trim() })
       return
     }
+    
+    // Check if business card details are complete
+    if (hasBusinessCards) {
+      if (!businessCardDetails.fullName || !businessCardDetails.jobTitle || !businessCardDetails.email) {
+        toast.error('Bitte füllen Sie alle Pflichtfelder für Visitenkarten aus')
+        return
+      }
+    }
 
     setIsSubmitting(true)
     logger.info('Starting checkout process', { 
@@ -45,7 +68,7 @@ export default function CartPage() {
     })
 
     try {
-      const orderData = {
+      const orderData: any = {
         items: items.map((item) => ({
           productId: item.id,
           quantity: item.quantity
@@ -53,6 +76,19 @@ export default function CartPage() {
         costCenter: 'CC-001', // Set default cost center
         specialRequest: specialRequest.trim() || undefined,
         justification: justification.trim() || undefined
+      }
+      
+      // Add business card details if applicable
+      if (hasBusinessCards) {
+        orderData.businessCard = {
+          fullName: businessCardDetails.fullName,
+          jobTitle: businessCardDetails.jobTitle,
+          department: businessCardDetails.department,
+          email: businessCardDetails.email,
+          phone: businessCardDetails.phone || null,
+          mobile: businessCardDetails.mobile || null,
+          quantity: 250
+        }
       }
 
       logger.debug('Sending order data', orderData)
@@ -238,6 +274,105 @@ export default function CartPage() {
                   </p>
                 )}
               </div>
+
+              {hasBusinessCards && (
+                <Card className="bg-blue-50 border-blue-200">
+                  <CardHeader>
+                    <CardTitle className="text-base font-bold text-blue-900">
+                      🪪 Visitenkarten-Informationen
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="bc-fullName" className="text-xs font-semibold text-gray-800 block mb-1">
+                          Name <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          id="bc-fullName"
+                          name="bc-fullName"
+                          value={businessCardDetails.fullName}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, fullName: e.target.value })}
+                          placeholder="Max Mustermann"
+                          className="text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="bc-jobTitle" className="text-xs font-semibold text-gray-800 block mb-1">
+                          Jobtitel <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          id="bc-jobTitle"
+                          name="bc-jobTitle"
+                          value={businessCardDetails.jobTitle}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, jobTitle: e.target.value })}
+                          placeholder="Referent"
+                          className="text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="bc-department" className="text-xs font-semibold text-gray-800 block mb-1">
+                          Abteilung
+                        </label>
+                        <Input
+                          id="bc-department"
+                          name="bc-department"
+                          value={businessCardDetails.department}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, department: e.target.value })}
+                          placeholder="Marketing"
+                          className="text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="bc-email" className="text-xs font-semibold text-gray-800 block mb-1">
+                          E-Mail <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          id="bc-email"
+                          name="bc-email"
+                          type="email"
+                          value={businessCardDetails.email}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, email: e.target.value })}
+                          placeholder="max@bund.de"
+                          className="text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="bc-phone" className="text-xs font-semibold text-gray-800 block mb-1">
+                          Telefon
+                        </label>
+                        <Input
+                          id="bc-phone"
+                          name="bc-phone"
+                          type="tel"
+                          value={businessCardDetails.phone}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, phone: e.target.value })}
+                          placeholder="+49 30 123-456"
+                          className="text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="bc-mobile" className="text-xs font-semibold text-gray-800 block mb-1">
+                          Mobil
+                        </label>
+                        <Input
+                          id="bc-mobile"
+                          name="bc-mobile"
+                          type="tel"
+                          value={businessCardDetails.mobile}
+                          onChange={(e) => setBusinessCardDetails({ ...businessCardDetails, mobile: e.target.value })}
+                          placeholder="+49 170 123456"
+                          className="text-sm"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {(hasItemsRequiringApproval || specialRequest.trim()) && (
                 <div className="space-y-2">
