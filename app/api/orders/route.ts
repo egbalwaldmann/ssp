@@ -109,7 +109,7 @@ export async function POST(request: Request) {
       console.log('🔍 Checking products:', productIds)
       const { data: products, error: productsError } = await supabase
         .from('Product')
-        .select('id, requiresApproval, isBundle, bundleItems:ProductBundle(productId, quantity)')
+        .select('id, requiresApproval, isBundle')
         .in('id', productIds)
 
       if (productsError) {
