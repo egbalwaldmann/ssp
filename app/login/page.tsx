@@ -254,72 +254,85 @@ function LoginForm() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start hover:bg-green-50 hover:border-green-300"
-                  onClick={() => quickLogin('user@bund.de')}
-                  disabled={isLoading}
-                >
-                  <div className="text-left">
-                    <div className="font-medium flex items-center gap-2">
-                      👤 Mitarbeiter
-                    </div>
-                    <div className="text-xs text-gray-500">user@bund.de (Anforderer)</div>
+              <div className="space-y-4">
+                {/* Hauptnutzer - Mitarbeiter und Führungskraft */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">👥 Hauptnutzer</h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start hover:bg-green-50 hover:border-green-300"
+                      onClick={() => quickLogin('user@bund.de')}
+                      disabled={isLoading}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium flex items-center gap-2">
+                          👤 Mitarbeiter
+                        </div>
+                        <div className="text-xs text-gray-500">user@bund.de</div>
+                      </div>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start hover:bg-orange-50 hover:border-orange-300"
+                      onClick={() => quickLogin('manager@bund.de')}
+                      disabled={isLoading}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium flex items-center gap-2">
+                          👔 Führungskraft
+                        </div>
+                        <div className="text-xs text-gray-500">manager@bund.de</div>
+                      </div>
+                    </Button>
                   </div>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start hover:bg-blue-50 hover:border-blue-300"
-                  onClick={() => quickLogin('it@bund.de')}
-                  disabled={isLoading}
-                >
-                  <div className="text-left">
-                    <div className="font-medium flex items-center gap-2">
-                      💻 IT-Support
-                    </div>
-                    <div className="text-xs text-gray-500">it@bund.de (IT-Agent)</div>
+                </div>
+
+                {/* Support-Rollen */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">🛠️ Support & Verwaltung</h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start hover:bg-blue-50 hover:border-blue-300"
+                      onClick={() => quickLogin('it@bund.de')}
+                      disabled={isLoading}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium flex items-center gap-2">
+                          💻 IT-Support
+                        </div>
+                        <div className="text-xs text-gray-500">it@bund.de</div>
+                      </div>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start hover:bg-purple-50 hover:border-purple-300"
+                      onClick={() => quickLogin('reception@bund.de')}
+                      disabled={isLoading}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium flex items-center gap-2">
+                          🏢 Empfang
+                        </div>
+                        <div className="text-xs text-gray-500">reception@bund.de</div>
+                      </div>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start hover:bg-red-50 hover:border-red-300"
+                      onClick={() => quickLogin('admin@bund.de')}
+                      disabled={isLoading}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium flex items-center gap-2">
+                          ⚙️ Admin
+                        </div>
+                        <div className="text-xs text-gray-500">admin@bund.de</div>
+                      </div>
+                    </Button>
                   </div>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start hover:bg-purple-50 hover:border-purple-300"
-                  onClick={() => quickLogin('reception@bund.de')}
-                  disabled={isLoading}
-                >
-                  <div className="text-left">
-                    <div className="font-medium flex items-center gap-2">
-                      🏢 Empfang
-                    </div>
-                    <div className="text-xs text-gray-500">reception@bund.de (Empfang)</div>
-                  </div>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start hover:bg-orange-50 hover:border-orange-300"
-                  onClick={() => quickLogin('manager@bund.de')}
-                  disabled={isLoading}
-                >
-                  <div className="text-left">
-                    <div className="font-medium flex items-center gap-2">
-                      👔 Führungskraft
-                    </div>
-                    <div className="text-xs text-gray-500">manager@bund.de (Genehmiger)</div>
-                  </div>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start hover:bg-red-50 hover:border-red-300"
-                  onClick={() => quickLogin('admin@bund.de')}
-                  disabled={isLoading}
-                >
-                  <div className="text-left">
-                    <div className="font-medium flex items-center gap-2">
-                      ⚙️ Admin
-                    </div>
-                    <div className="text-xs text-gray-500">admin@bund.de (Admin)</div>
-                  </div>
-                </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

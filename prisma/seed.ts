@@ -18,26 +18,26 @@ async function main() {
     }
   })
 
-  const itAgent = await prisma.user.upsert({
+  const itSupport = await prisma.user.upsert({
     where: { email: 'it@bund.de' },
     update: {},
     create: {
       email: 'it@bund.de',
       name: 'IT-Support',
-      role: 'IT_AGENT',
+      role: 'IT_SUPPORT',
       costCenter: 'IT-001',
       department: 'IT'
     }
   })
 
-  const receptionAgent = await prisma.user.upsert({
+  const empfang = await prisma.user.upsert({
     where: { email: 'reception@bund.de' },
     update: {},
     create: {
       email: 'reception@bund.de',
-      name: 'Empfangssupport',
-      role: 'RECEPTION_AGENT',
-      costCenter: 'RCP-001',
+      name: 'Empfang',
+      role: 'EMPFANG',
+      costCenter: 'EMP-001',
       department: 'Empfang'
     }
   })
@@ -76,7 +76,8 @@ async function main() {
       model: 'C270',
       imageUrl: '/products/webcam-logitech-c270.jpg',
       description: 'HD-Webcam für Videotelefonie und Konferenzen',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'IT_SUPPORT'
     },
     {
       name: 'Jabra Evolve2 65 (Bluetooth)',
@@ -84,7 +85,8 @@ async function main() {
       model: 'Evolve2 65',
       imageUrl: '/products/headset-jabra-evolve2-65.jpg',
       description: 'Kabelloses Bluetooth-Headset mit aktiver Geräuschunterdrückung',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'IT_SUPPORT'
     },
     {
       name: 'Jabra Evolve2 40 (Kabelgebunden)',
@@ -92,7 +94,8 @@ async function main() {
       model: 'Evolve2 40',
       imageUrl: '/products/headset-jabra-evolve2-40.jpg',
       description: 'Kabelgebundenes USB-Headset mit überlegener Klangqualität',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'IT_SUPPORT'
     },
     {
       name: 'Cherry GENTIX Silent Maus',
@@ -100,7 +103,8 @@ async function main() {
       model: 'GENTIX Silent',
       imageUrl: '/products/mouse-cherry-gentix.jpg',
       description: 'Leise Maus für ruhige Büroumgebungen',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'IT_SUPPORT'
     },
     {
       name: 'Logitech Lift Ergonomische Maus',
@@ -108,7 +112,8 @@ async function main() {
       model: 'Lift',
       imageUrl: '/products/mouse-logitech-lift.jpg',
       description: 'Ergonomische vertikale Maus für komfortable Nutzung',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'IT_SUPPORT'
     },
     {
       name: 'Cherry Stream Tastatur',
@@ -116,7 +121,8 @@ async function main() {
       model: 'JK-8500',
       imageUrl: '/products/keyboard-cherry-stream.jpg',
       description: 'Professionelle Tastatur mit flachen Tasten',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'IT_SUPPORT'
     },
     {
       name: 'Verbatim USB-C zu HDMI Adapter',
@@ -124,7 +130,8 @@ async function main() {
       model: 'USB-C HDMI',
       imageUrl: '/products/adapter-usbc-hdmi.jpg',
       description: 'Verbinden Sie Ihr USB-C-Gerät mit HDMI-Displays',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'IT_SUPPORT'
     },
     {
       name: 'ROLINE HDMI Kabel High Speed',
@@ -132,21 +139,24 @@ async function main() {
       model: 'HDMI 2.0',
       imageUrl: '/products/cable-hdmi-roline.jpg',
       description: 'Hochgeschwindigkeits-HDMI-Kabel für 4K-Displays',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'IT_SUPPORT'
     },
     {
       name: 'Druckertoner',
       category: 'PRINTER_TONER',
       imageUrl: '/products/toner-generic.jpg',
       description: 'Verschiedene Tonerkartuschen für alle Bürodrucker verfügbar',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'IT_SUPPORT'
     },
     {
       name: 'Desktop-Lautsprecher',
       category: 'SPEAKERS',
       imageUrl: '/products/speakers-generic.jpg',
       description: 'Kompakte Desktop-Lautsprecher für Multimedia',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'IT_SUPPORT'
     },
     // Office Supplies
     {
@@ -154,35 +164,40 @@ async function main() {
       category: 'WHITEBOARD',
       imageUrl: '/products/whiteboard.jpg',
       description: 'Verschiedene Größen verfügbar - in Sonderwünschen angeben',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'EMPFANG'
     },
     {
       name: 'Pinnwand',
       category: 'PINBOARD',
       imageUrl: '/products/pinboard.jpg',
       description: 'Korkpinnwand für Mitteilungen und Dokumente',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'EMPFANG'
     },
     {
       name: 'Flipchart-Papier',
       category: 'FLIPCHART',
       imageUrl: '/products/flipchart.jpg',
       description: 'Flipchart-Papierblöcke für Meetings und Präsentationen',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'EMPFANG'
     },
     {
       name: 'Bürostuhl',
       category: 'CHAIR',
       imageUrl: '/products/chair.jpg',
       description: 'Ergonomischer Bürostuhl - erfordert Manager-Genehmigung',
-      requiresApproval: true
+      requiresApproval: true,
+      responsibleRole: 'EMPFANG'
     },
     {
       name: 'Geschäftsausdrucke & Briefumschläge',
       category: 'BUSINESS_PRINTS',
       imageUrl: '/products/business-prints.jpg',
       description: 'Visitenkarten, Briefköpfe und Briefumschläge',
-      requiresApproval: false
+      requiresApproval: false,
+      responsibleRole: 'EMPFANG'
     }
   ]
 

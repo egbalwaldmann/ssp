@@ -49,7 +49,7 @@ export default function PortalLayout({
     return null
   }
 
-  const isAgent = ['IT_AGENT', 'RECEPTION_AGENT', 'APPROVER', 'ADMIN'].includes(session.user.role)
+  const isAgent = ['IT_SUPPORT', 'EMPFANG', 'APPROVER', 'ADMIN'].includes(session.user.role)
   const cartItemsCount = getTotalItems()
 
   const getInitials = (name: string) => {
@@ -64,8 +64,8 @@ export default function PortalLayout({
   const getRoleLabel = (role: string) => {
     const roleLabels: Record<string, string> = {
       REQUESTER: 'Anforderer',
-      IT_AGENT: 'IT-Agent',
-      RECEPTION_AGENT: 'Empfang',
+      IT_SUPPORT: 'IT-Support',
+      EMPFANG: 'Empfang',
       APPROVER: 'Genehmiger',
       ADMIN: 'Admin'
     }
@@ -126,13 +126,44 @@ export default function PortalLayout({
                   </Link>
                 )}
                 {session?.user?.role === 'ADMIN' && (
-                  <Link href="/admin/logs">
+                  <>
+                    <Link href="/admin/users">
+                      <Button
+                        variant={pathname === '/admin/users' ? 'default' : 'ghost'}
+                        className="flex items-center space-x-2"
+                      >
+                        <span>👥</span>
+                        <span>Nutzer</span>
+                      </Button>
+                    </Link>
+                    <Link href="/admin/products">
+                      <Button
+                        variant={pathname === '/admin/products' ? 'default' : 'ghost'}
+                        className="flex items-center space-x-2"
+                      >
+                        <span>📦</span>
+                        <span>Produkte</span>
+                      </Button>
+                    </Link>
+                    <Link href="/admin/logs">
+                      <Button
+                        variant={pathname === '/admin/logs' ? 'default' : 'ghost'}
+                        className="flex items-center space-x-2"
+                      >
+                        <span>📊</span>
+                        <span>Logs</span>
+                      </Button>
+                    </Link>
+                  </>
+                )}
+                {['IT_SUPPORT', 'EMPFANG'].includes(session?.user?.role || '') && (
+                  <Link href="/admin/create-product">
                     <Button
-                      variant={pathname === '/admin/logs' ? 'default' : 'ghost'}
+                      variant={pathname === '/admin/create-product' ? 'default' : 'ghost'}
                       className="flex items-center space-x-2"
                     >
-                      <span>📊</span>
-                      <span>Logs</span>
+                      <span>➕</span>
+                      <span>Produkt hinzufügen</span>
                     </Button>
                   </Link>
                 )}
