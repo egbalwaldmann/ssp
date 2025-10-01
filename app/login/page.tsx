@@ -1,44 +1,115 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { ShoppingCart } from 'lucide-react'
+import { ShoppingCart, AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
 
-export default function LoginPage() {
+// Enhanced error handling with specific messages
+const getErrorMessage = (error: string): string => {
+  switch (error) {
+    case 'UNGÜLTIGE_E_MAIL_FORMAT':
+      return 'Bitte geben Sie eine gültige E-Mail-Adresse ein'
+    case 'BENUTZER_NICHT_GEFUNDEN':
+      return 'Diese E-Mail-Adresse ist nicht registriert. Bitte verwenden Sie eine der Demo-Accounts.'
+    case 'AUTHENTIFIZIERUNG_FEHLGESCHLAGEN':
+      return 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.'
+    case 'CredentialsSignin':
+      return 'Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre E-Mail-Adresse.'
+    default:
+      return 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.'
+  }
+}
+
+// Email validation
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [retryCount, setRetryCount] = useState(0)
+  const [lastError, setLastError] = useState<string | null>(null)
+
+  // Handle URL error parameters
+  useEffect(() => {
+    const error = searchParams.get('error')
+    if (error) {
+      const errorMessage = getErrorMessage(error)
+      toast.error(errorMessage)
+      setLastError(errorMessage)
+    }
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!email) {
-      toast.error('Bitte E-Mail eingeben')
+    // Clear previous errors
+    setLastError(null)
+    
+    if (!email.trim()) {
+      const errorMsg = 'Bitte E-Mail eingeben'
+      toast.error(errorMsg)
+      setLastError(errorMsg)
+      return
+    }
+
+    if (!isValidEmail(email)) {
+      const errorMsg = 'Bitte geben Sie eine gültige E-Mail-Adresse ein'
+      toast.error(errorMsg)
+      setLastError(errorMsg)
       return
     }
 
     setIsLoading(true)
 
     try {
+      console.log(`🔐 Login attempt for: ${email}`)
+      
       const result = await signIn('credentials', {
-        email,
+        email: email.trim(),
         redirect: false
       })
 
+      console.log('Login result:', result)
+
       if (result?.error) {
-        toast.error('Unbekannte E-Mail. Bitte eine registrierte Adresse verwenden.')
-      } else {
+        const errorMessage = getErrorMessage(result.error)
+        console.error('Login failed:', result.error)
+        toast.error(errorMessage)
+        setLastError(errorMessage)
+        setRetryCount(prev => prev + 1)
+      } else if (result?.ok) {
+        console.log('✅ Login successful')
         toast.success('Anmeldung erfolgreich!')
-        router.push('/catalog')
-        router.refresh()
+        setRetryCount(0)
+        setLastError(null)
+        
+        // Small delay to show success message
+        setTimeout(() => {
+          router.push('/catalog')
+          router.refresh()
+        }, 500)
+      } else {
+        const errorMessage = 'Unbekannter Fehler bei der Anmeldung'
+        toast.error(errorMessage)
+        setLastError(errorMessage)
+        setRetryCount(prev => prev + 1)
       }
     } catch (error) {
-      toast.error('Ein Fehler ist aufgetreten. Bitte erneut versuchen.')
+      console.error('Login exception:', error)
+      const errorMessage = 'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.'
+      toast.error(errorMessage)
+      setLastError(errorMessage)
+      setRetryCount(prev => prev + 1)
     } finally {
       setIsLoading(false)
     }
@@ -46,23 +117,45 @@ export default function LoginPage() {
 
   const quickLogin = async (userEmail: string) => {
     setEmail(userEmail)
+    setLastError(null)
     setIsLoading(true)
 
     try {
+      console.log(`🚀 Quick login for: ${userEmail}`)
+      
       const result = await signIn('credentials', {
         email: userEmail,
         redirect: false
       })
 
       if (result?.error) {
-        toast.error('Anmeldung fehlgeschlagen')
-      } else {
+        const errorMessage = getErrorMessage(result.error)
+        console.error('Quick login failed:', result.error)
+        toast.error(errorMessage)
+        setLastError(errorMessage)
+        setRetryCount(prev => prev + 1)
+      } else if (result?.ok) {
+        console.log('✅ Quick login successful')
         toast.success('Anmeldung erfolgreich!')
-        router.push('/catalog')
-        router.refresh()
+        setRetryCount(0)
+        setLastError(null)
+        
+        setTimeout(() => {
+          router.push('/catalog')
+          router.refresh()
+        }, 500)
+      } else {
+        const errorMessage = 'Schnell-Anmeldung fehlgeschlagen'
+        toast.error(errorMessage)
+        setLastError(errorMessage)
+        setRetryCount(prev => prev + 1)
       }
     } catch (error) {
-      toast.error('Ein Fehler ist aufgetreten')
+      console.error('Quick login exception:', error)
+      const errorMessage = 'Netzwerkfehler bei der Schnell-Anmeldung'
+      toast.error(errorMessage)
+      setLastError(errorMessage)
+      setRetryCount(prev => prev + 1)
     } finally {
       setIsLoading(false)
     }
@@ -88,7 +181,10 @@ export default function LoginPage() {
         <div className="grid md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Anmelden</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                🔐 Anmelden
+                {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              </CardTitle>
               <CardDescription>
                 E-Mail-Adresse eingeben, um das Portal zu nutzen
               </CardDescription>
@@ -107,16 +203,41 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
                     required
-                    className="bg-white text-gray-900 placeholder:text-gray-500"
+                    className={`bg-white text-gray-900 placeholder:text-gray-500 ${
+                      lastError ? 'border-red-300 focus:border-red-500' : ''
+                    }`}
                     autoComplete="email"
                   />
                 </div>
+
+                {/* Error Display */}
+                {lastError && (
+                  <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <AlertCircle className="h-4 w-4 text-red-600" />
+                    <p className="text-sm text-red-700">{lastError}</p>
+                  </div>
+                )}
+
+                {/* Retry Counter */}
+                {retryCount > 0 && (
+                  <div className="text-sm text-orange-600 text-center">
+                    Versuche: {retryCount} - Bitte versuchen Sie es erneut
+                  </div>
+                )}
+
                 <Button
                   type="submit"
                   className="w-full"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Anmelden…' : 'Anmelden'}
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Anmelden...
+                    </>
+                  ) : (
+                    'Anmelden'
+                  )}
                 </Button>
               </form>
             </CardContent>
@@ -124,7 +245,10 @@ export default function LoginPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Schnell-Anmeldung (Demo)</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                🚀 Schnell-Anmeldung (Demo)
+                {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              </CardTitle>
               <CardDescription>
                 Testkonto auswählen, um das Portal zu erkunden
               </CardDescription>
@@ -133,56 +257,66 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <Button
                   variant="outline"
-                  className="w-full justify-start"
+                  className="w-full justify-start hover:bg-green-50 hover:border-green-300"
                   onClick={() => quickLogin('user@bund.de')}
                   disabled={isLoading}
                 >
                   <div className="text-left">
-                    <div className="font-medium">Mitarbeiter</div>
+                    <div className="font-medium flex items-center gap-2">
+                      👤 Mitarbeiter
+                    </div>
                     <div className="text-xs text-gray-500">user@bund.de (Anforderer)</div>
                   </div>
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full justify-start"
+                  className="w-full justify-start hover:bg-blue-50 hover:border-blue-300"
                   onClick={() => quickLogin('it@bund.de')}
                   disabled={isLoading}
                 >
                   <div className="text-left">
-                    <div className="font-medium">IT-Support</div>
+                    <div className="font-medium flex items-center gap-2">
+                      💻 IT-Support
+                    </div>
                     <div className="text-xs text-gray-500">it@bund.de (IT-Agent)</div>
                   </div>
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full justify-start"
+                  className="w-full justify-start hover:bg-purple-50 hover:border-purple-300"
                   onClick={() => quickLogin('reception@bund.de')}
                   disabled={isLoading}
                 >
                   <div className="text-left">
-                    <div className="font-medium">Empfang</div>
+                    <div className="font-medium flex items-center gap-2">
+                      🏢 Empfang
+                    </div>
                     <div className="text-xs text-gray-500">reception@bund.de (Empfang)</div>
                   </div>
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full justify-start"
+                  className="w-full justify-start hover:bg-orange-50 hover:border-orange-300"
                   onClick={() => quickLogin('manager@bund.de')}
                   disabled={isLoading}
                 >
                   <div className="text-left">
-                    <div className="font-medium">Führungskraft</div>
+                    <div className="font-medium flex items-center gap-2">
+                      👔 Führungskraft
+                    </div>
                     <div className="text-xs text-gray-500">manager@bund.de (Genehmiger)</div>
                   </div>
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full justify-start"
+                  className="w-full justify-start hover:bg-red-50 hover:border-red-300"
                   onClick={() => quickLogin('admin@bund.de')}
                   disabled={isLoading}
                 >
                   <div className="text-left">
-                    <div className="font-medium">Admin</div>
+                    <div className="font-medium flex items-center gap-2">
+                      ⚙️ Admin
+                    </div>
                     <div className="text-xs text-gray-500">admin@bund.de (Admin)</div>
                   </div>
                 </Button>
@@ -196,6 +330,21 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Lade Anmeldung...</p>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }
 
