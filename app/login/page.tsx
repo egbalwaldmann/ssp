@@ -71,38 +71,101 @@ function LoginForm() {
       return
     }
 
+    setIsLoading(true)
+
     try {
-      setIsLoading(true)
-      console.log(`🔐 Login attempt (redirect flow) for: ${email}`)
-      await signIn('credentials', {
+      console.log(`🔐 Login attempt for: ${email}`)
+      
+      // Attempt login without redirect; navigate client-side on success
+      const result = await signIn('credentials', {
         email: email.trim(),
-        redirect: true,
-        callbackUrl: '/catalog'
+        redirect: false
       })
+
+      console.log('Login result:', result)
+
+      if (result?.error) {
+        const errorMessage = getErrorMessage(result.error)
+        console.error('Login failed:', result.error)
+        toast.error(errorMessage)
+        setLastError(errorMessage)
+        setRetryCount(prev => prev + 1)
+      } else if (result?.ok) {
+        console.log('✅ Login successful')
+        toast.success('Anmeldung erfolgreich!')
+        setRetryCount(0)
+        setLastError(null)
+        
+        // Small delay then redirect
+        setTimeout(() => {
+          router.push('/catalog')
+          router.refresh()
+        }, 300)
+      } else {
+        const errorMessage = 'Unbekannter Fehler bei der Anmeldung'
+        console.error('Login failed - unknown error')
+        toast.error(errorMessage)
+        setLastError(errorMessage)
+        setRetryCount(prev => prev + 1)
+      }
     } catch (error) {
       console.error('Login exception:', error)
       const errorMessage = 'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.'
       toast.error(errorMessage)
       setLastError(errorMessage)
+      setRetryCount(prev => prev + 1)
+    } finally {
       setIsLoading(false)
     }
   }
 
   const quickLogin = async (userEmail: string) => {
+    setEmail(userEmail)
+    setLastError(null)
+    setIsLoading(true)
+
     try {
-      setIsLoading(true)
-      setLastError(null)
-      console.log(`🚀 Quick login (redirect flow) for: ${userEmail}`)
-      await signIn('credentials', {
+      console.log(`🚀 Quick login for: ${userEmail}`)
+      
+      // Attempt login without redirect; navigate client-side on success
+      const result = await signIn('credentials', {
         email: userEmail,
-        redirect: true,
-        callbackUrl: '/catalog'
+        redirect: false
       })
+
+      console.log('Quick login result:', result)
+
+      if (result?.error) {
+        const errorMessage = getErrorMessage(result.error)
+        console.error('Quick login failed:', result.error)
+        toast.error(errorMessage)
+        setLastError(errorMessage)
+        setRetryCount(prev => prev + 1)
+      } else if (result?.ok) {
+        console.log('✅ Quick login successful')
+        toast.success('Anmeldung erfolgreich!')
+        setRetryCount(0)
+        setLastError(null)
+        
+        // Small delay then redirect
+        setTimeout(() => {
+          router.push('/catalog')
+          router.refresh()
+        }, 300)
+      } else {
+        const errorMessage = 'Schnell-Anmeldung fehlgeschlagen'
+        console.error('Quick login failed - unknown error')
+        toast.error(errorMessage)
+        setLastError(errorMessage)
+        setRetryCount(prev => prev + 1)
+      }
     } catch (error) {
       console.error('Quick login exception:', error)
       const errorMessage = 'Netzwerkfehler bei der Schnell-Anmeldung'
       toast.error(errorMessage)
       setLastError(errorMessage)
+      setRetryCount(prev => prev + 1)
+    } finally {
       setIsLoading(false)
     }
   }
