@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { createClient } from '@supabase/supabase-js'
 
 export async function GET(
   request: Request,
@@ -16,73 +16,64 @@ export async function GET(
 
     const { id } = await params
 
-    const order = await prisma.order.findUnique({
-      where: { id },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-            department: true,
-            costCenter: true
-          }
-        },
-        items: {
-          include: {
-            product: true
-          }
-        },
-        comments: {
-          include: {
-            user: {
-              select: {
-                name: true,
-                role: true
-              }
-            }
-          },
-          orderBy: {
-            createdAt: 'desc'
-          }
-        },
-        approvals: {
-          include: {
-            approver: {
-              select: {
-                name: true,
-                email: true
-              }
-            }
-          }
-        },
-        statusHistory: {
-          orderBy: {
-            createdAt: 'asc'
-          }
-        },
-        asset: true
-      }
-    })
+    // Create Supabase client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json({ error: 'Missing Supabase configuration' }, { status: 500 })
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    const { data: order, error } = await supabase
+      .from('Order')
+      .select(`
+        *,
+        items:OrderItem(
+          *,
+          product:Product(*)
+        ),
+        user:User(
+          name,
+          email,
+          department
+        ),
+        statusHistory:OrderStatusHistory(
+          *,
+          changedByUser:User(
+            name,
+            email
+          )
+        ),
+        comments:OrderComment(
+          *,
+          user:User(
+            name,
+            email
+          )
+        )
+      `)
+      .eq('id', id)
+      .single()
+
+    if (error) {
+      console.error('❌ Error fetching order:', error)
+      return NextResponse.json({ error: 'Bestellung nicht gefunden' }, { status: 404 })
+    }
 
     if (!order) {
       return NextResponse.json({ error: 'Bestellung nicht gefunden' }, { status: 404 })
     }
 
-    // Check authorization
-    if (
-      session.user.role === 'REQUESTER' &&
-      order.userId !== session.user.id
-    ) {
+    // Check if user has access to this order
+    if (session.user.role === 'REQUESTER' && order.userId !== session.user.id) {
       return NextResponse.json({ error: 'Zugriff verweigert' }, { status: 403 })
     }
 
     return NextResponse.json(order)
   } catch (error) {
-    console.error('Error fetching order:', error)
-    return NextResponse.json(
-      { error: 'Bestellung konnte nicht abgerufen werden' },
-      { status: 500 }
-    )
+    console.error('❌ Error fetching order:', error)
+    return NextResponse.json({ error: 'Fehler beim Laden der Bestellung' }, { status: 500 })
   }
 }
-

@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import { generateOrderNumber, requiresApproval } from '@/lib/workflow'
+import { createClient } from '@supabase/supabase-js'
 
 export async function GET(request: Request) {
   try {
@@ -17,45 +16,51 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
     
-    const where: any = {}
+    // Create Supabase client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json({ error: 'Missing Supabase configuration' }, { status: 500 })
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey)
+    
+    // Build query
+    let query = supabase
+      .from('Order')
+      .select(`
+        *,
+        items:OrderItem(
+          *,
+          product:Product(*)
+        ),
+        user:User(
+          name,
+          email,
+          department
+        )
+      `)
+      .order('createdAt', { ascending: false })
+
     // Filter by user role
     if (session.user.role === 'REQUESTER') {
-      where.userId = session.user.id
+      query = query.eq('userId', session.user.id)
     }
     
     if (status) {
-      where.status = status
+      query = query.eq('status', status)
     }
 
-    const orders = await prisma.order.findMany({
-      where,
-      include: {
-        items: {
-          include: {
-            product: true
-          }
-        },
-        user: {
-          select: {
-            name: true,
-            email: true,
-            department: true
-          }
-        },
-        _count: {
-          select: {
-            comments: true
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
+    const { data: orders, error } = await query
 
-    console.log(`✅ Fetched ${orders.length} orders from database`)
-    return NextResponse.json(orders)
+    if (error) {
+      console.error('❌ Error fetching orders:', error)
+      return NextResponse.json({ error: 'Fehler beim Laden der Bestellungen' }, { status: 500 })
+    }
+
+    console.log(`✅ Fetched ${orders?.length || 0} orders from Supabase`)
+    return NextResponse.json(orders || [])
   } catch (error) {
     console.error('❌ Error fetching orders:', error)
     return NextResponse.json({ error: 'Fehler beim Laden der Bestellungen' }, { status: 500 })
@@ -83,13 +88,29 @@ export async function POST(request: Request) {
 
     console.log('🛒 Creating order for user:', session.user.email)
 
+    // Create Supabase client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json({ error: 'Missing Supabase configuration' }, { status: 500 })
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
     // Fetch products to check if they require approval
     const productIds = items.map((item: any) => item.productId)
-    const products = await prisma.product.findMany({
-      where: { id: { in: productIds } }
-    })
+    const { data: products, error: productsError } = await supabase
+      .from('Product')
+      .select('id, requiresApproval')
+      .in('id', productIds)
 
-    const productMap = new Map(products.map(p => [p.id, p]))
+    if (productsError) {
+      console.error('❌ Error fetching products:', productsError)
+      return NextResponse.json({ error: 'Fehler beim Laden der Produkte' }, { status: 500 })
+    }
+
+    const productMap = new Map(products?.map(p => [p.id, p]) || [])
     
     // Check if any item requires approval or if there's a special request
     const needsApproval = items.some((item: any) => {
@@ -97,42 +118,69 @@ export async function POST(request: Request) {
       return product?.requiresApproval || false
     }) || !!specialRequest
 
-    const orderNumber = generateOrderNumber()
+    const orderNumber = `BEST-${Date.now()}`
     const orderStatus = needsApproval ? 'PENDING_APPROVAL' : 'IN_REVIEW'
 
-    const order = await prisma.order.create({
-      data: {
+    // Create order
+    const { data: order, error: orderError } = await supabase
+      .from('Order')
+      .insert({
         orderNumber,
         userId: session.user.id,
         costCenter,
         specialRequest,
         justification,
-        status: orderStatus,
-        items: {
-          create: items.map((item: any) => ({
-            productId: item.productId,
-            quantity: item.quantity
-          }))
-        }
-      },
-      include: {
-        items: {
-          include: {
-            product: true
-          }
-        },
-        user: {
-          select: {
-            name: true,
-            email: true,
-            department: true
-          }
-        }
-      }
-    })
+        status: orderStatus
+      })
+      .select()
+      .single()
+
+    if (orderError) {
+      console.error('❌ Error creating order:', orderError)
+      return NextResponse.json({ error: 'Fehler beim Erstellen der Bestellung' }, { status: 500 })
+    }
+
+    // Create order items
+    const orderItems = items.map((item: any) => ({
+      orderId: order.id,
+      productId: item.productId,
+      quantity: item.quantity
+    }))
+
+    const { error: itemsError } = await supabase
+      .from('OrderItem')
+      .insert(orderItems)
+
+    if (itemsError) {
+      console.error('❌ Error creating order items:', itemsError)
+      return NextResponse.json({ error: 'Fehler beim Erstellen der Bestellpositionen' }, { status: 500 })
+    }
+
+    // Fetch the complete order with items and user data
+    const { data: completeOrder, error: fetchError } = await supabase
+      .from('Order')
+      .select(`
+        *,
+        items:OrderItem(
+          *,
+          product:Product(*)
+        ),
+        user:User(
+          name,
+          email,
+          department
+        )
+      `)
+      .eq('id', order.id)
+      .single()
+
+    if (fetchError) {
+      console.error('❌ Error fetching complete order:', fetchError)
+      return NextResponse.json({ error: 'Bestellung erstellt, aber Fehler beim Laden der Details' }, { status: 500 })
+    }
 
     console.log(`✅ Created order ${orderNumber} with status ${orderStatus}`)
-    return NextResponse.json(order, { status: 201 })
+    return NextResponse.json(completeOrder, { status: 201 })
   } catch (error) {
     console.error('❌ Error creating order:', error)
     return NextResponse.json({ error: 'Fehler beim Erstellen der Bestellung' }, { status: 500 })
