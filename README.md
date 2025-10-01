@@ -273,3 +273,4 @@ Built with ❤️ using Next.js, TypeScript, and Tailwind CSS.
 For questions or support, please contact your IT department.
 # Trigger new build Wed Oct  1 01:40:16 CEST 2025
 # Fix database connection Wed Oct  1 01:48:17 CEST 2025
+# Force redeploy with hardcoded env vars Wed Oct  1 02:00:24 CEST 2025
