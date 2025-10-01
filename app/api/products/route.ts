@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { createClient } from '@supabase/supabase-js'
 
 export async function GET(request: Request) {
   try {
@@ -9,35 +9,44 @@ export async function GET(request: Request) {
 
     console.log('🛍️ Fetching products with filters:', { category, search })
     
-    const where: any = {
-      isActive: true
+    // Create Supabase client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json({ error: 'Missing Supabase configuration' }, { status: 500 })
     }
 
+    const supabase = createClient(supabaseUrl, supabaseKey)
+    
+    // Build query
+    let query = supabase
+      .from('Product')
+      .select('*')
+      .eq('isActive', true)
+      .order('name', { ascending: true })
+
+    // Apply filters
     if (category && category !== 'ALL') {
-      where.category = category
+      query = query.eq('category', category)
     }
 
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { model: { contains: search, mode: 'insensitive' } }
-      ]
+      query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%,model.ilike.%${search}%`)
     }
 
-    const products = await prisma.product.findMany({
-      where,
-      orderBy: {
-        name: 'asc'
-      }
-    })
+    const { data: products, error } = await query
+
+    if (error) {
+      console.error('❌ Error fetching products:', error)
+      return NextResponse.json({ error: 'Fehler beim Laden der Produkte' }, { status: 500 })
+    }
     
-    console.log(`✅ Fetched ${products.length} products from database`)
-    console.log(`📦 Returning ${products.length} products`)
-    return NextResponse.json(products)
+    console.log(`✅ Fetched ${products?.length || 0} products from Supabase`)
+    console.log(`📦 Returning ${products?.length || 0} products`)
+    return NextResponse.json(products || [])
   } catch (error) {
     console.error('❌ Error fetching products:', error)
     return NextResponse.json({ error: 'Fehler beim Laden der Produkte' }, { status: 500 })
   }
 }
-

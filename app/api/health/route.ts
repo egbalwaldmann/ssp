@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { env, logEnvStatus } from '@/lib/env'
-import { robustAuth } from '@/lib/auth-robust'
+import { createClient } from '@supabase/supabase-js'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -10,57 +8,68 @@ export const revalidate = 0
 export async function GET() {
   const startedAt = new Date().toISOString()
   
-  // Log environment status for debugging
-  logEnvStatus()
-  
   try {
-    // Test database connection with retry logic
-    const dbHealthy = await robustAuth.checkDatabaseHealth()
+    // Create Supabase client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     
-    if (!dbHealthy) {
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json({
+        ok: false,
+        startedAt,
+        error: 'Missing Supabase environment variables',
+        env: {
+          NEXT_PUBLIC_SUPABASE_URL: supabaseUrl ? 'SET' : 'MISSING',
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: supabaseKey ? 'SET' : 'MISSING',
+          DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'MISSING',
+        }
+      }, { status: 500 })
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey)
+    
+    // Test database connection with a simple query
+    const { data, error } = await supabase
+      .from('User')
+      .select('count')
+      .limit(1)
+    
+    if (error) {
+      console.error('Database connection error:', error)
       return NextResponse.json({
         ok: false,
         startedAt,
         env: {
-          NEXTAUTH_URL: env.NEXTAUTH_URL,
-          NODE_ENV: process.env.NODE_ENV || null,
-          DATABASE_URL: env.DATABASE_URL ? 'SET' : 'MISSING',
-          NEXTAUTH_SECRET: env.NEXTAUTH_SECRET ? 'SET' : 'MISSING',
+          NEXT_PUBLIC_SUPABASE_URL: 'SET',
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'SET',
+          DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'MISSING',
         },
         db: { 
           ok: false, 
-          error: 'Database connection failed - using fallback authentication',
-          fallbackAvailable: true
-        },
-        auth: {
-          ok: true,
-          fallbackMode: true,
-          message: 'Authentication available via fallback users'
+          error: error.message,
+          details: error.details
         }
       }, { status: 503 })
     }
 
-    // Database is healthy, get user count
-    const userCount = await prisma.user.count()
+    // Get user count
+    const { count: userCount, error: countError } = await supabase
+      .from('User')
+      .select('*', { count: 'exact', head: true })
     
     return NextResponse.json({
       ok: true,
       startedAt,
       env: {
-        NEXTAUTH_URL: env.NEXTAUTH_URL,
-        NODE_ENV: process.env.NODE_ENV || null,
-        DATABASE_URL: env.DATABASE_URL ? 'SET' : 'MISSING',
-        NEXTAUTH_SECRET: env.NEXTAUTH_SECRET ? 'SET' : 'MISSING',
+        NEXT_PUBLIC_SUPABASE_URL: 'SET',
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: 'SET',
+        DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'MISSING',
       },
       db: { 
         ok: true, 
-        userCount,
-        connection: 'healthy'
-      },
-      auth: {
-        ok: true,
-        fallbackMode: false,
-        message: 'Full authentication available'
+        userCount: userCount || 0,
+        connection: 'healthy',
+        provider: 'supabase'
       }
     })
   } catch (err: any) {
@@ -70,20 +79,13 @@ export async function GET() {
       ok: false,
       startedAt,
       env: {
-        NEXTAUTH_URL: env.NEXTAUTH_URL,
-        NODE_ENV: process.env.NODE_ENV || null,
-        DATABASE_URL: env.DATABASE_URL ? 'SET' : 'MISSING',
-        NEXTAUTH_SECRET: env.NEXTAUTH_SECRET ? 'SET' : 'MISSING',
+        NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'MISSING',
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'MISSING',
+        DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'MISSING',
       },
       db: { 
         ok: false, 
-        error: err?.message || String(err),
-        fallbackAvailable: true
-      },
-      auth: {
-        ok: true,
-        fallbackMode: true,
-        message: 'Authentication available via fallback users'
+        error: err?.message || String(err)
       }
     }, { status: 503 })
   }
