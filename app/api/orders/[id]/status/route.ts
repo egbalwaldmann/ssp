@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { createClient } from '@supabase/supabase-js'
+import { canUserUpdateToStatus } from '@/lib/workflow'
+import { OrderStatus } from '@prisma/client'
 
 export async function PUT(
   request: Request,
@@ -49,6 +51,13 @@ export async function PUT(
 
     if (orderError || !order) {
       return NextResponse.json({ error: 'Bestellung nicht gefunden' }, { status: 404 })
+    }
+
+    // Check role-based permissions for status update
+    if (!canUserUpdateToStatus(session.user.role, order.status as OrderStatus, status as OrderStatus)) {
+      return NextResponse.json({ 
+        error: `Ihre Rolle (${session.user.role}) kann diesen Status nicht setzen: ${status}` 
+      }, { status: 403 })
     }
 
     // Update order status

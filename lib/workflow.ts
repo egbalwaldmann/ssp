@@ -5,10 +5,12 @@ export const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   IN_REVIEW: ['PENDING_APPROVAL', 'APPROVED', 'ON_HOLD', 'REJECTED'],
   PENDING_APPROVAL: ['APPROVED', 'REJECTED', 'ON_HOLD'],
   APPROVED: ['ORDERED', 'CANCELLED'],
-  ORDERED: ['IN_TRANSIT', 'CANCELLED'],
-  IN_TRANSIT: ['READY_FOR_PICKUP', 'DELIVERED'],
-  READY_FOR_PICKUP: ['DELIVERED', 'COMPLETED'],
-  DELIVERED: ['COMPLETED'],
+  ORDERED: ['ORDER_CONFIRMED', 'CANCELLED'],
+  ORDER_CONFIRMED: ['IN_TRANSIT', 'CANCELLED'],
+  IN_TRANSIT: ['DELIVERED', 'CANCELLED'],
+  DELIVERED: ['NOTIFIED', 'COMPLETED'],
+  NOTIFIED: ['INVOICE_VERIFIED', 'COMPLETED'],
+  INVOICE_VERIFIED: ['COMPLETED'],
   COMPLETED: [],
   REJECTED: [],
   CANCELLED: [],
@@ -17,6 +19,58 @@ export const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
 
 export function canTransition(from: OrderStatus, to: OrderStatus): boolean {
   return ALLOWED_TRANSITIONS[from]?.includes(to) ?? false
+}
+
+// Role-based status permissions
+export const ROLE_ALLOWED_STATUS: Record<string, OrderStatus[]> = {
+  // Führungskräfte: Nur Genehmigungen
+  APPROVER: ['APPROVED', 'REJECTED'],
+  
+  // IT Support: Operative Schritte (IT-Artikel)
+  IT_SUPPORT: [
+    'IN_REVIEW', 
+    'ORDERED', 
+    'ORDER_CONFIRMED', 
+    'IN_TRANSIT', 
+    'DELIVERED', 
+    'NOTIFIED', 
+    'INVOICE_VERIFIED', 
+    'COMPLETED',
+    'CANCELLED',
+    'ON_HOLD'
+  ],
+  
+  // Empfang: Operative Schritte (Büromaterial)
+  EMPFANG: [
+    'IN_REVIEW', 
+    'ORDERED', 
+    'ORDER_CONFIRMED', 
+    'IN_TRANSIT', 
+    'DELIVERED', 
+    'NOTIFIED', 
+    'INVOICE_VERIFIED', 
+    'COMPLETED',
+    'CANCELLED',
+    'ON_HOLD'
+  ],
+  
+  // Admin: Alles
+  ADMIN: [
+    'NEW', 'IN_REVIEW', 'PENDING_APPROVAL', 'APPROVED', 'ORDERED', 
+    'ORDER_CONFIRMED', 'IN_TRANSIT', 'DELIVERED', 
+    'NOTIFIED', 'INVOICE_VERIFIED', 'COMPLETED', 'REJECTED', 'CANCELLED', 'ON_HOLD'
+  ]
+}
+
+export function canUserUpdateToStatus(userRole: string, fromStatus: OrderStatus, toStatus: OrderStatus): boolean {
+  // Prüfe erst ob Transition grundsätzlich erlaubt ist
+  if (!canTransition(fromStatus, toStatus)) {
+    return false
+  }
+  
+  // Prüfe rollenbasierte Berechtigung
+  const allowedStatuses = ROLE_ALLOWED_STATUS[userRole] || []
+  return allowedStatuses.includes(toStatus)
 }
 
 export function requiresApproval(
@@ -35,9 +89,11 @@ export const STATUS_LABELS: Record<OrderStatus, string> = {
   PENDING_APPROVAL: 'Wartet auf Genehmigung',
   APPROVED: 'Genehmigt',
   ORDERED: 'Bestellt',
+  ORDER_CONFIRMED: 'Bestellbestätigung erhalten',
   IN_TRANSIT: 'Unterwegs',
-  READY_FOR_PICKUP: 'Abholbereit',
   DELIVERED: 'Zugestellt',
+  NOTIFIED: 'Mitarbeiter informiert',
+  INVOICE_VERIFIED: 'Rechnung geprüft',
   COMPLETED: 'Abgeschlossen',
   REJECTED: 'Abgelehnt',
   CANCELLED: 'Storniert',
@@ -50,9 +106,11 @@ export const STATUS_COLORS: Record<OrderStatus, string> = {
   PENDING_APPROVAL: 'bg-orange-100 text-orange-800 border-orange-300',
   APPROVED: 'bg-green-100 text-green-800 border-green-300',
   ORDERED: 'bg-blue-100 text-blue-800 border-blue-300',
+  ORDER_CONFIRMED: 'bg-sky-100 text-sky-800 border-sky-300',
   IN_TRANSIT: 'bg-indigo-100 text-indigo-800 border-indigo-300',
-  READY_FOR_PICKUP: 'bg-purple-100 text-purple-800 border-purple-300',
   DELIVERED: 'bg-cyan-100 text-cyan-800 border-cyan-300',
+  NOTIFIED: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+  INVOICE_VERIFIED: 'bg-lime-100 text-lime-800 border-lime-300',
   COMPLETED: 'bg-teal-100 text-teal-800 border-teal-300',
   REJECTED: 'bg-red-100 text-red-800 border-red-300',
   CANCELLED: 'bg-gray-100 text-gray-800 border-gray-300',

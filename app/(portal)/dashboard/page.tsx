@@ -34,7 +34,7 @@ import {
   TrendingUp,
   ChevronRight
 } from 'lucide-react'
-import { STATUS_LABELS, STATUS_COLORS, ALLOWED_TRANSITIONS } from '@/lib/workflow'
+import { STATUS_LABELS, STATUS_COLORS, ALLOWED_TRANSITIONS, canUserUpdateToStatus } from '@/lib/workflow'
 import { OrderStatus } from '@prisma/client'
 
 interface Order {
@@ -192,8 +192,10 @@ export default function DashboardPage() {
   }
 
 
-  const allowedTransitions = selectedOrder
-    ? ALLOWED_TRANSITIONS[selectedOrder.status] || []
+  const allowedTransitions = selectedOrder && session?.user?.role
+    ? (ALLOWED_TRANSITIONS[selectedOrder.status] || []).filter(status => 
+        canUserUpdateToStatus(session.user.role, selectedOrder.status, status)
+      )
     : []
 
   return (
